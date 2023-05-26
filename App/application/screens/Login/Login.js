@@ -18,6 +18,10 @@ import FontAwes from 'react-native-vector-icons/FontAwesome';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import { _gotoHomeNavigator } from '../../navigation/navigationServcies';
+import { handleAxiosError } from '../../utils/ErrorHandler';
+import { LOGIN_API } from '../../api/apis';
+import { isValidEmail } from '../../utils/Validation';
+import { _setItem } from '../../utils/async';
 
 
 
@@ -28,46 +32,42 @@ export default function Login({ navigation }) {
     const [password, setpassword] = useState('');
     const [showPass, setShowPass] = useState(false)
 
-    const onLoginBtnClick = () => _gotoHomeNavigator(navigation);
+    // const onLoginBtnClick = () => _gotoHomeNavigator(navigation);
 
-    // const onLoginBtnClick = async () => {
-    //     if (email == '') alert('Email is required');
-    //     else if (!isValidEmail(email)) alert('Email is invalid');
-    //     else if (password == '') alert('Password is required');
-    //     else if (password.length <= 5)
-    //         alert('Password should be at least 6 characters long');
-    //     else {
-    //         setLoading(true);
-    //         let details = {
-    //             email: email.trim().toLowerCase(),
-    //             password: password,
-    //         };
-    //         await LOGIN_API(details)
-    //             .then(resp => {
-    //                 _setItem('token', resp?.data?.accesstoken || undefined)
-    //                     .then(async () => {
-    //                          setLoading(false)
-    //                          dispatch(_onProfileChange(resp.data?.accesstoken ,resp.data?.user ));
-    //                         setTimeout(() => {
-    //                             _gotoHomeNavigator(navigation);
-    //                            setLoading(false)
-
-    //                         }, 500);
-    //                     })
-    //                     .catch(error => {
-    //                         setLoading(false);
-    //                         alert(error.msg);
-    //                     });
-    //                 // console.log(resp.data)∏
-    //             })
-    //             .catch(error => {
-    //                 setLoading(false);
-    //                 alert(error?.response?.data?.msg)
-    //                 // console.log(error.response.data.msg);
-    //                 // console.log({...error}, error.toString());
-    //             });
-    //     }
-    // };
+    const onLoginBtnClick = async () => {
+        if (email == '') alert('Email is required');
+        else if (!isValidEmail(email)) alert('Email is invalid');
+        else if (password == '') alert('Password is required');
+        else if (password.length <= 5)
+            alert('Password should be at least 6 characters long');
+        else {
+            setLoading(true);
+            let details = {
+                email: email.trim().toLowerCase(),
+                password: password,
+            };
+            await LOGIN_API(details)
+                .then(resp => {
+                    _setItem('token', resp?.data?.accesstoken || undefined)
+                        .then(async () => {
+                             setLoading(false)
+                            //  dispatch(_onProfileChange(resp.data?.accesstoken ,resp.data?.user ));
+                            setTimeout(() => {
+                                _gotoHomeNavigator(navigation);
+                            }, 500);
+                        })
+                        .catch(error => {
+                            setLoading(false);
+                            handleAxiosError(error)
+                        });
+                    // console.log(resp.data)∏
+                })
+                .catch(error => {
+                    setLoading(false);
+                  handleAxiosError(error)
+                });
+        }
+    };
 
     return (
         <SafeAreaView style={Styles._mainContainer}>

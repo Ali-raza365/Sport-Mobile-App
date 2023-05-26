@@ -1,28 +1,24 @@
 import React, { useState } from 'react';
 import {
-    Image,
     SafeAreaView,
     ScrollView,
     StyleSheet,
     Text,
-    View,
+    View
 } from 'react-native';
 import { Button, LabelInput, Loader } from '../../components';
 import {
     COLORS,
-    FONT,
-    FONT_MEDIUM,
-    FONT_SEMIBOLD,
-    IMAGES,
     SPACING_PERCENT,
     TEXT_SIZES,
-    WP,
+    WP
 } from '../../theme/config';
 
 import FontAwes from 'react-native-vector-icons/FontAwesome';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
+import { SIGN_UP_API } from '../../api/apis';
+import { handleAxiosError } from '../../utils/ErrorHandler';
+import { isValidEmail } from '../../utils/Validation';
 
 
 
@@ -35,43 +31,45 @@ export default function Signup({ navigation }) {
     const [showPass, setShowPass] = useState(false)
 
     const onSignUpBtnClick = async () => {
-        navigation.navigate('OTP')
-        // if (email == '') alert('Email is required');
-        // else if (!isValidEmail(email)) alert('Email is invalid');
-        // else if (password == '') alert('Password is required');
-        // else if (password.length <= 5)
-        //     alert('Password should be at least 6 characters long');
-        // else {
-        //     setLoading(true);
-        //     let details = {
-        //         email: email.trim().toLowerCase(),
-        //         password: password,
-        //     };
-        //     await LOGIN_API(details)
-        //         .then(resp => {
-        //             _setItem('token', resp?.data?.accesstoken || undefined)
-        //                 .then(async () => {
-        //                      setLoading(false)
-        //                      dispatch(_onProfileChange(resp.data?.accesstoken ,resp.data?.user ));
-        //                     setTimeout(() => {
-        //                         _gotoHomeNavigator(navigation);
-        //                        setLoading(false)
+        if (email == '') alert('Email is required');
+        else if (!isValidEmail(email)) alert('Email is invalid');
+        if (name == '') alert('Name is required');
+        else if (password == '') alert('Password is required');
+        else if (password.length <= 5)
+            alert('Password should be at least 6 characters long');
+        else {
+            setLoading(true);
+            let details = {
+                email: email.trim().toLowerCase(),
+                fullname: name,
+                password: password,
+            };
+            await SIGN_UP_API(details)
+                .then(resp => {
+                    navigation.navigate('homenavigator')
+                    setLoading(false);
 
-        //                     }, 500);
-        //                 })
-        //                 .catch(error => {
-        //                     setLoading(false);
-        //                     alert(error.msg);
-        //                 });
-        //             // console.log(resp.data)∏
-        //         })
-        //         .catch(error => {
-        //             setLoading(false);
-        //             alert(error?.response?.data?.msg)
-        //             // console.log(error.response.data.msg);
-        //             // console.log({...error}, error.toString());
-        //         });
-        // }
+                    // _setItem('token', resp?.data?.accesstoken || undefined)
+                    //     .then(async () => {
+                    //         setLoading(false)
+                    //         dispatch(_onProfileChange(resp.data?.accesstoken, resp.data?.user));
+                    //         setTimeout(() => {
+                    //             _gotoHomeNavigator(navigation);
+                    //             setLoading(false)
+
+                    //         }, 500);
+                    //     })
+                    //     .catch(error => {
+                    //         setLoading(false);
+                    //         alert(error.msg);
+                    //     });
+                    // console.log(resp.data)∏
+                })
+                .catch(error => {
+                    setLoading(false);
+                    handleAxiosError(error)
+                });
+        }
     };
 
     return (
@@ -84,7 +82,7 @@ export default function Signup({ navigation }) {
                 }}>
                 <Loader isVisible={loading} />
                 {/* <Image source={IMAGES.mainLogo} style={Styles._logoMain} /> */}
-                <Text style={{ fontSize: WP(8), fontWeight: '700', letterSpacing: 0.8, marginTop:WP(4) }} >Team Mates</Text>
+                <Text style={{ fontSize: WP(8), fontWeight: '700', letterSpacing: 0.8, marginTop: WP(4) }} >Team Mates</Text>
 
                 <Text style={Styles._textMain}>Sign Up</Text>
 
