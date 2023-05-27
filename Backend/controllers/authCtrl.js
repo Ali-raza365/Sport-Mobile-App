@@ -63,7 +63,7 @@ const authCtrl = {
 }
 
 const createAccessToken = (payload) => {
-    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
+    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '30d' })
 }
 
 

@@ -24,7 +24,13 @@ const userSchema = new mongoose.Schema({
     },
     role: {type: String, default: 'user'},
     mobile: {type: String, default: ''},
-    address: {type: String, default: ''},
+    address: {
+        name: String,
+        coordinates: {
+          latitude: Number,
+          longitude: Number
+        }
+      }
 }, {
     timestamps: true
 })
