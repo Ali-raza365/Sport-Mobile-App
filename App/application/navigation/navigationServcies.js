@@ -11,3 +11,10 @@ export const _gotoOnBoardScreen = (navigation) => {
         routes: [{ name: 'onBoard' }]
     })
 }
+
+export const _gotoAuthStack = (navigation) => {
+    navigation.reset({
+        index: 0,
+        routes: [{ name: 'auth' }]
+    })
+}

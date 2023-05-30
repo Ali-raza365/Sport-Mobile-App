@@ -1,44 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Button, Image, SafeAreaView, StyleSheet, Text } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { _gotoHomeNavigator, _gotoOnBoardScreen } from '../../navigation/navigationServcies';
+import { _gotoAuthStack, _gotoHomeNavigator, _gotoOnBoardScreen } from '../../navigation/navigationServcies';
 import { _onJWTTokenSet } from '../../redux/reducers/userActions';
 import { COLORS, HP, IMAGES, SPACING_PERCENT, TAB_ICON_SIZE, WP } from "../../theme/config";
 import { _getItem } from '../../utils/async';
 import Lang from '../../translation'
+import UserStore from '../../Store/UserStore';
 
 
 
 export default function Splash({ navigation }) {
     // const dispatch = useDispatch()
-    const [ref, setref] = useState('')
+    const [ref, setref] = useState('');
+    const splashSucess = UserStore((state) => state.splashSucess)
 
-    // useEffect(() => {
-    //     setTimeout(async () => {
-    //         try {
-    //             await _getItem('token').then((Token) => {
-    //                 if (Token) {
-    //                     dispatch(_onJWTTokenSet(Token))
-    //                     _gotoHomeNavigator(navigation);
-    //                 } else {
-    //                     navigation.navigate("authstack")
-    //                 }
-    //             })
-    //         } catch (error) {
-    //             console.log('splash error', error)
-    //         }
-    //     }, 2000)
-    // }, [])
+
 
     useEffect(() => {
-        setTimeout(() => {
-            // _gotoOnBoardScreen(navigation)
-            // navigation.navigate("onboard")
-            navigation.navigate('auth');
-        
-            // navigation.navigate("homenavigator")
-        }, 1000);
+        setTimeout(async () => {
+            try {
+                await _getItem('token').then((Token) => {
+                    splashSucess(Token, navigation)
+                })
+            } catch (error) {
+                console.log('splash error', error)
+            }
+        }, 1200)
     }, [])
+
 
 
 
@@ -60,7 +50,7 @@ export default function Splash({ navigation }) {
                 }}
             /> */}
 
-            <Text style={{fontSize:WP(8),fontWeight:'700', letterSpacing:0.8}} >Team Mates</Text>
+            <Text style={{ fontSize: WP(8), fontWeight: '700', letterSpacing: 0.8 }} >Team Mates</Text>
 
         </SafeAreaView>
     )

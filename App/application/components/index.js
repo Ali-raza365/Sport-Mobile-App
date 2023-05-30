@@ -10,19 +10,22 @@ import CardBox from "./CardBox";
 import SearchBar from "./SearchBar";
 import SimpleInput from "./SimpleInput";
 import DescriptionInput from "./DescriptionInput";
+import PickerModal from "./PickerModal";
 export {
-     AppBar,
-     // PhoneInput,
-     Button,
-     Loader,
-     ImagePickerModal,
-     LabelInput,
-     HomeSearchBar,
-     Category,
-     CardBox,
-     SearchBar,
-     SimpleInput,
-     DescriptionInput,
+    AppBar,
+    // PhoneInput,
+    Button,
+    Loader,
+    ImagePickerModal,
+    LabelInput,
+    HomeSearchBar,
+    Category,
+    CardBox,
+    SearchBar,
+    SimpleInput,
+    DescriptionInput,
+    PickerModal,
+
 
 
 

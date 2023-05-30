@@ -26,17 +26,15 @@ export const SIGN_UP_API = (details) => {
         }
     })
 }
-// SIGN UP INFO API
-export const SIGN_UP_INFO_API = (details) => {
+
+// LOGIN  API
+export const LOGIN_API = (details) => {
     return new Promise((resolve, reject) => {
         try {
             axios({
-                url: BASE_URL + 'auth/userSignInfo',
+                url: BASE_URL + 'api/login',
                 method: 'POST',
                 data: details,
-                headers: {
-                    "Content-Type": "multipart/form-data"
-                }
             })
                 .then((response) => {
                     resolve(response);
@@ -50,14 +48,18 @@ export const SIGN_UP_INFO_API = (details) => {
     })
 }
 
-// LOGIN  API
-export const LOGIN_API = (details) => {
+
+
+// GET USER INFO
+export const GET_USER_INFO_API = (token) => {
     return new Promise((resolve, reject) => {
         try {
             axios({
-                url: BASE_URL + 'api/login',
-                method: 'POST',
-                data: details,
+                url: BASE_URL + 'api/user/info',
+                method: 'GET',
+                headers: {
+                    Authorization: "Bearer " + token,
+                }
             })
                 .then((response) => {
                     resolve(response);

@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TextInput } from 'react-native'
 import React from 'react'
 import { COLORS, FONT, HP, WP } from '../theme/config'
 
-export default function SimpleInput({ lable, style, Icon,editable, placeholder, secureTextEntry, discription, value, onChangeText, inputError }) {
+export default function SimpleInput({ lable, style, Icon, editable, placeholder, secureTextEntry, discription, value, onChangeText, inputError }) {
     return (
         <View style={[Styles._mainContainer, style]}>
             {lable && <Text style={Styles._lableText}>{lable}</Text>}
@@ -37,9 +37,9 @@ const Styles = StyleSheet.create({
     _inputContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems:'center',
+        alignItems: 'center',
         borderColor: COLORS.borderColor,
-        paddingRight:WP(1),
+        paddingRight: WP(1),
         borderWidth: 1.5,
         height: HP(5.6),
         borderRadius: 4,
@@ -50,6 +50,7 @@ const Styles = StyleSheet.create({
         // borderColor: COLORS.borderColor,
         // borderWidth: 1.5,
         // width: WP(70),
+        fontSize: WP(4),
         height: HP(5.6),
         // borderRadius: 4,
         // paddingLeft: WP(5),

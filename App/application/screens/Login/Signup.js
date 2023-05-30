@@ -19,7 +19,12 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SIGN_UP_API } from '../../api/apis';
 import { handleAxiosError } from '../../utils/ErrorHandler';
 import { isValidEmail } from '../../utils/Validation';
+import { _gotoHomeNavigator } from '../../navigation/navigationServcies';
+import UserStore from '../../Store/UserStore';
+import { _setItem } from '../../utils/async';
 
+
+const signupSucess = UserStore((state) => state.signupSucess);
 
 
 export default function Signup({ navigation }) {
@@ -46,24 +51,22 @@ export default function Signup({ navigation }) {
             };
             await SIGN_UP_API(details)
                 .then(resp => {
-                    navigation.navigate('homenavigator')
                     setLoading(false);
+                    console.log(resp.data)
 
-                    // _setItem('token', resp?.data?.accesstoken || undefined)
-                    //     .then(async () => {
-                    //         setLoading(false)
-                    //         dispatch(_onProfileChange(resp.data?.accesstoken, resp.data?.user));
-                    //         setTimeout(() => {
-                    //             _gotoHomeNavigator(navigation);
-                    //             setLoading(false)
-
-                    //         }, 500);
-                    //     })
-                    //     .catch(error => {
-                    //         setLoading(false);
-                    //         alert(error.msg);
-                    //     });
-                    // console.log(resp.data)∏
+                    _setItem('token', resp?.data?.access_token || null)
+                        .then(async () => {
+                            setLoading(false)
+                            signupSucess(resp?.data)
+                            setTimeout(() => {
+                                _gotoHomeNavigator(navigation);
+                                setLoading(false)
+                            }, 500);
+                        })
+                        .catch(error => {
+                            setLoading(false);
+                            alert(error.msg);
+                        });
                 })
                 .catch(error => {
                     setLoading(false);

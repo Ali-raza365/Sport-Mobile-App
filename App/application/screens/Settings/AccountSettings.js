@@ -1,10 +1,27 @@
-import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, Image } from 'react-native'
+import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, Image, Pressable } from 'react-native'
 import React from 'react'
 import { COLORS, HP, WP } from "../../theme/config"
 import Ionicons from "react-native-vector-icons/Ionicons"
 import Feather from "react-native-vector-icons/Feather"
+import { _setItem } from '../../utils/async'
+import { handleAxiosError } from '../../utils/ErrorHandler'
+import { _gotoAuthStack, _gotoHomeNavigator } from '../../navigation/navigationServcies'
 
-export default function AccountSettings() {
+export default function AccountSettings({navigation}) {
+
+    const onLogout = () => {
+        _setItem('token', "" )
+            .then(async () => {
+                setTimeout(() => {
+                    _gotoAuthStack(navigation);
+                }, 500);
+            })
+            .catch(error => {
+                handleAxiosError(error)
+            });
+    }
+
+
     return (
         <SafeAreaView style={Styles._mainContainer}>
             <View style={Styles._dpMain}>
@@ -69,6 +86,19 @@ export default function AccountSettings() {
                         </TouchableOpacity>
                     </View>
                 </View>
+
+                <Pressable onPress={onLogout} style={Styles._infoCard}>
+                    <View style={Styles._iconMain}>
+                        <Ionicons
+                            name='log-out-outline'
+                            color={COLORS.primaryColor}
+                            size={WP(6)}
+                        />
+                    </View>
+                    <View style={Styles._usernameMain}>
+                        <Text style={[Styles._nameHeading, { fontWeight: "700" }]}>Logout</Text>
+                    </View>
+                </Pressable>
             </View>
         </SafeAreaView>
     )

@@ -22,6 +22,7 @@ import { handleAxiosError } from '../../utils/ErrorHandler';
 import { LOGIN_API } from '../../api/apis';
 import { isValidEmail } from '../../utils/Validation';
 import { _setItem } from '../../utils/async';
+import UserStore from '../../Store/UserStore';
 
 
 
@@ -30,7 +31,9 @@ export default function Login({ navigation }) {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setpassword] = useState('');
-    const [showPass, setShowPass] = useState(false)
+    const [showPass, setShowPass] = useState(false);
+
+    const loginSucess = UserStore((state) => state.loginSucess)
 
     // const onLoginBtnClick = () => _gotoHomeNavigator(navigation);
 
@@ -48,10 +51,10 @@ export default function Login({ navigation }) {
             };
             await LOGIN_API(details)
                 .then(resp => {
-                    _setItem('token', resp?.data?.accesstoken || undefined)
+                    _setItem('token', resp?.data?.access_token || undefined)
                         .then(async () => {
-                             setLoading(false)
-                            //  dispatch(_onProfileChange(resp.data?.accesstoken ,resp.data?.user ));
+                            setLoading(false)
+                            loginSucess(resp.data)
                             setTimeout(() => {
                                 _gotoHomeNavigator(navigation);
                             }, 500);
@@ -64,7 +67,7 @@ export default function Login({ navigation }) {
                 })
                 .catch(error => {
                     setLoading(false);
-                  handleAxiosError(error)
+                    handleAxiosError(error)
                 });
         }
     };
@@ -79,7 +82,7 @@ export default function Login({ navigation }) {
                 }}>
                 <Loader isVisible={loading} />
                 {/* <Image source={IMAGES.mainLogo} style={Styles._logoMain} /> */}
-                <Text style={{ fontSize: WP(8), fontWeight: '700', letterSpacing: 0.8, marginTop:WP(4) }} >Team Mates</Text>
+                <Text style={{ fontSize: WP(8), fontWeight: '700', letterSpacing: 0.8, marginTop: WP(4) }} >Team Mates</Text>
 
                 <Text style={Styles._textMain}>Sign In</Text>
 
