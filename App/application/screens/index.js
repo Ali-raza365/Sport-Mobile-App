@@ -10,6 +10,8 @@ import Home from "./Home/Home";
 import SearchScr from "./search/SearchScr";
 import NewEvent from "./new-event/NewEvent";
 import EventDetail from "./Home/EventDetail";
+import EventLocation from "./new-event/EventLocation";
+import EventCategory from "./new-event/EventCategory";
 export {
 
     // Splash,
@@ -24,6 +26,9 @@ export {
     SearchScr,
     NewEvent,
     EventDetail,
+    EventLocation,
+    EventCategory,
+
 
 
 };

@@ -1,21 +1,28 @@
-import { Pressable, SafeAreaView, ScrollView, Image, StyleSheet, Text, Switch, View } from 'react-native'
-import React, { useState } from 'react'
+import { Pressable, SafeAreaView, ScrollView, Image, StyleSheet, Text, Switch, View, PermissionsAndroid, Platform } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { COLORS, HP, RADIUS, SPACING_PERCENT, TEXT_SIZES, WP } from '../../theme/config'
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Foundation from 'react-native-vector-icons/Foundation';
-import { Button, DescriptionInput, LabelInput, PickerModal, SimpleInput } from '../../components';
+import Octicons from 'react-native-vector-icons/Octicons';
+import { Button, DescriptionInput, LabelInput, Loader, PickerModal, SimpleInput } from '../../components';
 import Slider from '@react-native-community/slider';
 import DatePicker from 'react-native-date-picker'
 import UserStore from '../../Store/UserStore';
+import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import EventStore from '../../Store/EventStore';
 
-const NewEvent = () => {
+const NewEvent = ({ navigation }) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [eventDate, setEventDate] = useState(new Date());
     const [eventParti, seteventParti] = useState(1);
+    const [eventTitle, seteventTitle] = useState("");
+    const [eventDes, seteventDes] = useState("");
     const [showPickerModal, setShowPickerModal] = useState(false);
     const [eventImage, setEventImage] = useState(null);
     const { user, token } = UserStore();
+
+    const { fetchActivites, selectedActivity, createEventFuc, createEvent_loading } = EventStore();
 
 
     const togglePickerModal = () => {
@@ -24,15 +31,57 @@ const NewEvent = () => {
         else setShowPickerModal(true)
     }
 
-    const onLocationIconClick = () => {
+    const onLocationIconClick = async () => {
+        try {
+            const permission =
+                Platform.OS === 'android'
+                    ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+                    : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
 
+            const result = await request(permission);
+
+            if (result === RESULTS.GRANTED) {
+                navigation.navigate('eventlocation')
+            } else {
+                // Permission denied, handle accordingly
+                console.log('Permission denied');
+            }
+        } catch (error) {
+            console.log('Error requesting permission: ', error);
+        }
+    };
+
+    const onCategoryIconClick = () => {
+        navigation.navigate('eventcategory')
     }
+
+    useEffect(() => {
+        fetchActivites(token)
+    }, [])
+
+    const onEventCreate = () => {
+        let detail = {
+            organizer: user?.fullname || '',
+            image: eventImage,
+            title: eventTitle,
+            description: eventDes,
+            participants: eventParti,
+            date: eventDate,
+            time: eventDate,
+            location: {
+                name: "lahore"
+            }
+        }
+        createEventFuc(detail, token)
+    }
+
 
 
 
 
     return (
         <View style={styles._container}>
+            <Loader isVisible={createEvent_loading} />
             <PickerModal
                 onBackButtonPress={togglePickerModal}
                 onBackdropPress={togglePickerModal}
@@ -86,6 +135,8 @@ const NewEvent = () => {
                 <SimpleInput
                     lable={"Event Title"}
                     placeholder={"Title"}
+                    value={eventTitle}
+                    onChangeText={(val) => seteventTitle(val)}
                 />
                 <SimpleInput
                     lable={" Date & Time"}
@@ -100,6 +151,13 @@ const NewEvent = () => {
                     placeholder={"Location"}
                     editable={false}
                     Icon={(<Foundation onPress={onLocationIconClick} name="marker" size={WP(8)} color={COLORS.lightGrey} />)}
+                />
+                <SimpleInput
+                    lable={"Activity"}
+                    placeholder={"Activity"}
+                    value={selectedActivity?.name || ''}
+                    editable={false}
+                    Icon={(<Octicons onPress={onCategoryIconClick} name="checklist" size={WP(8)} color={COLORS.lightGrey} />)}
                 />
                 <View style={{ marginTop: WP(2) }}>
                     <Text style={styles._heading}>Participants {eventParti}</Text>
@@ -118,11 +176,14 @@ const NewEvent = () => {
                 <DescriptionInput
                     lable={"Event Description"}
                     placeholder={"Description..."}
+                    value={eventDes}
+                    onChangeText={(val) => seteventDes(val)}
                 />
 
                 <Button
                     lable={"Create Event"}
                     styles={{ marginTop: WP(2) }}
+                    onPress={onEventCreate}
                 />
             </ScrollView>
         </View>

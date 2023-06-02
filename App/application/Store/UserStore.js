@@ -21,7 +21,7 @@ const UserStore = create((set) => ({
 
     splashSucess: async (token, navigation) => {
         try {
-           await GET_USER_INFO_API(token).then((resp) => {
+            await GET_USER_INFO_API(token).then((resp) => {
                 // console.log(resp.data)
                 if (resp?.data?.user) {
                     set({ user: resp?.data?.user, token: token })

@@ -8,9 +8,11 @@ import { SIGN_UP_INFO_API } from '../../api/apis';
 import { Button, Loader } from '../../components';
 import { _gotoDeliveryNavigator } from '../../navigation/navigationServcies';
 import { userStore } from '../../Store';
-import { COLORS, IMAGES, TEXT_SIZES, WP } from '../../theme/config';
+import { COLORS, HP, IMAGES, TEXT_SIZES, WP } from '../../theme/config';
 import { handleAxiosError } from '../../utils/ErrorHandler';
 import { _setItem } from '../../utils/async';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
+import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 
 
 export default function EventLocation({ navigation }) {
@@ -24,10 +26,10 @@ export default function EventLocation({ navigation }) {
     const [country, setCountry] = useState('');
     const [address, setaddress] = useState('')
 
-    const lisenceFile = userStore((state) => state.lisenceFile);
-    const profileImg = userStore((state) => state.profileImg);
-    const userId = userStore((state) => state.userId);
-    const setUserDetail = userStore((state) => state.setUserDetail);
+    // const lisenceFile = userStore((state) => state.lisenceFile);
+    // const profileImg = userStore((state) => state.profileImg);
+    // const userId = userStore((state) => state.userId);
+    // const setUserDetail = userStore((state) => state.setUserDetail);
 
     Geocoder.init("AIzaSyAH8N_ig4vp8M1vSSph99yritgOUrWceK0");
 
@@ -36,26 +38,25 @@ export default function EventLocation({ navigation }) {
     }
 
     const requestLocationPermission = async () => {
-
         try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-                {
-                    title: 'Location Access Required',
-                    message: 'This App needs to Access your location',
-                },
-            );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                //To Check, If Permission is granted
-                getOneTimeLocation();
-                // subscribeLocationLocation();
+            const permission =
+                Platform.OS === 'android'
+                    ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
+                    : PERMISSIONS.IOS.LOCATION_WHEN_IN_USE;
+
+            const result = await request(permission);
+
+            if (result === RESULTS.GRANTED) {
+                getOneTimeLocation()
             } else {
-                setLocationStatus('Permission Denied');
+                // Permission denied, handle accordingly
+                console.log('Permission denied');
             }
-        } catch (err) {
-            console.warn(err);
+        } catch (error) {
+            console.log('Error requesting permission: ', error);
         }
     };
+
 
 
     useEffect(() => {
@@ -78,6 +79,7 @@ export default function EventLocation({ navigation }) {
                 //getting the Latitude from the location json
                 const currentLatitude =
                     JSON.stringify(position.coords.latitude);
+
 
                 _getAddressFromLatLog(currentLatitude, currentLongitude)
                 console.log({ currentLatitude });
@@ -123,7 +125,7 @@ export default function EventLocation({ navigation }) {
 
     const onConfirmClick = async () => {
         // () => navigation.navigate('homenavigator')
-        console.log(userId, profileImg, lisenceFile)
+        // console.log(userId, profileImg, lisenceFile)
         setLoading(true)
         try {
             const formData = new FormData();
@@ -190,43 +192,53 @@ export default function EventLocation({ navigation }) {
 
             <Loader isVisible={Loading} />
 
-            {Lattitude && (
-                <MapView
-                    ref={mapRef}
-                    style={{ position: 'absolute', width: '100%', height: '70%', top: 0, }}
-                    showsUserLocation={true}
+            {/* <GooglePlacesAutocomplete
+                styles={{ container: { position: 'absolute', zIndex: 999, top: HP(5), alignSelf: 'center', width: '80%' } }}
+                placeholder='Search'
+                onPress={(data, details = null) => {
+                    // 'details' is provided when fetchDetails = true
+                    console.log(data, details);
+                }}
+                query={{
+                    key: 'AIzaSyAH8N_ig4vp8M1vSSph99yritgOUrWceK0',
+                    language: 'en',
+                }}
+            /> */}
 
-                    followsUserLocation={true}
-                    mapType="standard"
-                    initialRegion={{
-                        latitude: Number(Lattitude),
-                        longitude: Number(Longitude),
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}
+            <MapView
+                ref={mapRef}
+                style={{ position: 'absolute', width: '100%', height: '100%', top: 0, }}
+                showsUserLocation={true}
+                followsUserLocation={true}
+                mapType="standard"
+                initialRegion={{
+                    latitude: Number(Lattitude),
+                    longitude: Number(Longitude),
+                    // latitudeDelta: 0.0922,
+                    // longitudeDelta: 0.0421,
+                }}
 
-                >
-                    {
-                        // true != null ? (
-                        Lattitude ? (
-                            <Marker
-                                // style={{position:"absolute"}}
-                                coordinate={{
-                                    longitude: Number(Longitude),
-                                    latitude: Number(Lattitude),
-                                }}
+            >
+                {
+                    // true != null ? (
+                    Lattitude ? (
+                        <Marker
+                            // style={{position:"absolute"}}
+                            coordinate={{
+                                longitude: Number(Longitude),
+                                latitude: Number(Lattitude),
+                            }}
 
-                                draggable
-                                onDragEnd={e => _getAddressFromLatLog(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
-                            />
-                        ) : (
-                            null
-                        )
-                    }
-                </MapView>
-            )}
+                            draggable
+                            onDragEnd={e => _getAddressFromLatLog(e.nativeEvent.coordinate.latitude, e.nativeEvent.coordinate.longitude)}
+                        />
+                    ) : (
+                        null
+                    )
+                }
+            </MapView>
 
-            <View style={styles.box}>
+            {/* <View style={styles.box}>
 
                 <View style={styles._cardContainer}>
                     <Image source={IMAGES.location_logo} style={{ width: WP(12), height: WP(12) }} resizeMode='contain' />
@@ -247,7 +259,7 @@ export default function EventLocation({ navigation }) {
                     onPress={() => onConfirmClick()}
                     lable={'Confirm'} styles={{ width: '90%' }} />
 
-            </View>
+            </View> */}
         </View>
     );
 }

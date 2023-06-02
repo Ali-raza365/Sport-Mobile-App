@@ -72,3 +72,54 @@ export const GET_USER_INFO_API = (token) => {
         }
     })
 }
+
+
+
+// GET ALL CATEGORY API
+export const GET_ACTIVITY_API = (token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/activity/all',
+                method: 'GET',
+                headers: {
+                    Authorization: "Bearer " + token,
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+
+// CREATE EVENT API 
+export const CREATE_EVENT_API = (detail, token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/event/create',
+                method: 'POST',
+                data: detail,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: "Bearer " + token,
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
