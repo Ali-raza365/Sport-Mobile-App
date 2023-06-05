@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+const d = new Date();
 const eventSchema = new mongoose.Schema(
     {
         organizer: {
@@ -31,11 +32,11 @@ const eventSchema = new mongoose.Schema(
         },
         activity: {
             name: String,
-            activity_id:String,
+            activity_id: String,
         },
         date: {
             type: Date,
-            default:new Date(),
+            default: d,
         },
         time: {
             type: String,
@@ -43,9 +44,12 @@ const eventSchema = new mongoose.Schema(
         },
         location: {
             name: String,
+            type: {
+                type: String,
+                default: 'Point',
+            },
             coordinates: {
-                latitude: Number,
-                longitude: Number
+                type: [Number]
             }
         }
     },

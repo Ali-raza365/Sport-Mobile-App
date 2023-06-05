@@ -1,9 +1,7 @@
 import axios from "axios";
 
 const BASE_URL = 'http://localhost:8080/';
-// const BASE_URL = 'https://us-central1-tropi-854f6.cloudfunctions.net/';
-// export const BASE_URL = 'http://192.168.18.109:8080/';
-// export const BASE_URL = 'http://192.168.100.182:8080/';
+
 
 
 // SIGN UP API
