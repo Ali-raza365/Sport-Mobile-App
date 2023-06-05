@@ -5,12 +5,15 @@ const eventCtrl = {
         try {
 
             const currentdate = new Date();
-            const { organizer, image, title, description, participants, date, time, location } = req.body
-
+            const { organizer,activity, title, description, participants, date, time, location } = req.body
+            const loc = !!location ? JSON.parse(location):null
+            const act = !!activity ? JSON.parse(activity):null
             if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
 
             const newEvent = new Event({
-                organizer, title, description, participants, time, location,
+                organizer, title, description, participants, time, 
+                location:loc,
+                activity:act,
                 createdBy: req.user._id,
                 date:!!date ? date: currentdate,
                 image: req?.imageUrl || '',

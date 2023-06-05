@@ -6,13 +6,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 export default function Category({ color, lable, icon, size, margin, onPress }) {
     return (
         <TouchableOpacity style={[Styles._mainConatiner, { }]} activeOpacity={0.7} onPress={onPress}>
-            <View style={[Styles._circle, { backgroundColor: COLORS.primaryColor, width: size, height: size, }]}>
-                <Ionicons
-                    name={icon}
-                    color={COLORS.whiteColor}
-                    size={HP(3.5)}
-                />
-            </View>
             <Text style={Styles._text} numberOfLines={2}>{lable}</Text>
         </TouchableOpacity>
     )
@@ -20,7 +13,9 @@ export default function Category({ color, lable, icon, size, margin, onPress }) 
 
 const Styles = StyleSheet.create({
     _mainConatiner: {
-        width: WP(19),
+        // width: WP(30),
+        padding:WP(2),
+        flex:1,
         justifyContent: "center",
         alignItems: "center",
     },
@@ -34,7 +29,7 @@ const Styles = StyleSheet.create({
         color: COLORS.blackColor,
         fontWeight: "600",
         marginTop: HP(1.5),
-        width: WP(18),
+        // width: WP(18),
         textAlign: "center",
         // height: HP(5),
     },

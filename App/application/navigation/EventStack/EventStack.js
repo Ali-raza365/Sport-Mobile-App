@@ -7,13 +7,13 @@ const Stack = createNativeStackNavigator();
 export default function EventStack() {
     return (
         <Stack.Navigator
-            initialRouteName='login'
+            initialRouteName='newevent'
         >
             <Stack.Screen
                 name='newevent'
                 component={NewEvent}
                 options={{
-                    headerShown: true,
+                    headerShown: false,
                     headerTitle:'Create Event'
                 }}
             />

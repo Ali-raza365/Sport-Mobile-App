@@ -8,207 +8,22 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import { AppBar, CardBox, Category, HomeSearchBar, Loader } from '../../components';
 import { COLORS, FONT_MEDIUM, HP, IMAGES, RADIUS, SPACING_PERCENT, TEXT_SIZES, WP } from '../../theme/config';
 import { Searchbar } from 'react-native-paper';
+import EventStore from '../../Store/EventStore';
+import UserStore from '../../Store/UserStore';
 // import StarRating from 'react-native-star-rating';
 
 const Home = ({ navigation }) => {
 
     const [loading, setLoading] = useState(false);
     const [searchText, setsearchText] = useState('');
-    const [quizArr, setquizArr] = useState([])
+    const [events, setEvents] = useState([])
     const keyExtractor = (_, i) => `item${i}`
 
-    const HOME_TABS = [
-        {
-            name: "Education",
-            icon: (<IonIcon name='school-sharp' color={COLORS.whiteColor} size={WP(8)} />)
-        },
-        {
-            name: "Sports",
-            icon: (<MatIcons name='sports-basketball' color={COLORS.whiteColor} size={WP(8)} />)
-        }
-    ];
+    const { fetchEvents,Events,Activites,setActivityEvents,fetchActivites } = EventStore ();
+    // const { Activites, setActivity } = EventStore();
 
+    const { user, token } = UserStore();
 
-    const HOME_CATEGORY = [
-        {
-            name: "All",
-            icon: (<IonIcon name='school-sharp' color={COLORS.whiteColor} size={WP(8)} />)
-        },
-        {
-            name: "Salad",
-            icon: (<MatIcons name='sports-basketball' color={COLORS.whiteColor} size={WP(8)} />)
-        },
-        {
-            name: "Chicken",
-            icon: (<MatIcons name='sports-basketball' color={COLORS.whiteColor} size={WP(8)} />)
-        },
-        {
-            name: "Pizza",
-            icon: (<MatIcons name='sports-basketball' color={COLORS.whiteColor} size={WP(8)} />)
-        }
-    ];
-
-    const DATA = [
-        {
-            "image": "https://www.crustpizzaco.com/assets/theme/cpc/images/pizza-main.png",
-            "name": "Margherita Pizza",
-            "rating": 4.5,
-            "price": 9.99,
-            "isFavorite": false,
-            "isDiscounted": true,
-            "discount": "20%"
-        },
-        {
-            "image": "https://static.onecms.io/wp-content/uploads/sites/43/2022/09/26/25473-the-perfect-basic-burger-ddmfs-4x3-1350-1.jpg",
-            "name": "Burger",
-            "rating": 4.2,
-            "price": 6.99,
-            "isFavorite": true,
-            "isDiscounted": false,
-            "discount": "0%"
-        },
-        {
-            "image": "https://www.seriouseats.com/thmb/DbQHUK2yNCALBnZE-H1M2AKLkok=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/chicken-tikka-masala-for-the-grill-recipe-hero-2_1-cb493f49e30140efbffec162d5f2d1d7.JPG",
-            "name": "Chicken Tikka Masala",
-            "rating": 4.7,
-            "price": 12.99,
-            "isFavorite": false,
-            "isDiscounted": true,
-            "discount": "10%"
-        },
-        {
-            "image": "https://www.veggiesdontbite.com/wp-content/uploads/2020/05/vegan-veggie-sushi-rolls-34.jpg",
-            "name": "Sushi Roll",
-            "rating": 4.9,
-            "price": 16.99,
-            "isFavorite": true,
-            "isDiscounted": false,
-            "discount": "0%"
-        },
-        {
-            "image": "https://img.taste.com.au/jgHrD_eG/w720-h480-cfill-q80/taste/2021/02/10-minute-vegetarian-pad-thai-168946-2.jpg",
-            "name": "Pad Thai",
-            "rating": 4.6,
-            "price": 11.99,
-            "isFavorite": false,
-            "isDiscounted": true,
-            "discount": "15%"
-        }
-    ]
-
-
-    const catdata = [
-        { "name": "Aikido" },
-        { "name": "Akrobatik" },
-        { "name": "Artistic Swimming" },
-        { "name": "Badminton" },
-        { "name": "Baseball/Softball" },
-        { "name": "Basketball" },
-        { "name": "Beachvolleyball" },
-        { "name": "Bergsteigen" },
-        { "name": "Boogie-Woogie" },
-        { "name": "Bowling" },
-        { "name": "Capoeira escolar" },
-        { "name": "Curling" },
-        { "name": "Donut Hockey" },
-        { "name": "Eishockey" },
-        { "name": "Eislauf" },
-        { "name": "Erwachsenensport" },
-        { "name": "Faustball" },
-        { "name": "Fechten" },
-        { "name": "Flag Football" },
-        { "name": "FooBaSKILL" },
-        { "name": "Freestylesport" },
-        { "name": "Freitauchen" },
-        { "name": "Frisbee" },
-        { "name": "Fussball" },
-        { "name": "Futnet" },
-        { "name": "Futsal" },
-        { "name": "Gaelic Football" },
-        { "name": "Ger teturnen" }
-        ,
-        { "name": "Golf" },
-        { "name": "Gymnastik und Tanz" },
-        { "name": "Handball" },
-        { "name": "Hornussen" },
-        { "name": "Inline-Skating" },
-        { "name": "Inlinehockey" },
-        { "name": "Intercrosse" },
-        { "name": "Ju-Jitsu" },
-        { "name": "Judo" },
-        { "name": "Jugger" },
-        { "name": "Kanusport" },
-        { "name": "Karate" },
-        { "name": "Kegeln" },
-        { "name": "Kin-Ball" },
-        { "name": "Kindersport (J+S-Kids)" },
-        { "name": "Korbball" },
-        { "name": "Kunstturnen" },
-        { "name": "Lagersport/Trekking" },
-        { "name": "Landhockey" },
-        { "name": "Leichtathletik" },
-        { "name": "Light-Contact Boxing" },
-        { "name": "Madball" },
-        { "name": "Minigolf" },
-        { "name": "Mountainbike" },
-        { "name": "Nationalturnen" },
-        { "name": "Netzball" },
-        { "name": "Nordic Walking" },
-        { "name": "Orientierungslauf" },
-        { "name": "Parkour" },
-        { "name": "Pferdesport" },
-        { "name": "Pilates" },
-        { "name": "Poull Ball" },
-        { "name": "Quidditch" },
-        { "name": "Radsport" },
-        { "name": "Rafroball" },
-        { "name": "Rettungsschwimmen" },
-        { "name": "Rh nrad" }
-        ,
-        { "name": "Rhythmische Gymnastik" },
-        { "name": "Ringen" },
-        { "name": "Rock n Roll" }
-        ,
-        { "name": "Rollstuhlsport" },
-        { "name": "Roundnet" },
-        { "name": "R ckschlagspiele" }
-        ,
-        { "name": "Rudern" },
-        { "name": "Rugby" },
-        { "name": "Schneeschuhlaufen" },
-        { "name": "Schulsport" },
-        { "name": "Schwimmen" },
-        { "name": "Schwingen" },
-        { "name": "Segeln" },
-        { "name": "Skateboard/Waveboard" },
-        { "name": "Skifahren" },
-        { "name": "Skilanglauf" },
-        { "name": "Skispringen" },
-        { "name": "Skitouren" },
-        { "name": "Slackline" },
-        { "name": "Smolball" },
-        { "name": "Snowboard" },
-        { "name": "Sportklettern" },
-        { "name": "Sportschiessen" },
-        { "name": "Squash" },
-        { "name": "Stand Up Paddling" },
-        { "name": "Street Racket" },
-        { "name": "Tanzsport" },
-        { "name": "Tchoukball" },
-        { "name": "Tennis" },
-        { "name": "Tischtennis" },
-        { "name": "Touchrugby" },
-        { "name": "Trailrunning" },
-        { "name": "Trampolin" },
-        { "name": "Triathlon" },
-        { "name": "Turnen" },
-        { "name": "Unihockey" },
-        { "name": "Volleyball" },
-        { "name": "Wasserball" },
-        { "name": "Wasserspringen" },
-        { "name": "Yoga" },
-        { "name": "All" }
-    ]
 
     let sportsEvents = [
         {
@@ -429,70 +244,29 @@ const Home = ({ navigation }) => {
 
 
     useEffect(() => {
-        // console.log(sportsEvents.length)
-        // console.log(array.length);
-
-        const newArry = array.map((item, index) => {
-            return {
-                ...item,
-                image: sportsEvents?.[index].eventImage
-            }
-        })
-        // console.log(newArry);
-        setquizArr(newArry)
-    }, [])
+        fetchActivites(token)
+        fetchEvents(token)
+        setEvents(Events)
+    }, [Events])
 
 
-    const onTabClick = (item) => {
-        navigation.navigate('quizdetail', { data: item })
-    }
-
-    // const _onfetchAllQuizs = async () => {
-    //     setLoading(true);
-    //     await FETCH_ALL_QUIZES_API()
-    //         .then(resp => {
-    //             setLoading(false);
-    //             console.log(resp.data);
-    //             setquizArr(resp.data || [])
-    //         })
-    //         .catch(error => {
-    //             setLoading(false);
-    //             alert(error.msg);
-    //             console.log(error);
-    //         });
-    // };
 
     const renderItem = ({ item, index }) => {
         return (
-            <TouchableOpacity
-                onPress={() => onTabClick(item)}
-                style={styles.tabContainer}>
-
-                <AntDesign style={styles.heartIconSty} name="heart" size={15} color={item?.isFavorite ? COLORS.primaryColor : COLORS.grey} />
-
-                {/* <Avatar.Image style={{ marginTop: -HP(4.5), backgroundColor: COLORS.whiteColor }} size={WP(30)} source={{ uri: item?.image }} /> */}
-                <View style={styles.tabInfoContainer}>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={styles._listHeaderTitle}>{item?.name}</Text>
-                    <View style={{ width: '80%', alignSelf: 'center', marginVertical: WP(2) }}>
-                        {/* <StarRating
-                            disabled={false}
-                            maxStars={5}
-                            starSize={14}
-                            fullStarColor={'#FFBA33'}
-                            halfStarColor={'#FFBA33'}
-                            rating={item?.rating}
-                        /> */}
-
-                    </View>
-                    <Text numberOfLines={1} adjustsFontSizeToFit style={styles.tabText}>RS {item?.price}</Text>
-                </View>
-            </TouchableOpacity>
+            <CardBox
+            onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
+            showsHorizontalScrollIndicator={false}
+            imageSource={item.image}
+            details={item.title}
+            date={item.date}
+            location={!!item?.location ?item?.location?.name:''}
+            time={item.date}
+            isfav={item.isfav}
+            />
         )
     }
 
-    // useEffect(() => {
-    //     _onfetchAllQuizs()
-    // }, [])
+    
 
 
     return (
@@ -515,12 +289,12 @@ const Home = ({ navigation }) => {
             // contentContainerStyle={{padding:WP(SPACING_PERCENT/2)}}
             >
 
-                {/* <View style={styles._categoryMain}>
+                <View style={styles._categoryMain}>
                     <FlatList
                         horizontal={true}
                         showsHorizontalScrollIndicator={false}
                         // scrollEventThrottle={30}
-                        data={catdata}
+                        data={Activites||[]}
                         renderItem={({ item, index }) => {
                             return (
                                 <Category
@@ -535,27 +309,14 @@ const Home = ({ navigation }) => {
                             )
                         }}
                     />
-                </View> */}
+                </View>
 
                 <View style={[styles._sectionThree,{paddingBottom:0}]}>
                     <Text style={{ fontSize: WP(4), fontWeight: '600', paddingVertical: WP(3), padding: WP(2) }}>Recommended Activities  </Text>
                     <FlatList
-                        data={quizArr}
+                        data={events}
                         horizontal
-                        renderItem={({ item, index }) => {
-                            return (
-                                <CardBox
-                                    onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
-                                    showsHorizontalScrollIndicator={false}
-                                    imageSource={item.image}
-                                    details={item.name}
-                                    price={item.date}
-                                    location={item.location}
-                                    date={item.date}
-                                    isfav={item.isfav}
-                                />
-                            )
-                        }}
+                        renderItem={renderItem}
                     />
                 </View>
 
@@ -563,23 +324,10 @@ const Home = ({ navigation }) => {
                 <View style={styles._sectionThree}>
                     <Text style={{ fontSize: WP(4), fontWeight: '600', paddingVertical: WP(3), padding: WP(2) }}>Activities in my area  </Text>
                     <FlatList
-                        data={quizArr}
+                        data={events}
                         scrollEnabled={false}
                         numColumns={2}
-                        renderItem={({ item, index }) => {
-                            return (
-                                <CardBox
-                                    onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
-                                    showsHorizontalScrollIndicator={false}
-                                    imageSource={item.image}
-                                    details={item.name}
-                                    price={item.date}
-                                    location={item.location}
-                                    date={item.date}
-                                    isfav={item.isfav}
-                                />
-                            )
-                        }}
+                        renderItem={renderItem}
                     />
                 </View>
 

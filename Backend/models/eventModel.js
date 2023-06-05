@@ -29,6 +29,10 @@ const eventSchema = new mongoose.Schema(
             require: true,
             default: 1,
         },
+        activity: {
+            name: String,
+            activity_id:String,
+        },
         date: {
             type: Date,
             default:new Date(),

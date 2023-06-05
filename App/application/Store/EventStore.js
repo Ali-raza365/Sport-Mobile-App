@@ -1,14 +1,14 @@
 import { create } from "zustand";
-import { CREATE_EVENT_API, GET_ACTIVITY_API } from "../api/apis";
+import { CREATE_EVENT_API, GET_ACTIVITY_API, GET_EVENTS_API } from "../api/apis";
 import { _gotoAuthStack, _gotoHomeNavigator } from "../navigation/navigationServcies";
 import { handleAxiosError } from "../utils/ErrorHandler";
 
 const EventStore = create((set) => ({
 
     Activites: [],
+    Events: [],
     selectedActivity: null,
     createEvent_loading: false,
-
     setActivity: (avtivity) => set({
         selectedActivity: avtivity
     }),
@@ -19,6 +19,22 @@ const EventStore = create((set) => ({
                 // console.log(resp.data)
                 if (resp?.data) {
                     set({ Activites: resp?.data?.activities, })
+                } else {
+                    handleAxiosError(resp.data)
+                }
+            }).catch((err) => {
+                handleAxiosError(err)
+            })
+        } catch (error) {
+            handleAxiosError(error)
+        }
+    },
+    fetchEvents: async (token) => {
+        try {
+            await GET_EVENTS_API(token).then((resp) => {
+                // console.log(resp.data)
+                if (resp?.data) {
+                    set({ Events: resp?.data?.events, })
                 } else {
                     handleAxiosError(resp.data)
                 }
@@ -44,7 +60,7 @@ const EventStore = create((set) => ({
             form.append("date", detail.date)
             form.append("time", detail.time)
             form.append("location", JSON.stringify(detail.location))
-
+            form.append("activity", JSON.stringify(detail.activity))
             await CREATE_EVENT_API(form, token).then((resp) => {
                 set({ createEvent_loading: false })
                 if (resp?.data) {

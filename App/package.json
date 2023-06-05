@@ -21,6 +21,7 @@
         "@react-navigation/native-stack": "^6.9.12",
         "@react-navigation/stack": "^6.3.16",
         "axios": "^1.4.0",
+        "pod-install": "0.1.38",
         "react": "18.2.0",
         "react-native": "0.71.7",
         "react-native-date-picker": "^4.2.13",
@@ -28,6 +29,7 @@
         "react-native-gesture-handler": "^2.9.0",
         "react-native-google-places-autocomplete": "^2.5.1",
         "react-native-image-picker": "^5.4.0",
+        "react-native-keyboard-aware-scroll-view": "^0.9.5",
         "react-native-localization": "^2.3.1",
         "react-native-maps": "^1.4.0",
         "react-native-modal": "^13.0.1",
@@ -39,8 +41,7 @@
         "react-native-screens": "^3.20.0",
         "react-native-svg": "^13.9.0",
         "react-native-vector-icons": "^9.2.0",
-        "zustand": "^4.3.8",
-        "pod-install": "0.1.38"
+        "zustand": "^4.3.8"
     },
     "devDependencies": {
         "@babel/core": "^7.20.0",
@@ -79,7 +80,7 @@
         "Siri",
         "SpeechRecognition",
         "StoreKit"
-      ],
+    ],
     "jest": {
         "preset": "react-native"
     }

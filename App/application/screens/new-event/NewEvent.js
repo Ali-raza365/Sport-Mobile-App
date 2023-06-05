@@ -11,6 +11,8 @@ import DatePicker from 'react-native-date-picker'
 import UserStore from '../../Store/UserStore';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import EventStore from '../../Store/EventStore';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 
 const NewEvent = ({ navigation }) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
@@ -60,6 +62,16 @@ const NewEvent = ({ navigation }) => {
     }, [])
 
     const onEventCreate = () => {
+        console.log(selectedActivity)
+        if (!eventImage) return alert('event image is required!')
+        if (!user?.fullname) return alert('organizer name is required!')
+        if (!eventTitle) return alert('event title is required!')
+        if (!eventDate) return alert('date is required!')
+        if (!eventDate) return alert('time is required!')
+        // if(!location) return alert('location is required!')
+        if (!selectedActivity?.name) return alert('please select sport activity for create event')
+        if (!eventParti) return alert('participants is required!')
+        if (!eventDes) return alert('please enter description is required')
         let detail = {
             organizer: user?.fullname || '',
             image: eventImage,
@@ -68,8 +80,13 @@ const NewEvent = ({ navigation }) => {
             participants: eventParti,
             date: eventDate,
             time: eventDate,
+            activity: { name: selectedActivity?.name, activity_id: selectedActivity?._id },
             location: {
-                name: "lahore"
+                name: "lahore",
+                coordinates: {
+                    latitude: 31.582045,
+                    longitude: 74.329376
+                }
             }
         }
         createEventFuc(detail, token)
@@ -89,7 +106,7 @@ const NewEvent = ({ navigation }) => {
                 onCameraPress={(img) => { setEventImage(img) }}
                 onGalleryPress={(img) => { setEventImage(img) }}
             />
-            <ScrollView
+            <KeyboardAwareScrollView
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ paddingBottom: 100, }}
             >
@@ -185,7 +202,7 @@ const NewEvent = ({ navigation }) => {
                     styles={{ marginTop: WP(2) }}
                     onPress={onEventCreate}
                 />
-            </ScrollView>
+            </KeyboardAwareScrollView>
         </View>
     )
 }

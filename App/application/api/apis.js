@@ -123,3 +123,26 @@ export const CREATE_EVENT_API = (detail, token) => {
         }
     })
 }
+
+// GET ALL CATEGORY API
+export const GET_EVENTS_API = (token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/event/all',
+                method: 'GET',
+                headers: {
+                    Authorization: "Bearer " + token,
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}

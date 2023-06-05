@@ -47,14 +47,9 @@ const Styles = StyleSheet.create({
         // color: COLORS.primaryColor,
     },
     _input: {
-        // borderColor: COLORS.borderColor,
-        // borderWidth: 1.5,
-        // width: WP(70),
         fontSize: WP(4),
         height: HP(5.6),
-        // borderRadius: 4,
-        // paddingLeft: WP(5),
-        // // color: COLORS.primaryColor,
+      flex:1,
     },
     _discription: {
         color: COLORS.blackColor,

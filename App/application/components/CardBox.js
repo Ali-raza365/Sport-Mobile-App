@@ -3,7 +3,7 @@ import React from 'react'
 import { COLORS, HP, WP } from '../theme/config'
 import Ionicons from "react-native-vector-icons/Ionicons"
 
-export default function CardBox({ imageSource, details, price, location, date, onPress }) {
+export default function CardBox({ imageSource, details, date, location, onPress, }) {
     return (
         <TouchableOpacity style={Styles._mainContainer} activeOpacity={0.7} onPress={onPress}>
             <View style={Styles._imageMain}>
@@ -22,7 +22,7 @@ export default function CardBox({ imageSource, details, price, location, date, o
                     />
                 </View>
                 <View style={Styles._sectionTwo}>
-                    <Text style={Styles._priceText}>{price}</Text>
+                    <Text style={Styles._priceText}>{!!date ? new Date(date).toDateString() : ''}</Text>
                 </View>
 
             </View>
