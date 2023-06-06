@@ -18,19 +18,25 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    avatar:{
+    avatar: {
         type: String,
         default: 'https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png'
     },
-    role: {type: String, default: 'user'},
-    mobile: {type: String, default: ''},
+    role: { type: String, default: 'user' },
+    mobile: { type: String, default: '' },
+    favorites: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'event',
+        },
+    ],
     address: {
         name: String,
         coordinates: {
-          latitude: Number,
-          longitude: Number
+            latitude: Number,
+            longitude: Number
         }
-      }
+    }
 }, {
     timestamps: true
 })

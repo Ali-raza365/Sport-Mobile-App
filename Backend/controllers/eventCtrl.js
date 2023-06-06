@@ -1,11 +1,14 @@
-const Event = require('../models/eventModel')
+
+const { CheckEventsfavorites } = require('../middleware/events');
+const Event = require('../models/eventModel');
+const User = require('../models/userModel');
+
 
 const eventCtrl = {
     createEvent: async (req, res) => {
         try {
-
             const currentdate = new Date();
-            const { organizer, activity, title, description, participants, date, time, location } = req.body
+            const { organizer, activity, title, description, max_participants, date, time, location } = req.body
             const loc = {
                 name: 'Sample 5 Location',
                 coordinates: [
@@ -19,16 +22,19 @@ const eventCtrl = {
 
 
             //!!activity ? JSON.parse(activity) : null
-            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            if (!req?.user?._id) return res.status(400).json({ msg: "invalid Token!" })
 
             const newEvent = new Event({
-                organizer, title, description, participants, time,
+                organizer, title, description,
+                max_participants,
+                time,
                 location: loc,
                 activity: act,
                 createdBy: req.user._id,
                 date: !!date ? date : currentdate,
                 image: req?.imageUrl || '',
             })
+            newEvent.participants.push(req?.user?._id);
 
             await newEvent.save()
 
@@ -46,7 +52,8 @@ const eventCtrl = {
         try {
             const events = await Event.find({}).sort({ createdAt: -1 })
             if (!events) return res.status(400).json({ msg: "events does not found" })
-            res.json({ events })
+            const eventList = await CheckEventsfavorites(events, req?.user?._id)
+            res.json({ events: eventList })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
@@ -54,8 +61,10 @@ const eventCtrl = {
     getEventDetails: async (req, res) => {
         const { event_id } = req.body
         try {
-
             const event = await Event.findById(event_id)
+                .populate('participants', 'fullname email avatar')
+                .populate('favorites', 'fullname email avatar')
+                .exec();
             if (!event) return res.status(400).json({ msg: "Event not found" })
             res.json({ event })
         } catch (err) {
@@ -64,7 +73,6 @@ const eventCtrl = {
     },
     getEventById: async (req, res) => {
         try {
-
             const events = await Event.find({ createdBy: req.user._id })
             if (!events) return res.status(400).json({ msg: "No events found!" })
             res.json({ events })
@@ -85,7 +93,6 @@ const eventCtrl = {
             return res.status(500).json({ msg: err.message })
         }
     },
-
     updateEvent: async (req, res) => {
         try {
             const {
@@ -240,6 +247,151 @@ const eventCtrl = {
             res.json({ events });
         } catch (err) {
             return res.status(500).json({ msg: err.message });
+        }
+    },
+    addToFavourite: async (req, res) => {
+        const { event_id } = req.body;
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+
+            const user = await User.findByIdAndUpdate(
+                userId,
+                { $addToSet: { favorites: event_id } }, // Using $addToSet to prevent duplicate entries
+                { new: true }
+            );
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            const event = await Event.findByIdAndUpdate(
+                event_id,
+                { $addToSet: { favorites: userId } }, // Using $addToSet to prevent duplicate entries
+                { new: true }
+            );
+
+
+            if (!event) {
+                return res.status(404).json({ error: 'Event not found' });
+            }
+
+
+            res.json({ message: 'Event added to favorites' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+    removeToFavourite: async (req, res) => {
+        const { event_id } = req.body;
+        try {
+
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+            const user = await User.findByIdAndUpdate(
+                userId,
+                { $pull: { favorites: event_id } },
+                { new: true }
+            );
+
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            const event = await Event.findByIdAndUpdate(
+                event_id,
+                { $pull: { favorites: userId } },
+                { new: true }
+            );
+
+            if (!event) {
+                return res.status(404).json({ error: 'Event not found' });
+            }
+
+            res.json({ message: 'Event removed from favorites' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+    getAllFavouriteByuser: async (req, res) => {
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+            const user = await User.findById(userId).populate('favorites');
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            const favoriteEvents = user.favorites;
+            return res.json({ favoriteEvents });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+    addParticipant: async (req, res) => {
+        const { event_id } = req.body;
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+
+            const event = await Event.findById(event_id);
+            if (!event) {
+                return res.status(404).json({ error: 'Event not found' });
+            }
+
+            if (event.total_participants >= event.max_participants) {
+                return res.status(404).json({ error: "Maximum number of participants reached" });
+            }
+            let updateEvent = await Event.findByIdAndUpdate(
+                event_id,
+                { $addToSet: { participants: userId } },
+                { new: true }
+            );
+
+            event.total_participants = updateEvent.participants.length;
+            await event.save();
+            res.json({ message: 'you are successfully participanted in this event' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+    removeParticipant: async (req, res) => {
+        const { event_id } = req.body;
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+
+            const event = await Event.findByIdAndUpdate(
+                event_id,
+                { $pull: { participants: userId } },
+                { new: true }
+            );
+            event.total_participants = event.participants.length;
+            if (!event) {
+                return res.status(404).json({ error: 'Event not found' });
+            }
+
+            res.json({ message: 'Event removed from favorites' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+    getEventsByuserParticipant: async (req, res) => {
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+            const events = await Event.find({ participants: { $in: [userId] } })
+
+            if (!events) {
+                return res.status(404).json({ error: 'Events not found' });
+            }
+            return res.json({ events });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
         }
     },
 }

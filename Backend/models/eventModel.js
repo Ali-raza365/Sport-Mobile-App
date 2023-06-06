@@ -9,7 +9,17 @@ const eventSchema = new mongoose.Schema(
             trim: true,
             maxlength: 225,
         },
-        createdBy: { type: String, require: true },
+        createdBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'user',
+            required: true,
+        },
+        favorites: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'user',
+            },
+        ],
         image: {
             type: String,
             require: true
@@ -25,11 +35,22 @@ const eventSchema = new mongoose.Schema(
             minLength: 5,
             require: true,
         },
-        participants: {
+        max_participants: {
             type: Number,
             require: true,
             default: 1,
         },
+        total_participants: {
+            type: Number,
+            require: true,
+            default: 1,
+        },
+        participants: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'user',
+            },
+        ],
         activity: {
             name: String,
             activity_id: String,
@@ -57,5 +78,7 @@ const eventSchema = new mongoose.Schema(
         timestamps: true,
     }
 );
+eventSchema.index({ location: '2dsphere' });
+
 
 module.exports = mongoose.model("event", eventSchema);

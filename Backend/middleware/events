@@ -1,0 +1,11 @@
+function  CheckEventsfavorites (events=[],userId=''){
+     return events.map((event) => {
+          return {
+            ...event?._doc,
+            isFavorite:  event?._doc?.favorites?.includes(userId)
+          };
+        });
+}
+module.exports = {
+     CheckEventsfavorites
+};

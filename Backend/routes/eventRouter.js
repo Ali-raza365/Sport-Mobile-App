@@ -13,6 +13,12 @@ router.post('/event/location', auth, eventCtrl.getEventsByLocation)
 router.get('/event/activity', auth, eventCtrl.getEventByActivity)
 router.post('/event/recommended', auth, eventCtrl.getRecommendedEvent)
 router.get('/event/search', auth, eventCtrl.searchEvent)
+router.post('/event/add-to-favorites', auth, eventCtrl.addToFavourite)
+router.post('/event/remove-to-favorites', auth, eventCtrl.removeToFavourite)
+router.get('/event/all-favorites', auth, eventCtrl.getAllFavouriteByuser)
+router.post('/event/add-participant', auth, eventCtrl.addParticipant)
+router.post('/event/remove-participant', auth, eventCtrl.removeParticipant)
+router.get('/event/participant', auth, eventCtrl.getEventsByuserParticipant)
 
 
 
