@@ -41,16 +41,15 @@ export default function Splash({ navigation }) {
 
     return (
         <SafeAreaView style={Styles._mainContainer}>
-            {/* <Image
+            <Image
                 source={IMAGES.mainLogo}
                 resizeMode='contain'
                 style={{
-                    width: WP(50),
-                    // backgroundColor:'red'
+                    width: WP(70),
                 }}
-            /> */}
+            />
 
-            <Text style={{ fontSize: WP(8), fontWeight: '700', letterSpacing: 0.8 }} >Team Mates</Text>
+            {/* <Text style={{ fontSize: WP(8), fontWeight: '700', letterSpacing: 0.8 }} >Team Mates</Text> */}
 
         </SafeAreaView>
     )
@@ -59,7 +58,7 @@ export default function Splash({ navigation }) {
 const Styles = StyleSheet.create({
     _mainContainer: {
         flex: 1,
-        backgroundColor: COLORS.whiteColor,
+        backgroundColor: "#0D0E13",
         justifyContent: "center",
         alignItems: "center",
     },

@@ -106,8 +106,8 @@ export const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 //IMAGES FOR THE APP
 export const IMAGES = {
-     splash_img: require("../assets/images/splash_bg.jpeg"),
-     mainLogo: require("../assets/images/Sports.png"),
+     splash_img: require("../assets/images/logo.jpeg"),
+     mainLogo: require("../assets/images/logo.jpeg"),
      whiteLogo: require("../assets/images/Connection2.png"),
      onboard_img: require("../assets/images/board_img.png"),
      user_logo:require('../assets/images/user.png'),

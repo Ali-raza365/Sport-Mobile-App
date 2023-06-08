@@ -5,6 +5,7 @@ const uploadToCloudinary = require('../middleware/uploadToCloudinary')
 
 router.post('/event/create', auth, uploadToCloudinary, eventCtrl.createEvent)
 router.get('/event/all', auth, eventCtrl.getEvents)
+router.post('/event/near-me', auth, eventCtrl.getEventNearMe)
 router.post('/event', auth, eventCtrl.updateEvent)
 router.post('/event/info', auth, eventCtrl.getEventDetails)
 router.get('/event/byid', auth, eventCtrl.getEventById)

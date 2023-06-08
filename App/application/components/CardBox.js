@@ -3,7 +3,18 @@ import React from 'react'
 import { COLORS, HP, WP } from '../theme/config'
 import Ionicons from "react-native-vector-icons/Ionicons"
 
-export default function CardBox({ imageSource, details, date, location, onPress, }) {
+export default function CardBox({
+    imageSource,
+    details,
+    date,
+    isfav,
+    OnHeartPress = () => { },
+    location,
+    onPress = () => { },
+}) {
+
+
+
     return (
         <TouchableOpacity style={Styles._mainContainer} activeOpacity={0.7} onPress={onPress}>
             <View style={Styles._imageMain}>
@@ -15,11 +26,21 @@ export default function CardBox({ imageSource, details, date, location, onPress,
             <View style={Styles._dataMain}>
                 <View style={Styles._sectionOne}>
                     <Text numberOfLines={2} style={Styles._detailText}>{details}</Text>
-                    <Ionicons
-                        name='heart-outline'
-                        color={COLORS.primaryColor}
-                        size={WP(5)}
-                    />
+                    <TouchableOpacity onPress={OnHeartPress}>
+                        {isfav ?
+                            <Ionicons
+                                name='heart'
+                                color={COLORS.primaryColor}
+                                size={WP(5)}
+                            />
+                            : <Ionicons
+                                name='heart-outline'
+                                color={COLORS.primaryColor}
+                                size={WP(5)}
+                            />
+                        }
+                    </TouchableOpacity>
+
                 </View>
                 <View style={Styles._sectionTwo}>
                     <Text style={Styles._priceText}>{!!date ? new Date(date).toDateString() : ''}</Text>

@@ -12,6 +12,7 @@ import UserStore from '../../Store/UserStore';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
 import EventStore from '../../Store/EventStore';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { _gotoHomeNavigator } from '../../navigation/navigationServcies';
 
 
 const NewEvent = ({ navigation }) => {
@@ -89,7 +90,10 @@ const NewEvent = ({ navigation }) => {
                 }
             }
         }
-        createEventFuc(detail, token)
+        createEventFuc(detail, token).then(()=>{
+            // _gotoHomeNavigator(navigation)
+            navigation.navigate('home')
+        })
     }
 
 
@@ -97,113 +101,115 @@ const NewEvent = ({ navigation }) => {
 
 
     return (
-        <View style={styles._container}>
-            <Loader isVisible={createEvent_loading} />
-            <PickerModal
-                onBackButtonPress={togglePickerModal}
-                onBackdropPress={togglePickerModal}
-                isVisible={showPickerModal}
-                onCameraPress={(img) => { setEventImage(img) }}
-                onGalleryPress={(img) => { setEventImage(img) }}
-            />
-            <KeyboardAwareScrollView
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ paddingBottom: 100, }}
-            >
+        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.whiteColor, }}>
+            <View style={styles._container}>
+                <Loader isVisible={createEvent_loading} />
+                <PickerModal
+                    onBackButtonPress={togglePickerModal}
+                    onBackdropPress={togglePickerModal}
+                    isVisible={showPickerModal}
+                    onCameraPress={(img) => { setEventImage(img) }}
+                    onGalleryPress={(img) => { setEventImage(img) }}
+                />
+                <KeyboardAwareScrollView
+                    showsVerticalScrollIndicator={false}
+                    contentContainerStyle={{ paddingBottom: 100, }}
+                >
 
-                <DatePicker
-                    modal
-                    mode={'date'}
-                    open={showDatePicker}
-                    minimumDate={new Date()}
-                    date={eventDate}
-                    onConfirm={(date) => {
-                        setShowDatePicker(false)
-                        console.log(date.toLocaleDateString())
-                        setEventDate(date)
-                    }}
-                    onCancel={() => {
-                        setShowDatePicker(false)
-                    }}
-                />
-                {
-                    eventImage ?
-                        <View style={styles._imagesContainer}>
-                            <AntDesign
-                                name="close" size={WP(6)}
-                                onPress={() => setEventImage(null)}
-                                style={{ position: 'absolute', top: 8, right: 8, zIndex: 20, padding: 5, borderRadius: 30, backgroundColor: 'rgba(255,255,255,0.5)' }}
-                                color={COLORS.redColor} />
-                            <Image source={{ uri: eventImage?.uri }} style={{ width: '100%', height: '100%' }} resizeMode='cover' />
-                        </View>
-                        :
-                        <Pressable onPress={togglePickerModal} style={styles._imagesContainer}>
-                            <Feather name="camera" size={WP(12)} color={COLORS.lightGrey} />
-                            <Text style={{ fontSize: WP(4), color: COLORS.lightGrey }}>Add Image</Text>
-                        </Pressable>
-
-                }
-
-                <SimpleInput
-                    lable={"Organizer"}
-                    placeholder={"Name"}
-                    value={user?.fullname || ""}
-                />
-                <SimpleInput
-                    lable={"Event Title"}
-                    placeholder={"Title"}
-                    value={eventTitle}
-                    onChangeText={(val) => seteventTitle(val)}
-                />
-                <SimpleInput
-                    lable={" Date & Time"}
-                    placeholder={"Time"}
-                    editable={false}
-                    value={eventDate?.toLocaleDateString() || ''}
-                    // onIconPress={() => setShowDatePicker(true)}
-                    Icon={(<AntDesign onPress={() => setShowDatePicker(true)} name="calendar" size={WP(8)} color={COLORS.lightGrey} />)}
-                />
-                <SimpleInput
-                    lable={"Location"}
-                    placeholder={"Location"}
-                    editable={false}
-                    Icon={(<Foundation onPress={onLocationIconClick} name="marker" size={WP(8)} color={COLORS.lightGrey} />)}
-                />
-                <SimpleInput
-                    lable={"Activity"}
-                    placeholder={"Activity"}
-                    value={selectedActivity?.name || ''}
-                    editable={false}
-                    Icon={(<Octicons onPress={onCategoryIconClick} name="checklist" size={WP(8)} color={COLORS.lightGrey} />)}
-                />
-                <View style={{ marginTop: WP(2) }}>
-                    <Text style={styles._heading}>Participants {eventParti}</Text>
-                    <Slider
-                        step={1}
-                        minimumValue={1}
-                        maximumValue={100}
-                        minimumTrackTintColor={COLORS.primaryColor}
-                        maximumTrackTintColor="#000000"
-                        onValueChange={(val) => { seteventParti(val) }}
-
+                    <DatePicker
+                        modal
+                        mode={'date'}
+                        open={showDatePicker}
+                        minimumDate={new Date()}
+                        date={eventDate}
+                        onConfirm={(date) => {
+                            setShowDatePicker(false)
+                            console.log(date.toLocaleDateString())
+                            setEventDate(date)
+                        }}
+                        onCancel={() => {
+                            setShowDatePicker(false)
+                        }}
                     />
-                </View>
+                    {
+                        eventImage ?
+                            <View style={styles._imagesContainer}>
+                                <AntDesign
+                                    name="close" size={WP(6)}
+                                    onPress={() => setEventImage(null)}
+                                    style={{ position: 'absolute', top: 8, right: 8, zIndex: 20, padding: 5, borderRadius: 30, backgroundColor: 'rgba(255,255,255,0.5)' }}
+                                    color={COLORS.redColor} />
+                                <Image source={{ uri: eventImage?.uri }} style={{ width: '100%', height: '100%' }} resizeMode='cover' />
+                            </View>
+                            :
+                            <Pressable onPress={togglePickerModal} style={styles._imagesContainer}>
+                                <Feather name="camera" size={WP(12)} color={COLORS.lightGrey} />
+                                <Text style={{ fontSize: WP(4), color: COLORS.lightGrey }}>Add Image</Text>
+                            </Pressable>
+
+                    }
+
+                    <SimpleInput
+                        lable={"Organizer"}
+                        placeholder={"Name"}
+                        value={user?.fullname || ""}
+                    />
+                    <SimpleInput
+                        lable={"Event Title"}
+                        placeholder={"Title"}
+                        value={eventTitle}
+                        onChangeText={(val) => seteventTitle(val)}
+                    />
+                    <SimpleInput
+                        lable={" Date & Time"}
+                        placeholder={"Time"}
+                        editable={false}
+                        value={eventDate?.toLocaleDateString() || ''}
+                        // onIconPress={() => setShowDatePicker(true)}
+                        Icon={(<AntDesign onPress={() => setShowDatePicker(true)} name="calendar" size={WP(8)} color={COLORS.lightGrey} />)}
+                    />
+                    <SimpleInput
+                        lable={"Location"}
+                        placeholder={"Location"}
+                        editable={false}
+                        Icon={(<Foundation onPress={onLocationIconClick} name="marker" size={WP(8)} color={COLORS.lightGrey} />)}
+                    />
+                    <SimpleInput
+                        lable={"Activity"}
+                        placeholder={"Activity"}
+                        value={selectedActivity?.name || ''}
+                        editable={false}
+                        Icon={(<Octicons onPress={onCategoryIconClick} name="checklist" size={WP(8)} color={COLORS.lightGrey} />)}
+                    />
+                    <View style={{ marginTop: WP(2) }}>
+                        <Text style={styles._heading}>Participants {eventParti}</Text>
+                        <Slider
+                            step={1}
+                            minimumValue={1}
+                            maximumValue={100}
+                            minimumTrackTintColor={COLORS.primaryColor}
+                            maximumTrackTintColor="#000000"
+                            onValueChange={(val) => { seteventParti(val) }}
+
+                        />
+                    </View>
 
 
-                <DescriptionInput
-                    lable={"Event Description"}
-                    placeholder={"Description..."}
-                    value={eventDes}
-                    onChangeText={(val) => seteventDes(val)}
-                />
+                    <DescriptionInput
+                        lable={"Event Description"}
+                        placeholder={"Description..."}
+                        value={eventDes}
+                        onChangeText={(val) => seteventDes(val)}
+                    />
 
-                <Button
-                    lable={"Create Event"}
-                    styles={{ marginTop: WP(2) }}
-                    onPress={onEventCreate}
-                />
-            </KeyboardAwareScrollView>
-        </View>
+                    <Button
+                        lable={"Create Event"}
+                        styles={{ marginTop: WP(2) }}
+                        onPress={onEventCreate}
+                    />
+                </KeyboardAwareScrollView>
+            </View>
+        </SafeAreaView>
     )
 }
 

@@ -50,12 +50,12 @@ const chatCtrl = {
             // .populate('chat.user',' fullname email avatar').exec()
 
             if (!chatlist) {
-                return res.status(404).json({ error: 'Chatlist not found' });
+                return res.status(404).json({ message: 'Chatlist not found' });
             }
             return res.json({ chatlist });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ message: 'Internal server error' });
         }
     },
     getmessages: async (req, res) => {
@@ -72,12 +72,12 @@ const chatCtrl = {
                 .exec()
 
             if (!messages?.chat) {
-                return res.status(404).json({ error: 'messages not found' });
+                return res.status(404).json({ message: 'messages not found' });
             }
             return res.json({ messages: messages?.chat });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ message: 'Internal server error' });
         }
     },
 }

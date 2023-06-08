@@ -88,7 +88,8 @@ const eventCtrl = {
                 .sort({ createdAt: 1 })
                 .exec();
             if (!events) return res.status(400).json({ msg: "No events found!" })
-            res.json({ events })
+            const eventList = await CheckEvents(events, req?.user?._id)
+            res.json({ events: eventList })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
@@ -134,7 +135,7 @@ const eventCtrl = {
 
             })
         } catch (err) {
-            return res.status(500).json({ msg: err.message })
+            return res.status(400).json({ msg: err.message })
         }
     },
     getEventsByLocation: async (req, res) => {
@@ -144,7 +145,7 @@ const eventCtrl = {
         const latitude = parseFloat(req.body.latitude);
 
         if (isNaN(longitude) || isNaN(latitude)) {
-            return res.status(400).json({ error: 'Invalid coordinates' });
+            return res.status(400).json({ message: 'Invalid coordinates' });
         }
         try {
             const events = await Event
@@ -162,20 +163,21 @@ const eventCtrl = {
 
 
             if (!events) return res.status(400).json({ msg: "No events found!" })
-            res.json({ events })
+            const eventList = await CheckEvents(events, req?.user?._id)
+            res.json({ events: eventList })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
 
 
     },
-    getRecommendedEvent: async (req, res) => {
+    getEventNearMe: async (req, res) => {
         const radiusInKm = req.body.radius || 5;
         const longitude = parseFloat(req.body.longitude);
         const latitude = parseFloat(req.body.latitude);
 
         if (isNaN(longitude) || isNaN(latitude)) {
-            return res.status(400).json({ error: 'Invalid coordinates' });
+            return res.status(400).json({ message: 'Invalid coordinates' });
         }
         try {
             const events = await Event
@@ -189,9 +191,40 @@ const eventCtrl = {
                             $maxDistance: (radiusInKm * 10000),
                         },
                     },
-                }).sort({ participants: -1 })
+                }).sort({ createdAt: -1 })
+
             if (!events) return res.status(400).json({ msg: "No events found!" })
-            res.json({ events })
+            const eventList = await CheckEvents(events, req?.user?._id)
+            res.json({ events: eventList })
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
+    getRecommendedEvent: async (req, res) => {
+        console.log(req.body);
+        const radiusInKm = req.body.radius || 5;
+        const longitude = parseFloat(req.body.longitude);
+        const latitude = parseFloat(req.body.latitude);
+
+        if (isNaN(longitude) || isNaN(latitude)) {
+            return res.status(400).json({ message: 'Invalid coordinates' });
+        }
+        try {
+            const events = await Event
+                .find({
+                    location: {
+                        $near: {
+                            $geometry: {
+                                type: "Point",
+                                coordinates: [longitude, latitude],
+                            },
+                            $maxDistance: (radiusInKm * 10000),
+                        },
+                    },
+                }).sort({ participants: -1 }).limit(10)
+            if (!events) return res.status(400).json({ msg: "No events found!" })
+            const eventList = await CheckEvents(events, req?.user?._id)
+            res.json({ events: eventList })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
@@ -205,7 +238,7 @@ const eventCtrl = {
         const locationQuery = {}
 
         if (isNaN(longitude) || isNaN(latitude)) {
-            // return res.status(400).json({ error: 'Invalid coordinates' });
+            // return res.status(400).json({ message: 'Invalid coordinates' });
         } else {
             locationQuery = {
                 location: {
@@ -261,7 +294,7 @@ const eventCtrl = {
                 { new: true }
             );
             if (!user) {
-                return res.status(404).json({ error: 'User not found' });
+                return res.status(404).json({ message: 'User not found' });
             }
 
             const event = await Event.findByIdAndUpdate(
@@ -272,14 +305,14 @@ const eventCtrl = {
 
 
             if (!event) {
-                return res.status(404).json({ error: 'Event not found' });
+                return res.status(404).json({ message: 'Event not found' });
             }
 
 
             res.json({ message: 'Event added to favorites' });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ message: 'Internal server error' });
         }
     },
     removeToFavourite: async (req, res) => {
@@ -295,7 +328,7 @@ const eventCtrl = {
             );
 
             if (!user) {
-                return res.status(404).json({ error: 'User not found' });
+                return res.status(404).json({ message: 'User not found' });
             }
 
             const event = await Event.findByIdAndUpdate(
@@ -305,13 +338,13 @@ const eventCtrl = {
             );
 
             if (!event) {
-                return res.status(404).json({ error: 'Event not found' });
+                return res.status(404).json({ message: 'Event not found' });
             }
 
             res.json({ message: 'Event removed from favorites' });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ message: 'Internal server error' });
         }
     },
     getAllFavouriteByuser: async (req, res) => {
@@ -320,13 +353,13 @@ const eventCtrl = {
             const userId = req.user._id
             const user = await User.findById(userId).populate('favorites');
             if (!user) {
-                return res.status(404).json({ error: 'User not found' });
+                return res.status(404).json({ message: 'User not found' });
             }
             const favoriteEvents = user.favorites;
             return res.json({ favoriteEvents });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ message: 'Internal server error' });
         }
     },
     addParticipant: async (req, res) => {
@@ -337,11 +370,11 @@ const eventCtrl = {
 
             const event = await Event.findById(event_id);
             if (!event) {
-                return res.status(404).json({ error: 'Event not found' });
+                return res.status(500).json({ message: 'Event not found' });
             }
 
             if (event.total_participants >= event.max_participants) {
-                return res.status(404).json({ error: "Maximum number of participants reached" });
+                return res.status(500).json({ message: "Maximum number of participants reached" });
             }
             let updateEvent = await Event.findByIdAndUpdate(
                 event_id,
@@ -354,7 +387,7 @@ const eventCtrl = {
             res.json({ message: 'you are successfully participanted in this event' });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ message: 'Internal server error' });
         }
     },
     removeParticipant: async (req, res) => {
@@ -370,13 +403,13 @@ const eventCtrl = {
             );
             event.total_participants = event.participants.length;
             if (!event) {
-                return res.status(404).json({ error: 'Event not found' });
+                return res.status(404).json({ message: 'Event not found' });
             }
 
             res.json({ message: 'Event removed from favorites' });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ message: 'Internal server error' });
         }
     },
     getEventsByuserParticipant: async (req, res) => {
@@ -386,12 +419,12 @@ const eventCtrl = {
             const events = await Event.find({ participants: { $in: [userId] } })
 
             if (!events) {
-                return res.status(404).json({ error: 'Events not found' });
+                return res.status(404).json({ message: 'Events not found' });
             }
             return res.json({ events });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ message: 'Internal server error' });
         }
     },
 }

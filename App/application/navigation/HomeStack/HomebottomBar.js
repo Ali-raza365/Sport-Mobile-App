@@ -89,7 +89,7 @@ export default function HomebottomBar() {
                 headerTitleAlign: 'left',
                 headerBackTitleVisible: false,
                 tabBarActiveTintColor: COLORS.primaryColor,
-
+                tabBarShowLabel: false,
                 headerShown: false,
                 cardStyle: {
                     backgroundColor: COLORS.whiteColor,
@@ -97,20 +97,19 @@ export default function HomebottomBar() {
                 cardStyleInterpolator: CardStyleInterpolators.forFadeFromBottomAndroid,
             }}>
             <Tab.Screen
-                name="eventStack"
-                component={EventStack}
+                name="homeStack"
+                component={HomeStack}
                 options={{
-                    tabBarLabel: 'Start new activity',
+                    tabBarLabel: 'My activities',
                     tabBarLabelStyle: {
                         fontWeight: '700',
                         top: -4,
                     },
                     tabBarIcon: ({ color, size }) => (
-                        <MaterialIcons name="event" color={color} size={size} />
+                        <Foundation name="home" color={color} size={size} />
                     ),
                 }}
             />
-
             <Tab.Screen
                 name="search"
                 component={SearchScr}
@@ -126,16 +125,16 @@ export default function HomebottomBar() {
                 }}
             />
             <Tab.Screen
-                name="home"
-                component={HomeStack}
+                name="eventStack"
+                component={EventStack}
                 options={{
-                    tabBarLabel: 'My activities',
+                    tabBarLabel: 'Start new activity',
                     tabBarLabelStyle: {
                         fontWeight: '700',
                         top: -4,
                     },
                     tabBarIcon: ({ color, size }) => (
-                        <Foundation name="home" color={color} size={size} />
+                        <MaterialIcons name="event" color={color} size={size} />
                     ),
                 }}
             />

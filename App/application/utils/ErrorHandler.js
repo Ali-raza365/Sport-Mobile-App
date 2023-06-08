@@ -6,6 +6,10 @@ export const handleAxiosError = (err) => {
             alert(err?.response?.data?.msg)
         } else if (err?.response?.data?.message) {
             alert(err?.response?.data?.message)
+        } else if (err?.response?.data?.error) {
+            alert(err?.response?.data?.error)
+        } else if (err?.message) {
+            alert(err?.message)
         } else if (err?.response?.data) {
             // alert('Something is going wrong. Please try again');
             alert(JSON.stringify(err));

@@ -15,11 +15,11 @@ const upload = multer({ storage: storage });
 const uploadToCloudinary = (req, res, next) => {
     upload.single('image')(req, res, async (err) => {
         if (err) {
-            return res.status(500).json({ error: 'Image upload failed.' });
+            return res.status(500).json({ message: 'Image upload failed.' });
         }
 
         if (!req.file) {
-            return res.status(400).json({ error: 'No image file provided.' });
+            return res.status(400).json({ message: 'No image file provided.' });
         }
 
         try {
@@ -30,7 +30,7 @@ const uploadToCloudinary = (req, res, next) => {
             next();
         } catch (error) {
             console.error('Error uploading image:', error);
-            return res.status(500).json({ error: 'Image upload failed.' });
+            return res.status(500).json({ message: 'Image upload failed.' });
         }
     });
 };
