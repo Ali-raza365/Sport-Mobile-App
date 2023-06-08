@@ -1,5 +1,5 @@
 
-const { CheckEventsfavorites } = require('../middleware/events');
+const { CheckEvents } = require('../middleware/events');
 const Event = require('../models/eventModel');
 const User = require('../models/userModel');
 
@@ -52,7 +52,7 @@ const eventCtrl = {
         try {
             const events = await Event.find({}).sort({ createdAt: -1 })
             if (!events) return res.status(400).json({ msg: "events does not found" })
-            const eventList = await CheckEventsfavorites(events, req?.user?._id)
+            const eventList = await CheckEvents(events, req?.user?._id)
             res.json({ events: eventList })
         } catch (err) {
             return res.status(500).json({ msg: err.message })

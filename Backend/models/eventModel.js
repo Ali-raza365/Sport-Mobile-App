@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const ChatModal = require("./chatModel");
 
 const d = new Date();
 const eventSchema = new mongoose.Schema(
@@ -45,6 +46,7 @@ const eventSchema = new mongoose.Schema(
             require: true,
             default: 1,
         },
+        chat: [ChatModal.schema],
         participants: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -79,6 +81,11 @@ const eventSchema = new mongoose.Schema(
     }
 );
 eventSchema.index({ location: '2dsphere' });
+
+eventSchema.pre('findOne', function(next) {
+    this.populate('chat.user');
+    next();
+  });
 
 
 module.exports = mongoose.model("event", eventSchema);

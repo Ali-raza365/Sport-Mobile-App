@@ -19,7 +19,8 @@
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^7.2.0",
     "morgan": "^1.10.0",
-    "multer": "*"
+    "multer": "*",
+    "socket.io": "^4.6.2"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
