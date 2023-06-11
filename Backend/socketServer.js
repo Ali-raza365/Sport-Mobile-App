@@ -12,10 +12,9 @@ const SocketServer = (socket,io) => {
                 socket.emit('chatError', 'Event not found');
                 return;
             }
-            // Join the event's chat room
             socket.join(`event:${eventId}`);
-            console.log(`User joined chat room for event: ${eventId}`);
-            socket.emit("joinChatRoom", "User joined chat room for event: 647f910bcd63e4ed05bcf880")
+            // console.log(`User joined chat room for event: ${eventId}`);
+            socket.emit(`joinChatRoom", "User joined chat room for event: ${eventId}` )
         } catch (error) {
             console.error('Error joining chat room:', error);
             socket.emit('chatError', 'Error joining chat room');

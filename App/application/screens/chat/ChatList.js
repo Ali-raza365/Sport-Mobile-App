@@ -84,7 +84,7 @@ const MessagesScreen = ({ navigation }) => {
             <FlatList
                 showsHorizontalScrollIndicator={false}
                 data={chatList}
-                keyExtractor={item => item.id}
+                keyExtractor={item => item._id}
                 renderItem={renderItem}
             />
         </View>

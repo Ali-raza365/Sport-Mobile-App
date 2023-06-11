@@ -141,7 +141,7 @@ export default function HomebottomBar() {
                 }}
             />
             <Tab.Screen
-                name="chat"
+                name="ChatStack"
                 component={ChatStack}
                 options={{
                     tabBarLabelStyle: {

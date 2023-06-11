@@ -2,10 +2,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import { Chat, ChatList } from '../../screens';
 import { COLORS, WP } from '../../theme/config';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 const Stack = createNativeStackNavigator();
 
-export default function ChatStack() {
+export default function ChatStack({navigation,route}) {
+
+   
+
     return (
         <Stack.Navigator
             initialRouteName='ChatList'

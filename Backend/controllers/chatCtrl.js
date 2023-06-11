@@ -10,7 +10,7 @@ const chatCtrl = {
             if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
             const userId = req.user._id
             const chatlist = await Event.aggregate([
-                { $match: { participants: { $in: [userId] }}},
+                { $match: { participants: { $in: [userId] } } },
                 { $addFields: { chat: { $reverseArray: "$chat" } } },
                 { $addFields: { lastMessage: { $arrayElemAt: ["$chat", 0] } } },
                 // {
@@ -61,15 +61,16 @@ const chatCtrl = {
             const userId = req.user._id
 
             const messages = await Event.findById(event_id)
-                // .populate('chat',
-                //   'fullname email avatar'
-                // )
                 .select('chat')
                 .exec()
+
 
             if (!messages?.chat) {
                 return res.status(404).json({ message: 'messages not found' });
             }
+            messages?.chat.sort((a, b) => {
+                return   new Date(b.createdAt) - new Date(a.createdAt);
+            });
             return res.json({ messages: messages?.chat });
         } catch (error) {
             console.error(error);

@@ -24,7 +24,7 @@ const ChatStore = create((set) => ({
         try {
             const resp = await FETCH_CHAT_MESSAGES_API(detail, token)
             if (resp?.data) {
-                set({ chatList: resp?.data?.messages||[] })
+                set({ chatMessage: resp?.data?.messages||[] })
                 return resp?.data?.messages ||[]
             } else {
                 handleAxiosError(resp.data)

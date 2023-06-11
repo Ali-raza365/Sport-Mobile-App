@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, ScrollView, Text, Button, StyleSheet } from 'react-native';
-import { Bubble, GiftedChat, MessageBubble, Send } from 'react-native-gifted-chat';
+import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { COLORS } from '../../theme/config';
@@ -8,19 +8,21 @@ import { TextInput } from 'react-native-gesture-handler';
 import { io } from 'socket.io-client';
 import UserStore from '../../Store/UserStore';
 import ChatStore from '../../Store/ChatStore';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 
 
 // const eventId ='6482285e33666f48db41370a'
+var socket = null;
 const connectToChat = (userId, roomId) => {
 
-    const socket = io(`http://localhost:8080?userId=${userId}`);
+    socket = io(`http://localhost:8080?userId=${userId}`);
 
     socket.emit('joinChatRoom', roomId);
 
     // Handle incoming chat messages
     socket.on('chatMessage', (data) => {
         // Handle the received chat message
-        console.log('Received chat message:', data);
+        console.log('Received chat message:'+roomId, data);
     });
 
     // Handle chat errors
@@ -35,7 +37,17 @@ const connectToChat = (userId, roomId) => {
     };
 };
 
-const ChatScreen = ({ route }) => {
+const ChatScreen = ({ route, navigation }) => {
+
+    React.useLayoutEffect(() => {
+        const routeName = getFocusedRouteNameFromRoute(route)
+        console.log(routeName, 'route name')
+        if (routeName === "Chat") {
+            navigation.setOptions({ tabBarVisible: false });
+        } else {
+            navigation.setOptions({ tabBarVisible: true });
+        }
+    })
     const { lastMessage } = route?.params
     const { user, token } = UserStore()
     const { chatMessage, fetchChatMessages } = ChatStore()
@@ -47,55 +59,39 @@ const ChatScreen = ({ route }) => {
     useEffect(() => {
         connectToChat(userId, roomId)
         fetchChatMessages({ event_id: roomId }, token).then((data) => {
-            setMessages(data)
+            console.log('from api',data[0]);
+            setMessages(data?.map((message) =>{
+            console.log(new Date(message?.createdAt)?.toDateString());
+            return(
+                {
+                    // ...message,
+                    _id: message?._id,
+                    text: message?.message,
+                    createdAt:new Date(message?.createdAt),
+                    user: {
+                        _id: message?.user._id,
+                        name: message?.user.fullname,
+                        avatar: message?.user.avatar,
+                    }
+                }
+
+            )
+            }))
         })
-        // setMessages([
-        //     {
-        //         _id: 1,
-        //         text: 'Hello developer',
-        //         createdAt: new Date(),
-        //         user: {
-        //             _id: 2,
-        //             name: 'React Native',
-        //             avatar: 'https://placeimg.com/140/140/any',
-        //         },
-        //     },
-        //     {
-        //         _id: 2,
-        //         text: 'Hello world',
-        //         createdAt: new Date(),
-        //         user: {
-        //             _id: 1,
-        //             name: 'React Native',
-        //             avatar: 'https://placeimg.com/140/140/any',
-        //         },
-        //     },
-        // ]);
     }, []);
+    console.log('from message',messages[0]);
+
 
     const onSend = useCallback((messages = []) => {
+
+        console.log(messages);
         setMessages((previousMessages) =>
             GiftedChat.append(previousMessages, messages),
         );
+        socket.emit('chatMessage', { eventId: roomId, message: messages[0]?.text })
     }, []);
 
-    const renderMessage = (messageProps) => {
-        const { currentMessage } = messageProps;
 
-        // Rename keys
-        const renamed_Message = {
-            messageId: currentMessage._id,
-            text: currentMessage.message,
-            createdAt: currentMessage.createdAt,
-            user: {
-                userId: currentMessage.user._id,
-                name: currentMessage.user.name,
-                avatar: currentMessage.user.image,
-            },
-        };
-
-        return <MessageBubble message={renamedMessage} />;
-    };
 
     const renderSend = (props) => {
         return (
@@ -138,31 +134,26 @@ const ChatScreen = ({ route }) => {
             <MaterialCommunityIcons name='chevron-double-down' size={22} color='#333' />
         );
     }
-    const renderInputToolbar = (props) => {
-        return (
-            <View style={styles.inputToolbar}>
-                <TextInput
-                    style={styles.inputField}
-                    placeholder="Type a message..."
-                //   onChangeText={(text) => console.log(text)}
-                />
-            </View>
-        );
-    };
-
 
     return (
         <GiftedChat
             messages={messages}
-            renderMessage={renderMessage}
             onSend={(messages) => onSend(messages)}
+            isLoadingEarlier={true}
             user={{
                 _id: userId,
             }}
+            listViewProps={{
+                maintainVisibleContentPosition: {
+                    minIndexForVisible: 0,
+                    autoscrollToTopThreshold: 30,
+                }
+            }}
             renderBubble={renderBubble}
             alwaysShowSend
+            // inverted={false}
             renderSend={renderSend}
-            scrollToBottom
+            // scrollToBottom
             scrollToBottomComponent={scrollToBottomComponent}
         // renderInputToolbar={renderInputToolbar}
         />

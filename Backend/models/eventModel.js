@@ -82,10 +82,10 @@ const eventSchema = new mongoose.Schema(
 );
 eventSchema.index({ location: '2dsphere' });
 
-eventSchema.pre('findOne', function(next) {
+eventSchema.pre('findOne', function (next) {
     this.populate('chat.user');
     next();
-  });
+});
 
 
 module.exports = mongoose.model("event", eventSchema);
