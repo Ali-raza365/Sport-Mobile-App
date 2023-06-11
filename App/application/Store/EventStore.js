@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ADD_FAVOURITE_EVENTS_API, CREATE_EVENT_API, GET_ACTIVITY_API, GET_EVENTS_API, GET_RECOMMENDED_EVENTS_API, PARTICIPATE_EVENT_API, REMOVE_FAVOURITE_EVENTS_API } from "../api/apis";
+import { ADD_FAVOURITE_EVENTS_API, CREATE_EVENT_API, GET_ACTIVITY_API, GET_EVENTS_API, GET_RECOMMENDED_EVENTS_API, PARTICIPATE_EVENT_API, REMOVE_FAVOURITE_EVENTS_API, SEARCH_EVENT_API } from "../api/apis";
 import { _gotoAuthStack, _gotoHomeNavigator } from "../navigation/navigationServcies";
 import { handleAxiosError } from "../utils/ErrorHandler";
 
@@ -8,6 +8,7 @@ const EventStore = create((set) => ({
     Activites: [],
     Events: [],
     Recommandedevents: [],
+    Searchevents: null,
     selectedActivity: null,
     createEvent_loading: false,
     setActivity: (avtivity) => set({
@@ -118,6 +119,19 @@ const EventStore = create((set) => ({
             const resp = await PARTICIPATE_EVENT_API(detail, token)
             if (resp?.data?.message) {
                 return resp?.data?.message
+            } else {
+                handleAxiosError(resp.data)
+            }
+        } catch (error) {
+            handleAxiosError(error)
+        }
+    },
+    FetchSearchEvents: async (detail, token) => {
+        try {
+            const resp = await SEARCH_EVENT_API(detail, token)
+            if (resp?.data) {
+                set({ Searchevents: resp?.data?.events })
+                return resp?.data?.events
             } else {
                 handleAxiosError(resp.data)
             }

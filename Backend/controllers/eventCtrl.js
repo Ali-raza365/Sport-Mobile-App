@@ -235,6 +235,7 @@ const eventCtrl = {
         const latitude = parseFloat(req.query.latitude);
         const searchText = req.query.text || '';
 
+        console.log(req?.query);
         const locationQuery = {}
 
         if (isNaN(longitude) || isNaN(latitude)) {
@@ -273,13 +274,13 @@ const eventCtrl = {
                 })
                 .sort({ createdAt: 1 });
 
-            if (!events || events.length === 0) {
-                return res.status(400).json({ msg: "No events found!" });
-            }
+            // if (!events || events.length === 0) {
+            //     return res.status(400).json({ msg: "No events found!" });
+            // }
 
             res.json({ events });
         } catch (err) {
-            return res.status(500).json({ msg: err.message });
+            return res.status(500).json({ msg: err });
         }
     },
     addToFavourite: async (req, res) => {

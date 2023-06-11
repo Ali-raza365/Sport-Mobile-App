@@ -1,17 +1,14 @@
 import React from 'react';
-import { StyleSheet, TextInput, Text, View, I18nManager, TouchableOpacity } from 'react-native';
-import Entypo from 'react-native-vector-icons/Entypo';
+import { I18nManager, StyleSheet, TextInput, View } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {
     COLORS,
-    FONT,
     HP,
-    INPUT_HEIGHT,
     RADIUS,
     SPACING_PERCENT,
     TEXT_SIZES,
-    WP,
+    WP
 } from '../theme/config';
 
 const SearchBar = ({
@@ -21,6 +18,7 @@ const SearchBar = ({
     placeholder,
     value,
     onChangeText,
+    handleTextSubmit,
     editable,
     stric,
     edit,
@@ -62,6 +60,7 @@ const SearchBar = ({
                 secureTextEntry={secureTextEntry}
                 value={value}
                 onChangeText={onChangeText}
+                onSubmitEditing={handleTextSubmit}
                 style={[
                     Styles._inputStyle,
                     {

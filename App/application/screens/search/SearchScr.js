@@ -15,14 +15,24 @@ import {
   TAB_ICON_SIZE,
   WP,
 } from '../../theme/config';
-import {SearchBar} from '../../components';
+import { SearchBar } from '../../components';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MatCommIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {Chip} from 'react-native-paper';
+import { Chip } from 'react-native-paper';
+import EventStore from '../../Store/EventStore';
+import UserStore from '../../Store/UserStore';
 
-const SearchScr = () => {
+const SearchScr = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => setSearchQuery(query);
+
+
+  const { Events, Searchevents, setActivityEvents, Activites, fetchEvents, fetchActivites, FetchSearchEvents } = EventStore();
+  const { user, token } = UserStore();
+
+  const handleTextSubmit = () => {
+    FetchSearchEvents({ text: searchQuery }, token)
+  };
 
   const dataArr = [
     {
@@ -67,42 +77,49 @@ const SearchScr = () => {
     },
   ];
 
-  const SearchComp = ({item, index}) => {
+  const SearchComp = ({ item, index }) => {
     const event = new Date(item?.time);
     return (
       <View style={styles.mainContainer}>
         <View style={styles.imageContainer}>
           <Image
-            source={{uri: item?.image}}
+            source={{ uri: item?.image }}
             resizeMode="cover"
-            style={{width: '100%', height: '100%'}}
+            style={{ width: '100%', height: '100%' }}
           />
         </View>
         <View style={styles.headingContainer}>
-          <Text style={{fontSize:12,color:"#686868" }}>{item?.category}</Text>
+          <Text style={{ fontSize: 12, color: "#686868" }}>{item?.activity?.name}</Text>
           <Text style={styles.heading}>
-            {item?.name}
+            {item?.title}
           </Text>
-          <Text style={{color: 'green', fontWeight: '700'}}>
-            {event.toDateString()}
+          <Text numberOfLines={3} style={styles.description}>
+            {item?.description}
           </Text>
-          <Ionicons
-          onPress={()=>{console.log("press")}}
+          <Text style={{ color: 'green', fontWeight: '700' }}>
+            {/* {item?.date?.toDateString?.()} */}
+            {item?.date?.toString?.()}
+          </Text>
+
+          {/* <Ionicons
+            onPress={() => { console.log("press") }}
             style={styles.favourite}
             name="heart-outline"
             color={COLORS.darkGrey}
             size={WP(5)}
-          />
+          /> */}
         </View>
       </View>
     );
   };
 
+  console.log(Searchevents);
   return (
     <SafeAreaView>
       <View style={styles.headerContainer}>
         <SearchBar
           placeholder="Search"
+          handleTextSubmit={handleTextSubmit}
           onChangeText={onChangeSearch}
           value={searchQuery}
         />
@@ -121,7 +138,7 @@ const SearchScr = () => {
           }}
           icon="filter"
           closeIcon="chevron-down"
-          onClose={() => {}}
+          onClose={() => { }}
           selected={true}
           selectedColor={COLORS.whiteColor}
           type="flat"
@@ -137,11 +154,11 @@ const SearchScr = () => {
           }}
           icon="filter"
           closeIcon="chevron-down"
-          onClose={() => {}}
+          onClose={() => { }}
           selected={true}
           selectedColor={COLORS.primaryColor}
           type="outlined"
-          onPress={() => console.log('Pressed')}>
+          onPress={() => { navigation.navigate('MapScreen') }}>
           Location
         </Chip>
         <Chip
@@ -152,7 +169,7 @@ const SearchScr = () => {
           }}
           icon="filter"
           closeIcon="chevron-down"
-          onClose={() => {}}
+          onClose={() => { }}
           selected={true}
           selectedColor={COLORS.primaryColor}
           type="outlined"
@@ -164,8 +181,9 @@ const SearchScr = () => {
       <FlatList
         keyExtractor={(_, i) => `item${i}`}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: HP(20)}}
-        data={dataArr}
+        disableVirtualization={false}
+        contentContainerStyle={{ flexGrow: 1, paddingBottom: HP(20), padding: WP(3), }}
+        data={Searchevents !== null ? Searchevents : Events}
         renderItem={SearchComp}
       />
     </SafeAreaView>
@@ -192,10 +210,12 @@ const styles = StyleSheet.create({
   mainContainer: {
     width: '100%',
     height: HP(20),
-    // backgroundColor: 'red',
+    backgroundColor: COLORS.whiteColor,
     borderBottomWidth: 1,
+    padding: WP(3),
     borderColor: COLORS.grey,
-    marginBottom: 1,
+    borderRadius: 10,
+    marginBottom: 5,
     flex: 1,
     flexDirection: 'row',
   },
@@ -203,8 +223,9 @@ const styles = StyleSheet.create({
     width: '42%',
     height: '100%',
   },
-  headingContainer:{padding: 7 ,width:WP('58')},
-  heading:{fontSize: 18, fontWeight: 'bold', color: '#000000',paddingVertical:5},
-  favourite:{position: 'absolute', bottom: 5, right: 5},
+  headingContainer: { padding: 7, width: WP('55') },
+  heading: { fontSize: 18, fontWeight: 'bold', color: '#000000', paddingVertical: 5 },
+  description: { fontSize: 15, color: '#000000', paddingVertical: 5 },
+  favourite: { position: 'absolute', bottom: 5, right: 5 },
 
 });

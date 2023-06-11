@@ -10,21 +10,17 @@ const chatCtrl = {
             if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
             const userId = req.user._id
             const chatlist = await Event.aggregate([
-                {
-                    $match: {
-                        participants: { $in: [userId] }
-                    }
-                },
+                { $match: { participants: { $in: [userId] }}},
                 { $addFields: { chat: { $reverseArray: "$chat" } } },
                 { $addFields: { lastMessage: { $arrayElemAt: ["$chat", 0] } } },
-                {
-                    $lookup: {
-                        from: "users", // Replace "users" with the actual collection name for users
-                        localField: "lastMessage.user",
-                        foreignField: "_id",
-                        as: "lastMessage.user"
-                    }
-                },
+                // {
+                //     $lookup: { // this code for user ref
+                //         from: "users", // Replace "users" with the actual collection name for users
+                //         localField: "lastMessage.user",
+                //         foreignField: "_id",
+                //         as: "lastMessage.user"
+                //     }
+                // },
                 { $unwind: "$lastMessage.user" },
                 {
                     $sort: {

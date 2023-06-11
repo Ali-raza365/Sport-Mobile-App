@@ -13,6 +13,7 @@ import { SearchScr } from '../../screens';
 import Account from '../../screens/Settings/Account';
 import AccountSettings from '../../screens/Settings/AccountSettings';
 import EventStack from '../EventStack/EventStack';
+import ChatStack from '../ChatStack/ChatStack';
 
 // import StepIndicator from 'react-native-step-indicator';
 const Tab = createBottomTabNavigator();
@@ -124,6 +125,7 @@ export default function HomebottomBar() {
                     ),
                 }}
             />
+
             <Tab.Screen
                 name="eventStack"
                 component={EventStack}
@@ -135,6 +137,20 @@ export default function HomebottomBar() {
                     },
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="event" color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="chat"
+                component={ChatStack}
+                options={{
+                    tabBarLabelStyle: {
+                        fontWeight: '700',
+                        top: -4,
+                    },
+                    tabBarLabel: 'Search for activities',
+                    tabBarIcon: ({ color, size }) => (
+                        <Feather name="message-circle" color={color} size={size} />
                     ),
                 }}
             />

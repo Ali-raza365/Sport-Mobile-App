@@ -1,7 +1,7 @@
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 import { COLORS, HP, RADIUS, SPACING_PERCENT, TEXT_SIZES, WP } from '../../theme/config';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Foundation from 'react-native-vector-icons/Foundation';
 import { Button } from '../../components';
@@ -13,14 +13,14 @@ const EventDetail = ({ route, navigation }) => {
 
     const { detail } = route.params;
     console.log(detail?.isParticipated);
-const [isParticipated, setisParticipated] = useState(detail?.isParticipated ||false)
+    const [isParticipated, setisParticipated] = useState(detail?.isParticipated || false)
     const onBackPress = () => navigation?.goBack()
     const { Activites, fetchEvents, AddEventToFavorite, RemoveEventFromFavorite, ParticipateEvents } = EventStore();
     const { user, token } = UserStore();
 
     const onParticipate = () => {
         ParticipateEvents(detail?._id, token).then((msg) => {
-            !!msg ? alert(msg):null
+            !!msg ? alert(msg) : null
             setisParticipated(true)
             fetchEvents()
         })
@@ -34,7 +34,11 @@ const [isParticipated, setisParticipated] = useState(detail?.isParticipated ||fa
                     contentContainerStyle={{ paddingBottom: 100, }}
                 >
                     <View style={styles._imagesContainer}>
-                        <MaterialIcons name="arrow-back-ios" onPress={onBackPress} style={styles.BackArrow} size={WP(7)} color={COLORS.blackColor} />
+                        <TouchableOpacity
+                            onPress={onBackPress}
+                            style={styles.innerCircle} >
+                            <Feather name="arrow-left" color={COLORS.blackColor} size={WP(6)} />
+                        </TouchableOpacity>
                         <Image source={{ uri: detail.image }} resizeMode='cover' style={{ width: '100%', height: '100%' }} />
                     </View>
                     <View style={styles._infoContainer}>
@@ -64,7 +68,7 @@ const [isParticipated, setisParticipated] = useState(detail?.isParticipated ||fa
 
                         <Button
                             onPress={onParticipate}
-                            lable={isParticipated ? "Already Participated":"Participate"}
+                            lable={isParticipated ? "Already Participated" : "Participate"}
                             disable={isParticipated}
                             styles={{ marginTop: WP(4) }}
                         />
@@ -91,6 +95,19 @@ const styles = StyleSheet.create({
         width: '100%',
         height: HP(40),
     },
+    innerCircle: {
+        position: 'absolute',
+        top: WP(2),
+        left: WP(4),
+        width: WP(10),
+        height: WP(10),
+        borderRadius: WP(10),
+        backgroundColor: COLORS.whiteColor,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 23,
+    },
+
     BackArrow: {
         position: "absolute",
         zIndex: 10,

@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
 import IonIcons from 'react-native-vector-icons/Ionicons';
-import { EventDetail, Home } from "../../screens";
+import { EventDetail, Home, MapScreen } from "../../screens";
 import { COLORS, FONT, FONT_MEDIUM, WP } from '../../theme/config';
 const Stack = createNativeStackNavigator();
 
@@ -41,6 +41,13 @@ export default function HomeStack() {
             <Stack.Screen
                 name='eventdetail'
                 component={EventDetail}
+                options={{
+                    headerShown: false,
+                }}
+            />
+            <Stack.Screen
+                name='MapScreen'
+                component={MapScreen}
                 options={{
                     headerShown: false,
                 }}

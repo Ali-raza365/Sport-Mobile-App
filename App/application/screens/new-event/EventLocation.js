@@ -214,8 +214,8 @@ export default function EventLocation({ navigation }) {
                 initialRegion={{
                     latitude: Number(Lattitude),
                     longitude: Number(Longitude),
-                    // latitudeDelta: 0.0922,
-                    // longitudeDelta: 0.0421,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
                 }}
 
             >
