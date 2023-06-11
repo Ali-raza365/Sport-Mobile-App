@@ -42,7 +42,7 @@ const chatCtrl = {
                     }
                 },
             ])
-            // .select('-location -max_participants -total_participants -participants -favorites')
+            //     .select('-location -max_participants -total_participants -participants -favorites')
             // .populate('chat.user',' fullname email avatar').exec()
 
             if (!chatlist) {
