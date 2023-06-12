@@ -25,7 +25,7 @@ const NewEvent = ({ navigation }) => {
     const [eventImage, setEventImage] = useState(null);
     const { user, token } = UserStore();
 
-    const { fetchActivites, selectedActivity, createEventFuc, createEvent_loading } = EventStore();
+    const { fetchActivites, selectedActivity, createEventFuc, createEvent_loading, EventLocation } = EventStore();
 
 
     const togglePickerModal = () => {
@@ -69,7 +69,7 @@ const NewEvent = ({ navigation }) => {
         if (!eventTitle) return alert('event title is required!')
         if (!eventDate) return alert('date is required!')
         if (!eventDate) return alert('time is required!')
-        // if(!location) return alert('location is required!')
+        if(!EventLocation) return alert('location is required!')
         if (!selectedActivity?.name) return alert('please select sport activity for create event')
         if (!eventParti) return alert('participants is required!')
         if (!eventDes) return alert('please enter description is required')
@@ -83,21 +83,18 @@ const NewEvent = ({ navigation }) => {
             time: eventDate,
             activity: { name: selectedActivity?.name, activity_id: selectedActivity?._id },
             location: {
-                name: "lahore",
+                name: EventLocation?.name || 'nothing',
                 coordinates: {
-                    latitude: 31.582045,
-                    longitude: 74.329376
+                    latitude: EventLocation?.lat || 0,
+                    longitude: EventLocation?.lng || 0
                 }
             }
         }
-        createEventFuc(detail, token).then(()=>{
+        createEventFuc(detail, token).then(() => {
             // _gotoHomeNavigator(navigation)
             navigation.navigate('home')
         })
     }
-
-
-
 
 
     return (
@@ -171,6 +168,7 @@ const NewEvent = ({ navigation }) => {
                     <SimpleInput
                         lable={"Location"}
                         placeholder={"Location"}
+                        value={EventLocation?.name || ''}
                         editable={false}
                         Icon={(<Foundation onPress={onLocationIconClick} name="marker" size={WP(8)} color={COLORS.lightGrey} />)}
                     />

@@ -6,6 +6,7 @@ import UserStore from '../../Store/UserStore';
 import { AppBar, CardBox, Category, Loader } from '../../components';
 import { COLORS, HP, RADIUS, SPACING_PERCENT, TEXT_SIZES, WP } from '../../theme/config';
 import { ActivityIndicator } from 'react-native-paper';
+import { getLat_Long } from '../../utils/GetIPAddress';
 
 const Home = ({ navigation }) => {
 
@@ -18,6 +19,7 @@ const Home = ({ navigation }) => {
          fetchRecommendedEvents, fetchActivites,AddEventToFavorite,RemoveEventFromFavorite } = EventStore();
     const { user, token } = UserStore();
 
+    // console.log(getLat_Long())
 
 
     let array = [

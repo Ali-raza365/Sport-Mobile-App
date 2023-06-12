@@ -7,12 +7,16 @@ const EventStore = create((set) => ({
 
     Activites: [],
     Events: [],
+    EventLocation:null,
     Recommandedevents: [],
     Searchevents: null,
     selectedActivity: null,
     createEvent_loading: false,
     setActivity: (avtivity) => set({
         selectedActivity: avtivity
+    }),
+    setEventLocation: (location) => set({
+        EventLocation: location
     }),
 
     fetchActivites: async (token) => {

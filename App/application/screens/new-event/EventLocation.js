@@ -13,6 +13,7 @@ import { handleAxiosError } from '../../utils/ErrorHandler';
 import { _setItem } from '../../utils/async';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 import { request, PERMISSIONS, RESULTS } from 'react-native-permissions';
+import EventStore from '../../Store/EventStore';
 
 
 export default function EventLocation({ navigation }) {
@@ -24,7 +25,10 @@ export default function EventLocation({ navigation }) {
     const [Longitude, setLongitude] = useState(null);
     const [Lattitude, setLattitude] = useState(null);
     const [country, setCountry] = useState('');
-    const [address, setaddress] = useState('')
+    const [address, setaddress] = useState('');
+
+    const { setEventLocation } = EventStore();
+
 
     // const lisenceFile = userStore((state) => state.lisenceFile);
     // const profileImg = userStore((state) => state.profileImg);
@@ -92,7 +96,7 @@ export default function EventLocation({ navigation }) {
                     longitudeDelta: 0.0421,
                 };
 
-                mapRef.current.animateToRegion(region, 1000);
+                // mapRef.current.animateToRegion(region, 1000);
 
             },
             (error) => {
@@ -116,69 +120,40 @@ export default function EventLocation({ navigation }) {
         }).then(async (json) => {
             var location = json.results[0].address_components[0];
             var country = json.results[0].formatted_address;
-            setaddress(location?.long_name)
-            setCountry(country)
-            console.log({ location, country });
+            setaddress(country)
+            setCountry(location)
+
+            const commaIndex = country.indexOf(',');
+
+            if (commaIndex !== -1) {
+                const modifiedAddress = country.substring(commaIndex + 2).trim();
+                setaddress(modifiedAddress)
+            }
+
+            // console.log({ location, country });
         })
             .catch(error => console.log({ error }));
     }
 
     const onConfirmClick = async () => {
-        // () => navigation.navigate('homenavigator')
-        // console.log(userId, profileImg, lisenceFile)
-        setLoading(true)
-        try {
-            const formData = new FormData();
-            formData.append('userId', userId);
-            formData.append('location', country);
-            formData.append('latitude', Lattitude);
-            formData.append('longitude', Longitude);
-            formData.append('profileFile', {
-                uri: profileImg?.uri || '',
-                name: profileImg?.fileName || '',
-                type: profileImg?.type || ''
-            });
-            formData.append('lisenceFile', {
-                uri: lisenceFile?.uri || '',
-                name: lisenceFile?.fileName || '',
-                type: lisenceFile?.type || ''
-            });
 
-            await SIGN_UP_INFO_API(formData)
-                .then(resp => {
-                    console.log(resp?.data)
-                    _setItem('logout', '0')
-                        .then(async () => {
-                            _setItem('email', resp?.data?.data?.email)
-                                .then(async () => {
-                                    _setItem('password', resp?.data?.data?.password)
-                                        .then(async () => {
-                                            setLoading(false)
-                                            setUserDetail(resp?.data?.data)
-                                            _gotoDeliveryNavigator(navigation)
-                                        }).catch(error => {
-                                            setLoading(false);
-                                            handleAxiosError(error)
-                                        });
-                                }).catch(error => {
-                                    setLoading(false);
-                                    handleAxiosError(error)
-                                });
-                        })
-                        .catch(error => {
-                            setLoading(false);
-                            handleAxiosError(error)
-                        });
-                })
-                .catch(error => {
-                    setLoading(false);
-                    handleAxiosError(error)
-                });
-        } catch (error) {
-            setLoading(false)
-            console.log(error)
-        }
+        console.log({
+            Lattitude,
+            Longitude,
+            address,
+            // country
+        })
+
+        setEventLocation({
+            lat: Lattitude,
+            lng: Longitude,
+            name: address
+        })
+
+        navigation.goBack()
+
     }
+
 
     return (
         <View style={styles._container}>
@@ -192,26 +167,34 @@ export default function EventLocation({ navigation }) {
 
             <Loader isVisible={Loading} />
 
-            {/* <GooglePlacesAutocomplete
-                styles={{ container: { position: 'absolute', zIndex: 999, top: HP(5), alignSelf: 'center', width: '80%' } }}
+            <GooglePlacesAutocomplete
+                styles={{ container: { position: 'absolute', zIndex: 999, top: HP(8), alignSelf: 'center', width: '80%' } }}
                 placeholder='Search'
-                onPress={(data, details = null) => {
+                fetchDetails={true}
+                onPress={(data, details = null,) => {
                     // 'details' is provided when fetchDetails = true
-                    console.log(data, details);
+                    const location = details?.geometry?.location || null
+                    _getAddressFromLatLog(location.lat, location.lng)
+
                 }}
                 query={{
-                    key: 'AIzaSyAH8N_ig4vp8M1vSSph99yritgOUrWceK0',
+                    key: 'AIzaSyAQfjOJ3COtWccJr0gBIexmOu-nvNt853Y',
                     language: 'en',
                 }}
-            /> */}
+            />
 
             <MapView
                 ref={mapRef}
                 style={{ position: 'absolute', width: '100%', height: '100%', top: 0, }}
                 showsUserLocation={true}
                 followsUserLocation={true}
-                mapType="standard"
                 initialRegion={{
+                    latitude: Number(Lattitude),
+                    longitude: Number(Longitude),
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }}
+                region={{
                     latitude: Number(Lattitude),
                     longitude: Number(Longitude),
                     latitudeDelta: 0.0922,
@@ -255,11 +238,13 @@ export default function EventLocation({ navigation }) {
                     </View>
                 </View>
 
-                <Button
-                    onPress={() => onConfirmClick()}
-                    lable={'Confirm'} styles={{ width: '90%' }} />
+               
 
             </View> */}
+            <Button
+                onPress={() => onConfirmClick()}
+                lable={'Save'}
+                styles={{ width: '90%', alignSelf: 'center', position: 'absolute', bottom: 10, }} />
         </View>
     );
 }
@@ -268,7 +253,7 @@ const styles = StyleSheet.create({
     _container: {
         flex: 1,
         backgroundColor: COLORS.whiteColor,
-        justifyContent: 'flex-end',
+        // justifyContent: 'flex-end',
     },
     image: {
         width: WP(33),

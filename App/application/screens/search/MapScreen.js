@@ -294,7 +294,7 @@ const ExploreScreen = ({ navigation }) => {
                     )}
                 >
                     {state.markers.map((item, index) => (
-                        <MarkerCard detail={item} />
+                        <MarkerCard key={index} detail={item} />
                     ))}
                 </Animated.ScrollView>
             </View>
