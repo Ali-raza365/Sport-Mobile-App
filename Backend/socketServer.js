@@ -22,21 +22,23 @@ const SocketServer = (socket,io) => {
     });
 
     // Handle incoming chat messages
-    socket.on('chatMessage', async ({ eventId, message }) => {
+    socket.on('chatMessage', async ({ eventId, messageData }) => {
         try {
             console.log("userId",socket?.userId)
-            // Save the chat message to the event's document in MongoDB
+            console.log("messageData",messageData)
+            
+            const {_id,...other} =messageData
             const event = await Event.findById(eventId);
             if (!event) {
                 // Event not found
                 socket.emit('chatError', 'Event not found');
                 return;
             }
-            event.chat.push({ message, user: socket.userId });
+            event.chat.push({ ...other, user: socket.userId });
             await event.save();
 
             // Emit the chat message to all users in the event's chat room
-            io.to(`event:${eventId}`).emit('chatMessage', { message, user: socket.userId });
+            io.to(`event:${eventId}`).emit('chatMessage', { ...messageData, user: socket.userId });
         } catch (error) {
             console.error('Error sending chat message:', error);
             socket.emit('chatError', 'Error sending chat message');

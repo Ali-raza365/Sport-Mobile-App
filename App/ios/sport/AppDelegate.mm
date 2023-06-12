@@ -6,7 +6,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-    [GMSServices provideAPIKey:@"AIzaSyAH8N_ig4vp8M1vSSph99yritgOUrWceK0"];
+    [GMSServices provideAPIKey:@"AIzaSyAQfjOJ3COtWccJr0gBIexmOu-nvNt853Y"];
   self.moduleName = @"sport";
   // You can add your custom initial props in the dictionary below.
   // They will be passed down to the ViewController used by React Native.

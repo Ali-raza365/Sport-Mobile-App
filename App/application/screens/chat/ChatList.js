@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import { View, Text, Image, StyleSheet, FlatList, Pressable } from 'react-native';
 
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -63,7 +63,7 @@ const MessagesScreen = ({ navigation }) => {
     }, [])
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity style={styles?.card} onPress={() => navigation.navigate('Chat', { lastMessage: item })}>
+        <Pressable style={styles?.card} onPress={() => navigation.navigate('Chat', { lastMessage: item })}>
             <View style={styles.UserInfo}>
                 <View style={styles.UserImgWrapper}>
                     <Image style={styles?.UserImg} source={{ uri: item.image }} />
@@ -76,7 +76,7 @@ const MessagesScreen = ({ navigation }) => {
                     <Text style={styles?.MessageText}>{item?.lastMessage?.message}</Text>
                 </View>
             </View>
-        </TouchableOpacity>
+        </Pressable>
     )
     return (
         // <SafeAreaView style={{ flex: 1 }}>

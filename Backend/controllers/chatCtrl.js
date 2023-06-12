@@ -69,7 +69,7 @@ const chatCtrl = {
                 return res.status(404).json({ message: 'messages not found' });
             }
             messages?.chat.sort((a, b) => {
-                return   new Date(b.createdAt) - new Date(a.createdAt);
+                return new Date(b.createdAt) - new Date(a.createdAt);
             });
             return res.json({ messages: messages?.chat });
         } catch (error) {

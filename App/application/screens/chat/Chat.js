@@ -9,35 +9,39 @@ import { io } from 'socket.io-client';
 import UserStore from '../../Store/UserStore';
 import ChatStore from '../../Store/ChatStore';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { BASE_URL } from '../../api/apis';
 
 
-// const eventId ='6482285e33666f48db41370a'
 var socket = null;
-const connectToChat = (userId, roomId) => {
 
-    socket = io(`http://localhost:8080?userId=${userId}`);
-
-    socket.emit('joinChatRoom', roomId);
-
-    // Handle incoming chat messages
-    socket.on('chatMessage', (data) => {
-        // Handle the received chat message
-        console.log('Received chat message:'+roomId, data);
-    });
-
-    // Handle chat errors
-    socket.on('chatError', (error) => {
-        // Handle the chat error
-        console.log('Chat error:', error);
-    });
-
-    // Clean up the connection when the component unmounts
-    return () => {
-        socket.disconnect();
-    };
-};
 
 const ChatScreen = ({ route, navigation }) => {
+
+    const connectToChat = (userId, roomId) => {
+
+        socket = io(`${BASE_URL}?userId=${userId}`);
+
+        socket.emit('joinChatRoom', roomId);
+
+        socket.on('chatMessage', (data) => {
+
+            if (userId !== data?.user?._id) {
+                // setMessages((previousMessages) => GiftedChat.append(previousMessages, data));
+            }
+            console.log(userId + 'userId Received chat message:' + roomId, data);
+        });
+
+        // Handle chat errors
+        socket.on('chatError', (error) => {
+            // Handle the chat error
+            console.log('Chat error:', error);
+        });
+
+        // Clean up the connection when the component unmounts
+        return () => {
+            socket.disconnect();
+        };
+    };
 
     React.useLayoutEffect(() => {
         const routeName = getFocusedRouteNameFromRoute(route)
@@ -59,36 +63,33 @@ const ChatScreen = ({ route, navigation }) => {
     useEffect(() => {
         connectToChat(userId, roomId)
         fetchChatMessages({ event_id: roomId }, token).then((data) => {
-            console.log('from api',data[0]);
-            setMessages(data?.map((message) =>{
-            console.log(new Date(message?.createdAt)?.toDateString());
-            return(
-                {
-                    // ...message,
-                    _id: message?._id,
-                    text: message?.message,
-                    createdAt:new Date(message?.createdAt),
-                    user: {
-                        _id: message?.user._id,
-                        name: message?.user.fullname,
-                        avatar: message?.user.avatar,
+            // console.log('from api', data[0]);
+            setMessages(data?.map((message) => {
+                return (
+                    {
+                        // ...message,
+                        _id: message?._id,
+                        text: message?.message,
+                        createdAt: new Date(message?.createdAt),
+                        user: {
+                            _id: message?.user._id,
+                            name: message?.user.fullname,
+                            avatar: message?.user.avatar,
+                        }
                     }
-                }
 
-            )
+                )
             }))
         })
     }, []);
-    console.log('from message',messages[0]);
 
 
     const onSend = useCallback((messages = []) => {
-
-        console.log(messages);
+        // console.log(messages);
         setMessages((previousMessages) =>
             GiftedChat.append(previousMessages, messages),
         );
-        socket.emit('chatMessage', { eventId: roomId, message: messages[0]?.text })
+        socket.emit('chatMessage', { eventId: roomId, messageData: { ...messages?.[0], message: messages?.[0]?.text } })
     }, []);
 
 
@@ -151,9 +152,7 @@ const ChatScreen = ({ route, navigation }) => {
             }}
             renderBubble={renderBubble}
             alwaysShowSend
-            // inverted={false}
             renderSend={renderSend}
-            // scrollToBottom
             scrollToBottomComponent={scrollToBottomComponent}
         // renderInputToolbar={renderInputToolbar}
         />
