@@ -1,16 +1,45 @@
-import { View, Text, SafeAreaView, TouchableOpacity, StyleSheet, Image, Pressable } from 'react-native'
-import React from 'react'
-import { COLORS, HP, WP } from "../../theme/config"
-import Ionicons from "react-native-vector-icons/Ionicons"
-import Feather from "react-native-vector-icons/Feather"
-import { _setItem } from '../../utils/async'
-import { handleAxiosError } from '../../utils/ErrorHandler'
-import { _gotoAuthStack, _gotoHomeNavigator } from '../../navigation/navigationServcies'
+import React from 'react';
+import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+    Avatar,
+    Caption,
+    Text,
+    Title,
+    TouchableRipple,
+} from 'react-native-paper';
+import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import UserStore from '../../Store/UserStore';
+import { _gotoAuthStack } from '../../navigation/navigationServcies';
+import { COLORS } from '../../theme/config';
+import { handleAxiosError } from '../../utils/ErrorHandler';
+import { _setItem } from '../../utils/async';
 
-export default function AccountSettings({navigation}) {
+// import Share from 'react-native-share';
+
+// import files from '../assets/filesBase64';
+
+const ProfileScreen = ({ navigation }) => {
+    const { user, token } = UserStore();
+    console.log(user);
+
+    const myCustomShare = async () => {
+        // const shareOptions = {
+        //     message: 'Order your next meal from FoodFinder App. I\'ve already ordered more than 10 meals on it.',
+        //     url: files.appLogo,
+        //     // urls: [files.image1, files.image2]
+        // }
+
+        // try {
+        //     const ShareResponse = await Share.open(shareOptions);
+        //     console.log(JSON.stringify(ShareResponse));
+        // } catch (error) {
+        //     console.log('Error => ', error);
+        // }
+    };
 
     const onLogout = () => {
-        _setItem('token', "" )
+        _setItem('token', "")
             .then(async () => {
                 setTimeout(() => {
                     _gotoAuthStack(navigation);
@@ -23,159 +52,145 @@ export default function AccountSettings({navigation}) {
 
 
     return (
-        <SafeAreaView style={Styles._mainContainer}>
-            <View style={Styles._dpMain}>
-                <Image
-                    source={require("../../assets/images/man.png")}
-                    style={Styles._dpStyle}
-                />
-                <TouchableOpacity
-                    style={Styles._cameraBtn}
-                    activeOpacity={0.8}
-                >
-                    <Ionicons
-                        name='camera-outline'
-                        color={COLORS.primaryColor}
-                        size={WP(6)}
-                    />
+        <SafeAreaView style={styles.container}>
+
+            <View style={styles.userInfoSection}>
+                <TouchableOpacity style={styles.editIcon} onPress={() => navigation.navigate('editProfile')}>
+                    <Icon name="circle-edit-outline" color={'#777777'} size={30} />
                 </TouchableOpacity>
+                <View style={{ flexDirection: 'row', marginTop: 15 }}>
+                    <Avatar.Image
+                        source={{
+                            uri: user?.avatar || 'https://api.adorable.io/avatars/80/abott@adorable.png',
+                        }}
+                        size={80}
+                    />
+                    <View style={{ marginLeft: 20 }}>
+                        <Title style={[styles.title, {
+                            marginTop: 15,
+                            marginBottom: 5,
+                        }]}>{user?.fullname}</Title>
+                        <Caption style={styles.caption}>@{user?.username || '__'}</Caption>
+                    </View>
+                </View>
             </View>
-            <View style={Styles._infoMain}>
-                <View style={Styles._infoCard}>
-                    <View style={Styles._iconMain}>
-                        <Ionicons
-                            name='ios-person-outline'
-                            color={COLORS.primaryColor}
-                            size={WP(6)}
-                        />
-                    </View>
-                    <View style={Styles._usernameMain}>
-                        <Text style={Styles._nameHeading}>Username</Text>
-                        <Text style={Styles._username}>Demo User</Text>
-                    </View>
-                    <View style={Styles._editMain}>
-                        <TouchableOpacity>
-                            <Feather
-                                name='edit-2'
-                                color={COLORS.primaryColor}
-                                size={WP(6)}
-                            />
-                        </TouchableOpacity>
-                    </View>
-                </View>
 
-                <View style={Styles._infoCard}>
-                    <View style={Styles._iconMain}>
-                        <Ionicons
-                            name='mail-outline'
-                            color={COLORS.primaryColor}
-                            size={WP(6)}
-                        />
-                    </View>
-                    <View style={Styles._usernameMain}>
-                        <Text style={Styles._nameHeading}>Email</Text>
-                        <Text style={Styles._username}>example@gmail.com</Text>
-                    </View>
-                    <View style={Styles._editMain}>
-                        <TouchableOpacity>
-                            <Feather
-                                name='edit-2'
-                                color={COLORS.primaryColor}
-                                size={WP(6)}
-                            />
-                        </TouchableOpacity>
-                    </View>
+            <View style={styles.userInfoSection}>
+                {/* <View style={styles.row}>
+                    <Icon name="map-marker-radius" color="#777777" size={20} />
+                    <Text style={{ color: "#777777", marginLeft: 20 }}>Kolkata, India</Text>
+                </View> */}
+                <View style={styles.row}>
+                    <Icon name="phone" color="#777777" size={20} />
+                    <Text style={{ color: "#777777", marginLeft: 20 }}>{!!user?.mobile ? user?.mobile : "+XX XXX-XXXXXXX"}</Text>
                 </View>
+                <View style={styles.row}>
+                    <Icon name="email" color="#777777" size={20} />
+                    <Text style={{ color: "#777777", marginLeft: 20 }}>{user?.email}</Text>
+                </View>
+            </View>
 
-                <Pressable onPress={onLogout} style={Styles._infoCard}>
-                    <View style={Styles._iconMain}>
-                        <Ionicons
-                            name='log-out-outline'
-                            color={COLORS.primaryColor}
-                            size={WP(6)}
-                        />
+            <View style={styles.infoBoxWrapper}>
+
+            </View>
+
+            <View style={styles.menuWrapper}>
+                <TouchableRipple onPress={() => { }}>
+                    <View style={styles.menuItem}>
+                        <Icon name="heart-outline" color={COLORS.primaryColor} size={25} />
+                        <Text style={styles.menuItemText}>Your Favorites</Text>
                     </View>
-                    <View style={Styles._usernameMain}>
-                        <Text style={[Styles._nameHeading, { fontWeight: "700" }]}>Logout</Text>
+                </TouchableRipple>
+                <TouchableRipple onPress={() => { }}>
+                    <View style={styles.menuItem}>
+                        <Icon name="credit-card" color={COLORS.primaryColor} size={25} />
+                        <Text style={styles.menuItemText}>Payment</Text>
                     </View>
-                </Pressable>
+                </TouchableRipple>
+                <TouchableRipple onPress={myCustomShare}>
+                    <View style={styles.menuItem}>
+                        <Icon name="share-outline" color={COLORS.primaryColor} size={25} />
+                        <Text style={styles.menuItemText}>Tell Your Friends</Text>
+                    </View>
+                </TouchableRipple>
+                <TouchableRipple onPress={() => { }}>
+                    <View style={styles.menuItem}>
+                        <Icon name="account-check-outline" color={COLORS.primaryColor} size={25} />
+                        <Text style={styles.menuItemText}>Support</Text>
+                    </View>
+                </TouchableRipple>
+                <TouchableRipple onPress={() => { }}>
+                    <View style={styles.menuItem}>
+                        <Ionicons name="settings-outline" color={COLORS.primaryColor} size={25} />
+                        <Text style={styles.menuItemText}>Settings</Text>
+                    </View>
+                </TouchableRipple>
+                <TouchableRipple onPress={onLogout}>
+                    <View style={styles.menuItem}>
+                        <Ionicons name="log-out-outline" color={COLORS.primaryColor} size={25} />
+                        <Text style={styles.menuItemText}>Logout</Text>
+                    </View>
+                </TouchableRipple>
             </View>
         </SafeAreaView>
-    )
-}
+    );
+};
 
-const Styles = StyleSheet.create({
-    _mainContainer: {
+export default ProfileScreen;
+
+const styles = StyleSheet.create({
+    container: {
         flex: 1,
-        backgroundColor: COLORS.whiteColor
     },
-    _dpMain: {
-        width: "100%",
-        height: HP(25),
-        backgroundColor: COLORS.primaryColor,
-        justifyContent: "center",
-        alignItems: "center",
+    userInfoSection: {
+        paddingHorizontal: 30,
+        marginBottom: 25,
     },
-    _dpStyle: {
-        width: WP(40),
-        height: WP(40),
-        resizeMode: "cover"
-    },
-    _cameraBtn: {
-        width: WP(12),
-        height: WP(12),
-        backgroundColor: COLORS.whiteColor,
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: WP(50),
+    editIcon: {
         position: "absolute",
-        bottom: 10,
-        right: WP(32)
+        right: 30,
+        top: 30,
+        zIndex: 100,
     },
-    _infoMain: {
-        width: "100%",
-        height: WP(40),
-        backgroundColor: COLORS.whiteColor,
-        justifyContent: "space-around",
-        alignItems: "center",
-        paddingHorizontal: WP(2),
-        marginTop: HP(5)
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
     },
-    _infoCard: {
-        width: "100%",
-        height: "40%",
-        backgroundColor: COLORS.whiteColor,
-        flexDirection: "row",
-        borderBottomColor: COLORS.grey,
-        borderBottomWidth: 0.6,
+    caption: {
+        fontSize: 14,
+        lineHeight: 14,
+        fontWeight: '500',
     },
-    _iconMain: {
-        height: "100%",
-        width: "20%",
-        backgroundColor: COLORS.whiteColor,
-        justifyContent: "center",
-        alignItems: "center",
+    row: {
+        flexDirection: 'row',
+        marginBottom: 10,
     },
-    _usernameMain: {
-        width: "65%",
-        height: "100%",
-        backgroundColor: COLORS.whiteColor,
-        justifyContent: "center",
-        // alignItems: "center",
+    infoBoxWrapper: {
+        borderBottomColor: '#dddddd',
+        borderBottomWidth: 1,
+        borderTopColor: '#dddddd',
+        borderTopWidth: 1,
+        flexDirection: 'row',
+        height: 0,
     },
-    _editMain: {
-        width: "15%",
-        height: "100%",
-        backgroundColor: COLORS.whiteColor,
-        justifyContent: "center",
-        alignItems: "center",
+    infoBox: {
+        width: '50%',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    _nameHeading: {
-        color: COLORS.primaryColor,
-        fontSize: WP(3.5),
+    menuWrapper: {
+        marginTop: 10,
     },
-    _username: {
-        color: COLORS.lightGrey,
-        fontSize: WP(4.4)
+    menuItem: {
+        flexDirection: 'row',
+        paddingVertical: 15,
+        paddingHorizontal: 30,
     },
-})
+    menuItemText: {
+        color: '#777777',
+        marginLeft: 20,
+        fontWeight: '600',
+        fontSize: 16,
+        lineHeight: 26,
+    },
+});

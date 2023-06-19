@@ -1,15 +1,14 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, ScrollView, Text, Button, StyleSheet } from 'react-native';
-import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Bubble, GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat';
+import Feather from 'react-native-vector-icons/Feather';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { COLORS } from '../../theme/config';
-import { TextInput } from 'react-native-gesture-handler';
 import { io } from 'socket.io-client';
-import UserStore from '../../Store/UserStore';
 import ChatStore from '../../Store/ChatStore';
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import UserStore from '../../Store/UserStore';
 import { BASE_URL } from '../../api/apis';
+import { COLORS, WP } from '../../theme/config';
+
 
 
 var socket = null;
@@ -17,6 +16,14 @@ var socket = null;
 
 const ChatScreen = ({ route, navigation }) => {
 
+    const { lastMessage } = route?.params
+    const { user, token } = UserStore()
+    const { chatMessage, fetchChatMessages } = ChatStore()
+    const [messages, setMessages] = useState([]);
+
+    let userId = user?._id;
+    let roomId = lastMessage?._id
+    console.log({ lastMessage });
     const connectToChat = (userId, roomId) => {
 
         socket = io(`${BASE_URL}?userId=${userId}`);
@@ -24,11 +31,11 @@ const ChatScreen = ({ route, navigation }) => {
         socket.emit('joinChatRoom', roomId);
 
         socket.on('chatMessage', (data) => {
-
+            console.log('chatMessage', data?.user);
             if (userId !== data?.user?._id) {
-                // setMessages((previousMessages) => GiftedChat.append(previousMessages, data));
+                setMessages((previousMessages) => GiftedChat.append(previousMessages, data));
             }
-            console.log(userId + 'userId Received chat message:' + roomId, data);
+            console.log(userId + ' userId Received chat message:' + roomId, { user: data?.user?._id });
         });
 
         // Handle chat errors
@@ -38,27 +45,29 @@ const ChatScreen = ({ route, navigation }) => {
         });
 
         // Clean up the connection when the component unmounts
-        return () => {
-            socket.disconnect();
-        };
+        // return () => {
+        //     socket.disconnect();
+        // };
     };
 
-    React.useLayoutEffect(() => {
-        const routeName = getFocusedRouteNameFromRoute(route)
-        console.log(routeName, 'route name')
-        if (routeName === "Chat") {
-            navigation.setOptions({ tabBarVisible: false });
-        } else {
-            navigation.setOptions({ tabBarVisible: true });
-        }
-    })
-    const { lastMessage } = route?.params
-    const { user, token } = UserStore()
-    const { chatMessage, fetchChatMessages } = ChatStore()
-    const [messages, setMessages] = useState([]);
+    navigation.setOptions({
+        headerLeft: () => (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Pressable onPress={() => { navigation.goBack() }}>
+                    <Feather name="arrow-left" color={COLORS.blackColor} size={WP(6)} />
+                </Pressable>
+                <Pressable style={{}} onPress={() => { navigation.navigate('invhistorystack') }}>
+                    <Image source={{ uri: lastMessage?.image }}
+                        style={{ width: WP(7), height: WP(7), borderRadius: WP(30), marginHorizontal: 10, }}
+                        resizeMode='cover'
+                    />
+                </Pressable>
+                <Text style={{ color: COLORS.blackColor, fontSize: WP(4.4), fontWeight: "500" }}>{lastMessage?.title}</Text>
+            </View>
 
-    let userId = user?._id;
-    let roomId = lastMessage?._id
+        )
+    })
+
 
     useEffect(() => {
         connectToChat(userId, roomId)
@@ -81,16 +90,20 @@ const ChatScreen = ({ route, navigation }) => {
                 )
             }))
         })
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
 
     const onSend = useCallback((messages = []) => {
-        // console.log(messages);
+        console.log({ useCallbackmessages: messages[0] });
         setMessages((previousMessages) =>
             GiftedChat.append(previousMessages, messages),
         );
-        socket.emit('chatMessage', { eventId: roomId, messageData: { ...messages?.[0], message: messages?.[0]?.text } })
+        socket.emit('chatMessage', { eventId: roomId, messageData: { ...messages?.[0], message: messages?.[0]?.text, user } })
     }, []);
+
 
 
 
@@ -136,12 +149,25 @@ const ChatScreen = ({ route, navigation }) => {
         );
     }
 
+    const renderInputToolbar = (props) => {
+        return (
+            <InputToolbar
+                {...props}
+                containerStyle={styles.inputToolbarContainer}
+                primaryStyle={styles.inputToolbarPrimary}
+            />
+        );
+    };
+
     return (
         <GiftedChat
             messages={messages}
             onSend={(messages) => onSend(messages)}
             isLoadingEarlier={true}
+            showAvatarForEveryMessage
+            renderUsernameOnMessage
             user={{
+                ...user,
                 _id: userId,
             }}
             listViewProps={{
@@ -151,6 +177,7 @@ const ChatScreen = ({ route, navigation }) => {
                 }
             }}
             renderBubble={renderBubble}
+            scrollToBottom
             alwaysShowSend
             renderSend={renderSend}
             scrollToBottomComponent={scrollToBottomComponent}
@@ -166,5 +193,13 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    inputToolbarContainer: {
+        backgroundColor: '#f0f0f0',
+        borderTopWidth: 1,
+        borderTopColor: '#d0d0d0',
+    },
+    inputToolbarPrimary: {
+        backgroundColor: 'white',
     },
 });

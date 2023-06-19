@@ -42,7 +42,7 @@ export const getLat_Long = async (isAlertShow) => {
                         const currentLatitude =
                             JSON.stringify(position.coords.latitude);
                         //Setting Longitude state
-                        console.log({ currentLongitude });
+                        console.log({ currentLongitude,currentLatitude });
                         resolve({ longitude: currentLongitude, latitude: currentLatitude })
                     },
                     (error) => {

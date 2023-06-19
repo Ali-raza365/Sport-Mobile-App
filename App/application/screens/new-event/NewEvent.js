@@ -25,9 +25,11 @@ const NewEvent = ({ navigation }) => {
     const [eventImage, setEventImage] = useState(null);
     const { user, token } = UserStore();
 
-    const { fetchActivites, selectedActivity, createEventFuc, createEvent_loading, EventLocation } = EventStore();
+    const { fetchActivites,
+        setEventLocation,setActivity,
+        selectedActivity, createEventFuc, createEvent_loading, EventLocation } = EventStore();
 
-
+    console.log(EventLocation);
     const togglePickerModal = () => {
         if (showPickerModal)
             setShowPickerModal(false)
@@ -69,7 +71,7 @@ const NewEvent = ({ navigation }) => {
         if (!eventTitle) return alert('event title is required!')
         if (!eventDate) return alert('date is required!')
         if (!eventDate) return alert('time is required!')
-        if(!EventLocation) return alert('location is required!')
+        if (!EventLocation) return alert('location is required!')
         if (!selectedActivity?.name) return alert('please select sport activity for create event')
         if (!eventParti) return alert('participants is required!')
         if (!eventDes) return alert('please enter description is required')
@@ -84,15 +86,21 @@ const NewEvent = ({ navigation }) => {
             activity: { name: selectedActivity?.name, activity_id: selectedActivity?._id },
             location: {
                 name: EventLocation?.name || 'nothing',
-                coordinates: {
-                    latitude: EventLocation?.lat || 0,
-                    longitude: EventLocation?.lng || 0
-                }
+                coordinates: [
+                    EventLocation?.lng || 0,
+                    EventLocation?.lat || 0,
+                ]
             }
         }
-        createEventFuc(detail, token).then(() => {
-            // _gotoHomeNavigator(navigation)
-            navigation.navigate('home')
+        createEventFuc(detail, token).then((res) => {
+            console.log(res?.status,'createEventFuc status');
+            if(res?.status ==200){
+                setEventLocation(null)
+                setActivity(null)
+                setTimeout(() => {
+                    _gotoHomeNavigator(navigation)
+                    }, 1300);
+            }
         })
     }
 

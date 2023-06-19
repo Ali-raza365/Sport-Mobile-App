@@ -22,13 +22,22 @@ const userCtrl = {
     },
     updateUser: async (req, res) => {
         try {
-            const { fullname, email, avatar, mobile, address, role, } = req.body
+            const { fullname,username, email, avatar, mobile, address, role, } = req.body
             if (!fullname) return res.status(400).json({ msg: "Please add your full name." })
+            if (!email) return res.status(400).json({ msg: "Please add your email address." })
+            const email_user = await Users.findOne({ email })
+            if(email_user){
+                if (email_user?._id?.toString() !== req.user._id?.toString()) return res.status(400).json({ msg: "This email already exists." })
+            }
+            const username_user = !!username ? await Users.findOne({ username }):null
+            if(username_user){
+                if (username_user?._id?.toString() !== req.user._id?.toString()) return res.status(400).json({ msg: "This username already exists." })
+            }
 
-        let updatedUser =  await Users.findOneAndUpdate({ _id: req.user._id }, {
-                fullname, email, avatar, address, mobile, role,
-            },{ new: true }).select('-password')
-            res.json({ msg: "Update Success!",user:updatedUser })
+            let updatedUser = await Users.findOneAndUpdate({ _id: req.user._id }, {
+                username,fullname, email, avatar: req?.imageUrl || avatar, address, mobile, role,
+            }, { new: true }).select('-password')
+            res.json({ msg: "Profile Updated Successfully", user: updatedUser })
 
         } catch (err) {
             return res.status(500).json({ msg: err.message })

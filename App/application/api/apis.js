@@ -72,6 +72,31 @@ export const GET_USER_INFO_API = (token) => {
     })
 }
 
+// UPDATE USER INFO
+export const UPDATE_USER_INFO_API = (token,detail) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/user',
+                method: 'POST',
+                data: detail,
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    Authorization: "Bearer " + token,
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
 
 
 // GET ALL CATEGORY API
@@ -251,6 +276,29 @@ export const SEARCH_EVENT_API = ({ text }, token) => {
                 headers: {
                     Authorization: "Bearer " + token,
                     "Content-Type": 'application/json',
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+export const GET_EVENTS_BY_LOCATION_API = (token, details) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/event/location',
+                method: 'POST',
+                data: details,
+                headers: {
+                    Authorization: "Bearer " + token,
                 }
             })
                 .then((response) => {

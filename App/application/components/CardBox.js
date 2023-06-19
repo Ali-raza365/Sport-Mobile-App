@@ -11,12 +11,14 @@ export default function CardBox({
     OnHeartPress = () => { },
     location,
     onPress = () => { },
+    hideFavorite,
+    contentContainerStyle,
 }) {
 
 
 
     return (
-        <TouchableOpacity style={Styles._mainContainer} activeOpacity={0.7} onPress={onPress}>
+        <TouchableOpacity style={[Styles._mainContainer,contentContainerStyle]} activeOpacity={0.7} onPress={onPress}>
             <View style={Styles._imageMain}>
                 <Image
                     style={Styles._image}
@@ -26,7 +28,8 @@ export default function CardBox({
             <View style={Styles._dataMain}>
                 <View style={Styles._sectionOne}>
                     <Text numberOfLines={2} style={Styles._detailText}>{details}</Text>
-                    <TouchableOpacity onPress={OnHeartPress}>
+                    {!hideFavorite ?
+                      <TouchableOpacity onPress={OnHeartPress}>
                         {isfav ?
                             <Ionicons
                                 name='heart'
@@ -40,6 +43,7 @@ export default function CardBox({
                             />
                         }
                     </TouchableOpacity>
+                    :<Text/>}
 
                 </View>
                 <View style={Styles._sectionTwo}>
@@ -78,16 +82,18 @@ const Styles = StyleSheet.create({
     _sectionOne: {
         width: "100%",
         height: "60%",
+        paddingHorizontal:WP(1),
         backgroundColor: COLORS.whiteColor,
         flexDirection: "row",
-        justifyContent: "space-around",
+        justifyContent: "space-between",
         paddingTop: WP(1)
     },
     _sectionTwo: {
         width: "100%",
         height: "30%",
         backgroundColor: COLORS.whiteColor,
-        paddingLeft: WP(1)
+        paddingLeft: WP(1),
+        marginBottom:WP(2)
     },
     _sectionThree: {
         width: "100%",

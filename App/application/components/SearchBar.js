@@ -29,6 +29,7 @@ const SearchBar = ({
     keyboard,
     maxLength,
     onIconPress,
+    ...props
 }) => {
     return (
         <View
@@ -52,6 +53,7 @@ const SearchBar = ({
             />
 
             <TextInput
+            {...props}
                 selectionColor={COLORS.secondaryColor}
                 editable={editable || edit}
                 placeholder={placeholder}

@@ -9,11 +9,11 @@ export const isValidName = (name) => {
     return /^[a-z ]+$/gi.test(name);
 };
 export const isValidUsername = (text) => {
-    return /^[a-z0-9]+$/gi.test(text);
+    return /^[a-zA-Z0-9_]{3,16}$/gi.test(text);
 };
 
 export const isValidNumber = (text) => {
-    return /^[0-9 ]+$/gi.test(text);
+    return /^[0-9]{10}$/gi.test(text);
 };
 
 export const isValidAmount = (text) => {

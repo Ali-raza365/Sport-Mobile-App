@@ -91,7 +91,9 @@ export default function Login({ navigation }) {
                         <LabelInput
                             placeholder={'Enter your Email'}
                             label={'Email'}
+                            autoCapitalize='none'
                             value={email}
+                            keyboard='email-address'
                             Icon={<MaterialIcons style={[Styles._icon]} size={20} bold color={COLORS.primaryColor} name="done" />}
                             IconShow={true}
                             onChangeText={val => setEmail(val)}

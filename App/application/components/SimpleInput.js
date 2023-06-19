@@ -10,6 +10,7 @@ export default function SimpleInput({ lable, style, Icon, editable, placeholder,
             <View style={Styles._inputContainer}>
                 <TextInput
                     style={[Styles._input,]}
+                    placeholderTextColor={"#cccccc"}
                     placeholder={placeholder}
                     secureTextEntry={secureTextEntry}
                     value={value}
@@ -50,6 +51,7 @@ const Styles = StyleSheet.create({
         fontSize: WP(4),
         height: HP(5.6),
       flex:1,
+      color:COLORS.blackColor,
     },
     _discription: {
         color: COLORS.blackColor,

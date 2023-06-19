@@ -2,11 +2,11 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import React from 'react'
 import { COLORS, FONT_SEMIBOLD, HP, WP } from '../theme/config'
 
-export default function Button({ lable, disable, onPress, styles, lableSty }) {
+export default function Button({ lable, backgroundColor, disable, onPress, styles, lableSty }) {
      return (
           <TouchableOpacity
                disabled={disable}
-               style={[Styles._mainContainer, styles]}
+               style={[Styles._mainContainer, styles, backgroundColor ? { backgroundColor } : {}]}
                activeOpacity={0.8}
                onPress={onPress}
           >

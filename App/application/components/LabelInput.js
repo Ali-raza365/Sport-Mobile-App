@@ -1,6 +1,5 @@
 import React from 'react';
-import {StyleSheet, TextInput, Text, View, I18nManager} from 'react-native';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import { StyleSheet, TouchableOpacity,TextInput, Text, View, I18nManager } from 'react-native';
 import {
   COLORS,
   FONT,
@@ -29,13 +28,14 @@ const LabelInput = ({
   keyboard,
   maxLength,
   onIconPress,
+  ...props
 }) => {
   return (
     <View style={containerStyle}>
       <Text
         style={[
           Styles._label,
-          {color: edit == false ? COLORS.blackColor : COLORS.blackColor},
+          { color: edit == false ? COLORS.blackColor : COLORS.blackColor },
         ]}>
         {label} {stric ? '*' : ''}
       </Text>
@@ -49,6 +49,7 @@ const LabelInput = ({
           alignItems: 'center',
         }}>
         <TextInput
+          {...props}
           selectionColor={COLORS.secondaryColor}
           editable={editable || edit}
           placeholder={placeholder}
@@ -60,8 +61,8 @@ const LabelInput = ({
             keyboard == 'default' || keyboard == null || keyboard == undefined
               ? 'default'
               : keyboard
-              ? keyboard
-              : 'number-pad'
+                ? keyboard
+                : 'number-pad'
           }
           onChangeText={onChangeText}
           style={[
@@ -108,7 +109,7 @@ const Styles = StyleSheet.create({
     textAlign: 'left',
   },
   iconContainer: {
-    right:10,
+    right: 10,
   },
   _icon: {
     fontSize: 20,

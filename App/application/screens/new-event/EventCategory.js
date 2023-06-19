@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { FlatList, I18nManager, SafeAreaView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import AppBar from '../../components/AppBar';
 import {
     COLORS, RADIUS, SPACING_PERCENT, TEXT_SIZES, WP
 } from '../../theme/config';
 import EventStore from '../../Store/EventStore';
+import { AppBar } from '../../components';
 
 // create a component
 const EventCategory = ({ navigation }) => {

@@ -6,6 +6,7 @@ import Splash from '../screens/Splash/Splash';
 // import ONBoard from '../screens/OnBoard/ONBoard';
 import AuthStack from './AuthSatck/AuthStack';
 import HomebottomBar from './HomeStack/HomebottomBar';
+import { EditProfileScreen } from '../screens';
 // import HomebottomBar from './HomeStack/HomebottomBar';
 
 
@@ -47,6 +48,14 @@ export default function Root() {
                 component={HomebottomBar}
                 options={{
                     headerShown: false
+                }}
+            />
+             <Stack.Screen
+                name='editProfile'
+                component={EditProfileScreen}
+                options={{
+                    headerShown: true,
+                    headerTitle:'Edit Your Prfile',
                 }}
             />
 

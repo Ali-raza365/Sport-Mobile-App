@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet, FlatList, Pressable } from 'react-native';
+import { FlatList, Image, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, WP } from '../../theme/config';
+import { useIsFocused } from '@react-navigation/native';
 import ChatStore from '../../Store/ChatStore';
 import UserStore from '../../Store/UserStore';
+import { COLORS, WP } from '../../theme/config';
 
 const Messages = [
     {
@@ -56,11 +55,13 @@ const Messages = [
 const MessagesScreen = ({ navigation }) => {
 
     const { chatList, fetchChatList } = ChatStore()
+    const IsFocused = useIsFocused()
     const { token } = UserStore()
 
     useEffect(() => {
-        fetchChatList('_', token)
-    }, [])
+        if (IsFocused) fetchChatList('_', token)
+
+    }, [IsFocused])
 
     const renderItem = ({ item }) => (
         <Pressable style={styles?.card} onPress={() => navigation.navigate('Chat', { lastMessage: item })}>

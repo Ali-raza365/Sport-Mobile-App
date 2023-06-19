@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { FlatList, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import IonIcon from 'react-native-vector-icons/Ionicons';
 import EventStore from '../../Store/EventStore';
 import UserStore from '../../Store/UserStore';
@@ -7,6 +7,7 @@ import { AppBar, CardBox, Category, Loader } from '../../components';
 import { COLORS, HP, RADIUS, SPACING_PERCENT, TEXT_SIZES, WP } from '../../theme/config';
 import { ActivityIndicator } from 'react-native-paper';
 import { getLat_Long } from '../../utils/GetIPAddress';
+import { useIsFocused } from '@react-navigation/native';
 
 const Home = ({ navigation }) => {
 
@@ -16,10 +17,10 @@ const Home = ({ navigation }) => {
 
     const keyExtractor = (item, index) => `${item._id}${index}`
     const { Events, Recommandedevents, setActivityEvents, Activites, fetchEvents,
-         fetchRecommendedEvents, fetchActivites,AddEventToFavorite,RemoveEventFromFavorite } = EventStore();
+        fetchRecommendedEvents, fetchActivites, AddEventToFavorite, RemoveEventFromFavorite } = EventStore();
     const { user, token } = UserStore();
 
-    // console.log(getLat_Long())
+    const IsFocused = useIsFocused()
 
 
     let array = [
@@ -160,23 +161,39 @@ const Home = ({ navigation }) => {
         },
     ]
 
-    const location = {
-        radius: 5,
-        longitude: 30.443902444762696,
-        latitude: -84.27326978424058
+    var location = {
+        radius: 10,
+        // longitude: 30.443902,
+        // latitude: -84.27327,
     }
 
+    useEffect(() => { fetchActivites(token) }, [])
     useEffect(() => {
-        fetchActivites(token)
-        fetchEvents(location, token).then((ev) => {
-            setLoading(false)
-            setEvents(ev || Events || [])
-        })
-        fetchRecommendedEvents(location, token).then((ev) => {
-            setLoading(false)
-            setRecEvents(ev || Recommandedevents || [])
-        })
-    }, [])
+        if (IsFocused) {
+            getLat_Long().then((res) => {
+                location = { ...location, ...res };
+                console.log({ location });
+                if (location?.longitude) {
+                    fetchEvents(location, token).then((ev) => {
+                        setLoading(false)
+                        setEvents(ev || Events || [])
+                    })
+                    fetchRecommendedEvents(location, token).then((ev) => {
+                        setLoading(false)
+                        setRecEvents(ev || Recommandedevents || [])
+                    })
+                } else {
+                    alert(`Location Services Disabled \nPlease enable location services for this app in Settings.`)
+                    setLoading(false)
+                }
+
+            })
+        }
+
+
+
+    }, [IsFocused])
+
     const renderItem = ({ item, index }) => {
         return (
             <CardBox
@@ -199,10 +216,10 @@ const Home = ({ navigation }) => {
         const eventIndex = updatedArray.findIndex(event => event._id === event_id);
         if (eventIndex !== -1) {
             console.log(updatedArray[eventIndex]?.isFavorite);
-            if(!updatedArray[eventIndex]?.isFavorite){
-                AddEventToFavorite(event_id,token)
-            }else{
-                RemoveEventFromFavorite(event_id,token)
+            if (!updatedArray[eventIndex]?.isFavorite) {
+                AddEventToFavorite(event_id, token)
+            } else {
+                RemoveEventFromFavorite(event_id, token)
 
             }
             updatedArray[eventIndex] = {
@@ -210,9 +227,32 @@ const Home = ({ navigation }) => {
                 isFavorite: !updatedArray[eventIndex]?.isFavorite,
             };
             setEvents(updatedArray)
-          
+
         }
     }
+
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        getLat_Long().then((res) => {
+            location = { ...location, ...res };
+            console.log({ location });
+            if (location?.longitude) {
+                fetchEvents(location, token).then((ev) => {
+                    setEvents(ev || Events || [])
+                })
+                fetchRecommendedEvents(location, token).then((ev) => {
+                    setRecEvents(ev || Recommandedevents || [])
+                })
+            } else {
+                alert(`Location Services Disabled \nPlease enable location services for this app in Settings.`)
+                setLoading(false)
+            }
+
+        })
+        setRefreshing(false);
+    };
 
 
 
@@ -229,9 +269,11 @@ const Home = ({ navigation }) => {
             {loading ? (
                 <ActivityIndicator size="large" color={COLORS.primaryColor} />
             ) : (
-                <ScrollView>
-
-
+                <ScrollView
+                    refreshControl={
+                        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                    }
+                >
                     <View style={[styles._sectionThree, { paddingBottom: 0 }]}>
                         <Text style={{ fontSize: WP(4), fontWeight: '600', paddingVertical: WP(3), padding: WP(2) }}>Recommended Activities  </Text>
                         <FlatList
@@ -377,7 +419,6 @@ const styles = StyleSheet.create({
     },
     _sectionThree: {
         width: "100%",
-        // alignItems: "center",
         padding: WP(2),
         paddingBottom: WP(5)
     },

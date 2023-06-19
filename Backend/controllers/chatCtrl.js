@@ -13,15 +13,6 @@ const chatCtrl = {
                 { $match: { participants: { $in: [userId] } } },
                 { $addFields: { chat: { $reverseArray: "$chat" } } },
                 { $addFields: { lastMessage: { $arrayElemAt: ["$chat", 0] } } },
-                // {
-                //     $lookup: { // this code for user ref
-                //         from: "users", // Replace "users" with the actual collection name for users
-                //         localField: "lastMessage.user",
-                //         foreignField: "_id",
-                //         as: "lastMessage.user"
-                //     }
-                // },
-                { $unwind: "$lastMessage.user" },
                 {
                     $sort: {
                         "lastMessage.createdAt": -1,

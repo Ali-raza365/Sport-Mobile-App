@@ -38,7 +38,7 @@ const SocketServer = (socket,io) => {
             await event.save();
 
             // Emit the chat message to all users in the event's chat room
-            io.to(`event:${eventId}`).emit('chatMessage', { ...messageData, user: socket.userId });
+            io.to(`event:${eventId}`).emit('chatMessage', { ...messageData });
         } catch (error) {
             console.error('Error sending chat message:', error);
             socket.emit('chatError', 'Error sending chat message');

@@ -44,7 +44,7 @@ const EventDetail = ({ route, navigation }) => {
                     <View style={styles._infoContainer}>
                         <Text style={styles._typeText}>{!!detail?.activity ? detail?.activity?.name : ''}</Text>
                         <Text style={styles._heading}>{detail?.name}</Text>
-                        <Text style={styles._priceText}>Rs {detail?.total_participants} /Person</Text>
+                        <Text style={styles._priceText}>{detail?.total_participants} Participants</Text>
 
                         <View style={styles._dateLocationContainer}>
                             <View style={styles._row}>
@@ -67,6 +67,7 @@ const EventDetail = ({ route, navigation }) => {
                         </View>
 
                         <Button
+                            backgroundColor={isParticipated ? COLORS.darkGrey : COLORS.primaryColor}
                             onPress={onParticipate}
                             lable={isParticipated ? "Already Participated" : "Participate"}
                             disable={isParticipated}

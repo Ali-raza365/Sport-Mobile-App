@@ -9,19 +9,22 @@ const eventCtrl = {
         try {
             const currentdate = new Date();
             const { organizer, activity, title, description, max_participants, date, time, location } = req.body
-            const loc = {
-                name: 'Sample 5 Location',
-                coordinates: [
-                    30.443902444762696, -84.27326978424058
-                ]
-            } //!!location ? JSON.parse(location) : null
-            const act = {
-                name: 'Yoga',
-                activity_id: '64726219c05329af74705321'
-            }
+            console.log(location);
+            const loc = !!location ? JSON.parse(location) : null
+            // {
+            //     name: 'Sample 5 Location',
+            //     coordinates: [
+            //         30.443902444762696, -84.27326978424058
+            //     ]
+            // } 
+            const act = !!activity ? JSON.parse(activity) : null;
+            //  {
+            //     name: 'Yoga',
+            //     activity_id: '64726219c05329af74705321'
+            // }
 
 
-            //!!activity ? JSON.parse(activity) : null
+
             if (!req?.user?._id) return res.status(400).json({ msg: "invalid Token!" })
 
             const newEvent = new Event({
@@ -175,24 +178,30 @@ const eventCtrl = {
         const radiusInKm = req.body.radius || 5;
         const longitude = parseFloat(req.body.longitude);
         const latitude = parseFloat(req.body.latitude);
-
+        console.log({ Qury: req.body });
         if (isNaN(longitude) || isNaN(latitude)) {
             return res.status(400).json({ message: 'Invalid coordinates' });
         }
         try {
-            const events = await Event
-                .find({
-                    location: {
-                        $near: {
-                            $geometry: {
-                                type: "Point",
-                                coordinates: [longitude, latitude],
-                            },
-                            $maxDistance: (radiusInKm * 10000),
-                        },
-                    },
-                }).sort({ createdAt: -1 })
-
+            const events = await Event.find({
+                location: {
+                  $geoWithin: {
+                    $centerSphere: [[longitude, latitude], radiusInKm / 6371] // Convert radius to radians
+                  }
+                }
+              })
+                // .find({
+                //     location: {
+                //         $near: {
+                //             $geometry: {
+                //                 type: "Point",
+                //                 coordinates: [longitude, latitude],
+                //             },
+                //             $maxDistance: (radiusInKm * 10000),
+                //         },
+                //     },
+                // }).sort({ createdAt: -1 })
+            console.log(events);
             if (!events) return res.status(400).json({ msg: "No events found!" })
             const eventList = await CheckEvents(events, req?.user?._id)
             res.json({ events: eventList })
@@ -248,7 +257,7 @@ const eventCtrl = {
                             type: "Point",
                             coordinates: [longitude, latitude],
                         },
-                        $maxDistance: radiusInKm * 1000, // Convert km to meters
+                        $maxDistance: (radiusInKm * 10000), // Convert km to meters
                     },
                 },
             }
@@ -277,7 +286,7 @@ const eventCtrl = {
             // if (!events || events.length === 0) {
             //     return res.status(400).json({ msg: "No events found!" });
             // }
-
+console.log(events);
             res.json({ events });
         } catch (err) {
             return res.status(500).json({ msg: err });

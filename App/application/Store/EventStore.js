@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ADD_FAVOURITE_EVENTS_API, CREATE_EVENT_API, GET_ACTIVITY_API, GET_EVENTS_API, GET_RECOMMENDED_EVENTS_API, PARTICIPATE_EVENT_API, REMOVE_FAVOURITE_EVENTS_API, SEARCH_EVENT_API } from "../api/apis";
+import { ADD_FAVOURITE_EVENTS_API, CREATE_EVENT_API, GET_ACTIVITY_API, GET_EVENTS_API, GET_EVENTS_BY_LOCATION_API, GET_RECOMMENDED_EVENTS_API, PARTICIPATE_EVENT_API, REMOVE_FAVOURITE_EVENTS_API, SEARCH_EVENT_API } from "../api/apis";
 import { _gotoAuthStack, _gotoHomeNavigator } from "../navigation/navigationServcies";
 import { handleAxiosError } from "../utils/ErrorHandler";
 
@@ -7,6 +7,7 @@ const EventStore = create((set) => ({
 
     Activites: [],
     Events: [],
+    nearMeEvents:[],
     EventLocation:null,
     Recommandedevents: [],
     Searchevents: null,
@@ -89,6 +90,7 @@ const EventStore = create((set) => ({
                 set({ createEvent_loading: false })
 
             }
+            return resp
         } catch (error) {
             set({ createEvent_loading: false })
             handleAxiosError(error)
@@ -142,7 +144,21 @@ const EventStore = create((set) => ({
         } catch (error) {
             handleAxiosError(error)
         }
-    }
+    },
+    fetchEventsByLocation: async (data, token) => {
+        try {
+            let resp = await GET_EVENTS_BY_LOCATION_API(data, token)
+            // console.log(resp.data) 
+            if (resp?.data) {
+                set({ nearMeEvents: resp?.data?.events, })
+            } else {
+                handleAxiosError(resp.data)
+            }
+            return resp?.data?.events ||null
+        } catch (error) {
+            handleAxiosError(error)
+        }
+    },
 
 }))
 

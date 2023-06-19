@@ -4,6 +4,7 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import React from 'react';
@@ -31,6 +32,7 @@ const SearchScr = ({ navigation }) => {
   const { user, token } = UserStore();
 
   const handleTextSubmit = () => {
+    if(!searchQuery) return
     FetchSearchEvents({ text: searchQuery }, token)
   };
 
@@ -80,7 +82,10 @@ const SearchScr = ({ navigation }) => {
   const SearchComp = ({ item, index }) => {
     const event = new Date(item?.time);
     return (
-      <View style={styles.mainContainer}>
+      <TouchableOpacity 
+    activeOpacity={0.5}
+      onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
+      style={styles.mainContainer}>
         <View style={styles.imageContainer}>
           <Image
             source={{ uri: item?.image }}
@@ -109,7 +114,7 @@ const SearchScr = ({ navigation }) => {
             size={WP(5)}
           /> */}
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -119,13 +124,15 @@ const SearchScr = ({ navigation }) => {
       <View style={styles.headerContainer}>
         <SearchBar
           placeholder="Search"
+          returnKeyType="search" 
           handleTextSubmit={handleTextSubmit}
           onChangeText={onChangeSearch}
           value={searchQuery}
         />
-        <MatCommIcons
-          name="heart-plus-outline"
+        <Ionicons
+          name="md-search"
           size={WP(8)}
+          onPress={handleTextSubmit}
           color={COLORS.primaryColor}
         />
       </View>

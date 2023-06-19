@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     Animated, Dimensions, Image, Platform, StatusBar, StyleSheet,
     Text, TouchableOpacity, View
@@ -8,6 +8,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, WP } from '../../theme/config';
 
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import { getLat_Long } from '../../utils/GetIPAddress';
+import EventStore from '../../Store/EventStore';
+import UserStore from '../../Store/UserStore';
 
 
 const { width, height } = Dimensions.get("window");
@@ -17,112 +20,148 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 const ExploreScreen = ({ navigation }) => {
 
+    var location = {
+        latitudeDelta: 0.04864195044303443,
+        longitudeDelta: 0.040142817690068,
+    }
+    const { nearMeEvents, fetchEventsByLocation } = EventStore()
+    const [currentLocation, setCurrentLocation] = useState(location)
+    const { token } = UserStore()
+console.log({currentLocation});
+    // const initialMapState = {
+    //     markers: [
+    //         {
+    //             coordinate: {
+    //                 latitude: 22.6293867,
+    //                 longitude: 88.4354486,
+    //             },
+    //             title: "609 S State ST. - Lot ",
+    //             description: "This is the best food place",
+    //             // image: require('../asserts/location-pin.png'),
+    //             rating: 4,
+    //             reviews: 99,
+    //         },
+    //         {
+    //             coordinate: {
+    //                 latitude: 22.6345648,
+    //                 longitude: 88.4377279,
+    //             },
+    //             title: "101 S Halsted - Lot",
+    //             description: "This is the second best food place",
+    //             // image: require('../asserts/location-pin.png'),
+    //             rating: 5,
+    //             reviews: 102,
+    //             currentLocation: true
+    //         },
+    //         {
+    //             coordinate: {
+    //                 latitude: 22.6281662,
+    //                 longitude: 88.4410113,
+    //             },
+    //             title: "Third Amazing Food Place",
+    //             description: "This is the third best food place",
+    //             // image: require('../asserts/location-pin.png'),
+    //             rating: 3,
+    //             reviews: 220,
+    //         },
+    //         {
+    //             coordinate: {
+    //                 latitude: 22.6341137,
+    //                 longitude: 88.4497463,
+    //             },
+    //             title: "Fourth Amazing Food Place",
+    //             description: "This is the fourth best food place",
+    //             // image: require('../asserts/location-pin.png'),
+    //             rating: 4,
+    //             reviews: 48,
+    //         },
+    //         {
+    //             coordinate: {
+    //                 latitude: 22.6292757,
+    //                 longitude: 88.444781,
+    //             },
+    //             title: "Fifth Amazing Food Place",
+    //             description: "This is the fifth best food place",
+    //             // image: require('../asserts/location-pin.png'),
+    //             rating: 4,
+    //             reviews: 178,
+    //         },
+    //     ],
 
-    const initialMapState = {
-        markers: [
-            {
-                coordinate: {
-                    latitude: 22.6293867,
-                    longitude: 88.4354486,
-                },
-                title: "609 S State ST. - Lot ",
-                description: "This is the best food place",
-                // image: require('../asserts/location-pin.png'),
-                rating: 4,
-                reviews: 99,
-            },
-            {
-                coordinate: {
-                    latitude: 22.6345648,
-                    longitude: 88.4377279,
-                },
-                title: "101 S Halsted - Lot",
-                description: "This is the second best food place",
-                // image: require('../asserts/location-pin.png'),
-                rating: 5,
-                reviews: 102,
-                currentLocation: true
-            },
-            {
-                coordinate: {
-                    latitude: 22.6281662,
-                    longitude: 88.4410113,
-                },
-                title: "Third Amazing Food Place",
-                description: "This is the third best food place",
-                // image: require('../asserts/location-pin.png'),
-                rating: 3,
-                reviews: 220,
-            },
-            {
-                coordinate: {
-                    latitude: 22.6341137,
-                    longitude: 88.4497463,
-                },
-                title: "Fourth Amazing Food Place",
-                description: "This is the fourth best food place",
-                // image: require('../asserts/location-pin.png'),
-                rating: 4,
-                reviews: 48,
-            },
-            {
-                coordinate: {
-                    latitude: 22.6292757,
-                    longitude: 88.444781,
-                },
-                title: "Fifth Amazing Food Place",
-                description: "This is the fifth best food place",
-                // image: require('../asserts/location-pin.png'),
-                rating: 4,
-                reviews: 178,
-            },
-        ],
+    //     region: {
+    //         latitude: 22.62938671242907,
+    //         longitude: 88.4354486029795,
+    //         latitudeDelta: 0.04864195044303443,
+    //         longitudeDelta: 0.040142817690068,
+    //     },
+    //     currentLocation: {
 
-        region: {
-            latitude: 22.62938671242907,
-            longitude: 88.4354486029795,
-            latitudeDelta: 0.04864195044303443,
-            longitudeDelta: 0.040142817690068,
-        },
-        currentLocation: {
+    //         latitude: 22.6422837,
+    //         longitude: 88.444781,
 
-            latitude: 22.6422837,
-            longitude: 88.444781,
-
-        }
-    };
-    const [state, setState] = React.useState(initialMapState);
+    //     }
+    // };
+    // const [state, setState] = React.useState(initialMapState);
+    const [isLoading, setisLoading] = React.useState(false);
     let mapIndex = 0;
     let mapAnimation = new Animated.Value(0);
 
-    useEffect(() => {
-        mapAnimation.addListener(({ value }) => {
-            let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
-            if (index >= state.markers.length) {
-                index = state.markers.length - 1;
-            }
-            if (index <= 0) {
-                index = 0;
-            }
-            clearTimeout(regionTimeout);
-            const regionTimeout = setTimeout(() => {
-                if (mapIndex !== index) {
-                    mapIndex = index;
-                    const { coordinate } = state.markers[index];
-                    _map.current.animateToRegion(
-                        {
-                            ...coordinate,
-                            latitudeDelta: state.region.latitudeDelta,
-                            longitudeDelta: state.region.longitudeDelta,
-                        },
-                        350
-                    );
-                }
-            }, 10);
-        });
-    });
+    const fetchEvents = async (token, location) => {
+        setisLoading(false)
+        let resp = await fetchEventsByLocation(token, location)
+        setisLoading(true)
 
-    const interpolations = state.markers.map((marker, index) => {
+
+    }
+    // console.log({nearMeEvents});
+
+    useEffect(() => {
+        getLat_Long().then((res) => {
+            location = { radius: 100, ...res };
+            setCurrentLocation({ ...currentLocation,...res, })
+            fetchEvents(token, location)
+        })
+
+    }, [])
+
+    useEffect(() => {
+        if (isLoading) {
+            mapAnimation.addListener(({ value }) => {
+                let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+                if (index >= nearMeEvents?.length) {
+                    index = nearMeEvents?.length - 1;
+                }
+                if (index <= 0) {
+                    index = 0;
+                }
+                clearTimeout(regionTimeout);
+                const regionTimeout = setTimeout(() => {
+                    if (mapIndex !== index) {
+                        mapIndex = index;
+                        const { location } = nearMeEvents?.[index];
+
+                        let lat = location?.coordinates?.[1] || null;
+                        let long = location?.coordinates?.[0] || null;
+
+                        _map.current.animateToRegion(
+                            {
+                                latitude: lat,
+                                longitude: long,
+                                latitudeDelta: 0.04864195044303443,
+                                longitudeDelta: 0.040142817690068,
+                            },
+                            350
+                        );
+                    }
+                }, 10);
+            });
+        }
+        return () => {
+            mapAnimation.removeAllListeners()
+        }
+    }, [isLoading]);
+
+    const interpolations = nearMeEvents.map((marker, index) => {
         const inputRange = [
             (index - 1) * CARD_WIDTH,
             index * CARD_WIDTH,
@@ -149,26 +188,34 @@ const ExploreScreen = ({ navigation }) => {
         _scrollView.current.scrollTo({ x: x, y: 0, animated: true });
     }
 
+
+
     const _map = React.useRef(null);
     const _scrollView = React.useRef(null);
 
     const renderMarkers = () => {
-        return state.markers.map((marker, index) => {
+        return nearMeEvents.map((marker, index) => {
+            // console.log(marker?.location?.coordinates);
+            let cordinate = {
+
+                latitude: marker?.location?.coordinates?.[1] || null,
+                longitude: marker?.location?.coordinates?.[0] || null,
+            }
             const scaleStyle = {
                 transform: [
                     {
-                        scale: interpolations[index].scale,
+                        scale: interpolations[index]?.scale,
                     },
                 ],
             };
             return (
-                <View>
-                    <Marker key={index} coordinate={marker.coordinate} onPress={(e) => onMarkerPress(e)}>
+                <View key={index}>
+                    <Marker key={index} coordinate={cordinate} onPress={(e) => onMarkerPress(e)}>
                         <Animated.View style={[styles.markerWrap]}>
                             <Animated.Image
-                                source={{ uri: 'https://images.unsplash.com/photo-1659523826599-2176e7b0434d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGJhc2tldGJhbGwlMjB0b3VybmFtZW50fGVufDB8fDB8fHww&auto=format&fit=crop&w=800&q=60' }}
+                                source={{ uri: marker?.image }}
                                 style={[styles.marker, scaleStyle]}
-                            // resizeMode="cover" 
+                                resizeMode="cover"
                             />
                         </Animated.View>
                     </Marker>
@@ -228,14 +275,14 @@ const ExploreScreen = ({ navigation }) => {
 
     return (
         <SafeAreaView style={{ flex: 1 }}>
-            <View style={styles.container}>
+        {currentLocation?.longitude ? <View style={styles.container}>
                 <MapView
                     ref={_map}
-                    initialRegion={state.region}
+                    initialRegion={currentLocation}
                     style={styles.container}
                     provider={PROVIDER_GOOGLE}
                 >
-                    {renderMarkers()}
+                    {nearMeEvents?.length ? renderMarkers() : null}
                 </MapView>
                 <View style={styles.header}>
                     <StatusBar backgroundColor="#000" />
@@ -293,11 +340,11 @@ const ExploreScreen = ({ navigation }) => {
                         { useNativeDriver: true }
                     )}
                 >
-                    {state.markers.map((item, index) => (
+                    {nearMeEvents?.length ? nearMeEvents.map((item, index) => (
                         <MarkerCard key={index} detail={item} />
-                    ))}
+                    )) : null}
                 </Animated.ScrollView>
-            </View>
+            </View>:null}
         </SafeAreaView>
     );
 };

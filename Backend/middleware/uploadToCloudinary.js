@@ -14,12 +14,14 @@ const upload = multer({ storage: storage });
 
 const uploadToCloudinary = (req, res, next) => {
     upload.single('image')(req, res, async (err) => {
+        console.log(req.file);
         if (err) {
             return res.status(500).json({ message: 'Image upload failed.' });
         }
 
         if (!req.file) {
-            return res.status(400).json({ message: 'No image file provided.' });
+            return next();
+            // return res.status(400).json({ message: 'No image file provided.' });
         }
 
         try {

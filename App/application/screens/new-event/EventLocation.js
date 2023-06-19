@@ -121,7 +121,7 @@ export default function EventLocation({ navigation }) {
             var location = json.results[0].address_components[0];
             var country = json.results[0].formatted_address;
             setaddress(country)
-            setCountry(location)
+            // setCountry(location)
 
             const commaIndex = country.indexOf(',');
 
@@ -168,8 +168,8 @@ export default function EventLocation({ navigation }) {
             <Loader isVisible={Loading} />
 
             <GooglePlacesAutocomplete
-                styles={{ container: { position: 'absolute', zIndex: 999, top: HP(8), alignSelf: 'center', width: '80%' } }}
-                placeholder='Search'
+                styles={{ container: { position: 'absolute', zIndex: 100, left: WP(13), top: HP(4.5), alignSelf: 'center', width: '80%', color: "#000" } }}
+                placeholder='Search Location'
                 fetchDetails={true}
                 onPress={(data, details = null,) => {
                     // 'details' is provided when fetchDetails = true
@@ -278,7 +278,7 @@ const styles = StyleSheet.create({
     innerCircle: {
         position: 'absolute',
         top: WP(10),
-        left: WP(6),
+        left: WP(2),
         width: WP(10),
         height: WP(10),
         borderRadius: WP(10),

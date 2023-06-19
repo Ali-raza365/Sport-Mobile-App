@@ -17,6 +17,11 @@ import ChatList from "./chat/ChatList";
 import Chat from "./chat/Chat";
 
 
+import EditProfileScreen from "./Settings/EditProfileScreen";
+
+
+
+
 
 export {
 
@@ -35,5 +40,7 @@ export {
     Chat,
     MapScreen,
 
+
+    EditProfileScreen
 };
 

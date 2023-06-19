@@ -35,6 +35,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Allow access to the camera to capture photos</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+    <string>Allow access to the photo library to select images.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This App needs to Access your location</string>
      <key>NSLocationWhenInUseUsageDescription</key>
