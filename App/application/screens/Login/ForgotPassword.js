@@ -1,74 +1,123 @@
-import React from 'react'
-import { Image, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import IonIcons from "react-native-vector-icons/Ionicons"
-import { Button, LabelInput } from '../../components'
-import { COLORS, FONT, FONT_BOLD, FONT_MEDIUM, FONT_SEMIBOLD, IMAGES, SPACING_PERCENT, TEXT_SIZES, WP } from '../../theme/config'
 
-export default function ForgotPassword({ navigation }) {
+import React from 'react';
+import {
+     Pressable,
+     StyleSheet,
+     Text,
+     View
+} from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Feather from 'react-native-vector-icons/Feather';
+import SvgIcon from '../../assets/SvgIcon';
+import { Button, LabelInput } from '../../components';
+import { COLORS, SPACING_PERCENT, WP } from '../../theme/config';
 
+const ForgotPasswordScreen = ({ navigation }) => {
 
+     const forgotPassword = () => {
+          
+          navigation.navigate('OTP')
+     }
      return (
-          <SafeAreaView style={Styles._mainContainer}>
-               {/* <Loader
-                    isVisible={Loading}
-               /> */}
-               <ScrollView contentContainerStyle={{
-                    alignItems: "center",
-                    padding: WP(5),
-                    // backgroundColor:'cyan'
-               }}>
-                    <View style={{ width: '100%' }}>
-                         <Text style={Styles._textMain}>Please enter your email to reset password</Text>
-
-                         <View style={Styles._inputContainer}>
-                              <LabelInput
-                                   placeholder={"Email"}
-                                   // label={'Email'}
-                                   // inputStyle={{ //fontFamily: FONT , paddingTop:0,}}
-                              />
-                         </View>
-                         <Button lable={'Reset password'} styles={{ width: '100%', marginTop: WP(SPACING_PERCENT) }} />
+          <SafeAreaView style={{ flex: 1 }}>
+               <KeyboardAwareScrollView behavior="position" style={styles.mainCon}>
+                    <View style={{ padding: 20 }}>
+                         <Pressable onPress={() => navigation.goBack()}>
+                              <Feather name="arrow-left" color={COLORS.blackColor} size={WP(8)} />
+                         </Pressable>
                     </View>
-               </ScrollView>
-          </SafeAreaView>
-     )
-}
+                    <View style={{ position: 'relative', bottom: 30 }}>
+                         <View style={styles.loginIcon}>
+                              <SvgIcon icon={'forgot'} width={320} height={320} />
+                         </View>
+                         <View style={styles.container}>
+                              <View style={styles.loginLblCon}>
+                                   <Text style={styles.loginLbl}>Forgot Password?</Text>
+                              </View>
+                              <View style={styles.forgotDes}>
+                                   <Text style={styles.forgotDesLbl}>
+                                        Don't worry! It happens, please enter the address associated
+                                        with your account
+                                   </Text>
+                              </View>
+                                        <LabelInput
+                                             placeholder={"Enter your Email"}
+                                        />
 
-const Styles = StyleSheet.create({
-     _mainContainer: {
+                              <Button
+                                   onPress={forgotPassword}
+                                   lable={'Submit'} styles={{ width: '100%', marginTop: WP(SPACING_PERCENT) }} />
+                         </View>
+                    </View>
+               </KeyboardAwareScrollView>
+          </SafeAreaView>
+     );
+}
+export default ForgotPasswordScreen
+
+
+const styles = StyleSheet.create({
+     mainCon: {
+          backgroundColor: '#fff',
           flex: 1,
-          backgroundColor: COLORS.whiteColor,
      },
-     _textMain: {
-          color: COLORS.secondaryColor,
-          fontSize: WP(TEXT_SIZES.info_1),
-          //fontFamily: FONT_MEDIUM,
+     loginIcon: {
+          alignSelf: 'center',
      },
-     _inputContainer: {
-          // marginTop: WP(SPACING_PERCENT * 1.5),
+     formCon: {
+          flexDirection: 'column',
+          justifyContent: 'space-around',
      },
-     _forgotText: {
-          color: COLORS.primaryColor,
-          fontSize: WP(TEXT_SIZES.info_1),
-          //fontFamily: FONT_MEDIUM,
-          textAlign: 'right',
-          padding: WP(SPACING_PERCENT / 2)
+     container: {
+          paddingHorizontal: 20,
      },
-     _dontText: {
-          color: COLORS.secondaryColor,
-          fontSize: WP(TEXT_SIZES.info_1),
-          //fontFamily: FONT,
+     loginLblCon: {
+          position: 'relative',
+          bottom: 40,
+     },
+     loginLbl: {
+          color: '#000',
+          fontSize: 40,
+     },
+     at: {
+          alignSelf: 'center',
+          width: '10%',
+     },
+
+     textBoxCon: {
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+     },
+     textCon: {
+          width: '90%',
+     },
+
+     textInput: {
+          borderBottomColor: '#aaa',
+          borderWidth: 1,
+          borderTopWidth: 0,
+          borderLeftWidth: 0,
+          borderRightWidth: 0,
+          color: '#000',
+          fontSize: 16,
+          height: 40,
+     },
+
+     LoginBtn: {
+          backgroundColor: '#0057ff',
+          borderRadius: 20,
+     },
+     loginBtnLbl: {
           textAlign: 'center',
-          padding: WP(SPACING_PERCENT / 2)
+          fontSize: 16,
+          color: '#fff',
+          paddingVertical: 10,
      },
-     _button: {
-          width: WP(14),
-          height: WP(14),
-          backgroundColor: COLORS.primaryColor,
-          borderRadius: WP(50),
-          justifyContent: "center",
-          alignItems: "center",
-          elevation: 8,
-          marginTop: WP(3)
+
+     forgotDes: {
      },
-})
+     forgotDesLbl: {
+          color: '#000',
+     },
+});

@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Login, Signup } from '../../screens';
+import { ForgotPassword, Login, OTP, ResetPassword, Signup } from '../../screens';
 // import {
 //     ForgotPassword, LocationSignup, Login, OTP, Signup, SignupDeliveryInfo, SignupFilesUpload, SignupType
 // } from "../../screens";s
@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator();
 export default function AuthStack() {
     return (
         <Stack.Navigator
-            initialRouteName='login'
+            initialRouteName='forgotpassword'
         >
             <Stack.Screen
                 name='login'
@@ -30,7 +30,7 @@ export default function AuthStack() {
                     headerTransparent: true,
                 }}
             />
-            {/* <Stack.Screen
+            <Stack.Screen
                 name='OTP'
                 component={OTP}
                 options={{
@@ -40,7 +40,18 @@ export default function AuthStack() {
                     headerTitle: '',
                     headerTransparent: true,
                 }}
-            /> */}
+            />
+             <Stack.Screen
+                name='ResetPassword'
+                component={ResetPassword}
+                options={{
+                    headerShown: false,
+                    headerBackTitleVisible: false,
+                    headerLargeTitleShadowVisible: false,
+                    headerTitle: '',
+                    headerTransparent: true,
+                }}
+            />
             {/* <Stack.Screen
                 name='signuptype'
                 component={SignupType}
@@ -73,18 +84,19 @@ export default function AuthStack() {
                 }}
             /> */}
 
-            {/* <Stack.Screen
+            <Stack.Screen
         name='forgotpassword'
         component={ForgotPassword}
         options={{
+          headerShown: false,
           headerTitle: 'Forgot Password',
           headerBackTitleVisible:false,
           headerShadowVisible:false,
           headerTitleStyle:{
-               fontFamily:FONT_MEDIUM,
+            //    fontFamily:FONT_MEDIUM,
           },
         }}
-      /> */}
+      />
         </Stack.Navigator>
     )
 }

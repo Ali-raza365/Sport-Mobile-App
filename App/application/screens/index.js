@@ -1,6 +1,9 @@
 import Splash from "./Splash/Splash";
 import Login from "./Login/Login";
 import Signup from "./Login/Signup";
+import ForgotPassword from "./Login/ForgotPassword";
+import OTP from "./Login/OTP";
+import ResetPassword from "./Login/ResetPassword";
 
 import Home from "./Home/Home";
 import NewEvent from "./new-event/NewEvent";
@@ -28,6 +31,9 @@ export {
     Splash,
     Login,
     Signup,
+    ForgotPassword,
+    OTP,
+    ResetPassword,
 
     SearchScr,
     Home,
