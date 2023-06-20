@@ -57,13 +57,13 @@ const EventDetail = ({ route, navigation }) => {
                                 <View style={styles.iconContainer}>
                                     <Foundation name="marker" size={WP(7)} color={COLORS.blackColor} />
                                 </View>
-                                <Text style={styles._priceText}>  {!!detail?.location ? detail?.location?.name : ""}</Text>
+                                <Text style={styles._LocationText}>{!!detail?.location ? detail?.location?.name : ""}</Text>
                             </View>
                         </View>
 
                         <View style={styles._desContainer}>
-                            <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>Event Detail</Text>
-                            <Text>{detail?.description || ''}</Text>
+                            <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>Detail</Text>
+                            <Text style={[styles.description,]}>{detail?.description || ''}</Text>
                         </View>
 
                         <Button
@@ -135,12 +135,25 @@ const styles = StyleSheet.create({
         color: COLORS.blackColor,
         fontWeight: '700',
         paddingTop: WP(1)
-
     },
     _priceText: {
         fontSize: WP(4.4),
         color: COLORS.lightGrey,
         fontWeight: '700',
+        paddingTop: WP(2.5)
+    },
+    description: {
+        fontSize: WP(4.4),
+        color: COLORS.lightGrey,
+        fontWeight: '500',
+    },
+    _LocationText: {
+        fontSize: WP(4.4),
+        color: COLORS.lightGrey,
+        fontWeight: '700',
+        textAlign: "left",
+        width: WP('82%'),
+        paddingHorizontal: WP(2),
         paddingTop: WP(2.5)
     },
     _dateLocationContainer: {
