@@ -27,6 +27,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png'
     },
+    resetPasswordToken:String,
+    resetPasswordExpires:String,
     role: { type: String, default: 'user' },
     mobile: { type: String, default: '' },
     favorites: [

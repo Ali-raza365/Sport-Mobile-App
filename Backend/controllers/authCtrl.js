@@ -1,11 +1,13 @@
 const Users = require('../models/userModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const crypto = require('crypto')
+const sendEmail = require('../utils/SendEmail')
 
 const authCtrl = {
     register: async (req, res) => {
         try {
-            const { fullname, email, password,  } = req.body
+            const { fullname, email, password, } = req.body
 
             const user_email = await Users.findOne({ email })
             if (user_email) return res.status(400).json({ msg: "This email already exists." })
@@ -16,7 +18,7 @@ const authCtrl = {
             const passwordHash = await bcrypt.hash(password, 12)
 
             const newUser = new Users({
-                fullname, email, password: passwordHash, 
+                fullname, email, password: passwordHash,
             })
 
             const access_token = createAccessToken({ id: newUser._id })
@@ -57,6 +59,89 @@ const authCtrl = {
             })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
+        }
+    },
+    forgotPasswordRoute: async (req, res) => {
+        const { email } = req.body;
+        try {
+            const user = await Users.findOne({ email })
+
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            // Generate a random OTP
+            const otp = crypto.randomInt(100000, 999999).toString();
+
+            console.log({ otp })
+            // Save the OTP in the user's document in the database
+            user.resetPasswordToken = otp;
+            user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
+            await user.save();
+
+            let mail_result = await sendEmail(email, otp)
+
+
+            console.log({ mail_result })
+
+            res.json({ message: 'Password reset email sent' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+
+        }
+    },
+    verifyOTPRoute: async (req, res) => {
+        const { email, otp } = req.body;
+
+        try {
+            const user = await Users.findOne({ email });
+
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+
+            if (user.resetPasswordToken !== otp) {
+                return res.status(401).json({ error: 'Invalid OTP' });
+            }
+
+            if (user.resetPasswordExpires < Date.now()) {
+                return res.status(401).json({ error: 'OTP expired' });
+            }
+
+            // OTP is valid
+            res.json({ message: 'OTP verified successfully' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
+        }
+    },
+    changePasswordRoute: async (req, res) => {
+        const { email, newPassword } = req.body;
+
+        try {
+            const user = await Users.findOne({ email });
+
+            if (!user) {
+                return res.status(404).json({ error: 'User not found' });
+            }
+            if (!newPassword) {
+                return res.status(404).json({ error: 'Please Enter New Password' });
+            }
+
+            if (newPassword?.length < 6)
+                return res.status(400).json({ msg: "Password must be at least 6 characters." })
+
+            const passwordHash = await bcrypt.hash(newPassword, 12)
+
+            user.password = passwordHash;
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+            await user.save();
+
+            res.json({ message: 'Password changed successfully' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ error: 'Internal server error' });
         }
     },
 
