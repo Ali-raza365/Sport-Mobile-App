@@ -47,6 +47,69 @@ export const LOGIN_API = (details) => {
     })
 }
 
+// FORGOT PASSWORD  API
+export const FORGOT_PASSWORD_API = (details) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/forgot-password',
+                method: 'POST',
+                data: details,
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+//  VERIFY OTP API
+export const VERIFY_OTP__API = (details) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/verify-otp',
+                method: 'POST',
+                data: details,
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+//  CHANGE PASSWORD APIS
+export const CHANGE_PASSWORD_API = (details) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/change-password',
+                method: 'POST',
+                data: details,
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+
 
 
 // GET USER INFO

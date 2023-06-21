@@ -10,7 +10,7 @@ const Stack = createNativeStackNavigator();
 export default function AuthStack() {
     return (
         <Stack.Navigator
-            initialRouteName='forgotpassword'
+            initialRouteName='login'
         >
             <Stack.Screen
                 name='login'
@@ -52,38 +52,6 @@ export default function AuthStack() {
                     headerTransparent: true,
                 }}
             />
-            {/* <Stack.Screen
-                name='signuptype'
-                component={SignupType}
-                options={{
-                    headerShown: false,
-                }}
-            />
-            <Stack.Screen
-                name='signupdeliveryinfo'
-                component={SignupDeliveryInfo}
-                options={{
-                    headerShown: false,
-                }}
-            />
-
-            <Stack.Screen
-                name='signupfilesupload'
-                component={SignupFilesUpload}
-                options={{
-                    headerTitle: '',
-                    headerBackTitleVisible: false,
-                    headerShadowVisible: false,
-                }}
-            />
-            <Stack.Screen
-                name='locationsignup'
-                component={LocationSignup}
-                options={{
-                    headerShown: false,
-                }}
-            /> */}
-
             <Stack.Screen
         name='forgotpassword'
         component={ForgotPassword}

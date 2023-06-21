@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
      Pressable,
      StyleSheet,
@@ -10,17 +10,38 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
 import SvgIcon from '../../assets/SvgIcon';
-import { Button, LabelInput } from '../../components';
+import { Button, LabelInput, Loader } from '../../components';
 import { COLORS, SPACING_PERCENT, WP } from '../../theme/config';
+import { isValidEmail } from '../../utils/Validation';
+import UserStore from '../../Store/UserStore';
 
-const ForgotPasswordScreen = ({ navigation }) => {
 
-     const forgotPassword = () => {
-          
-          navigation.navigate('OTP')
+export default function ForgotPasswordScreen({ navigation }) {
+     const [isLoading, setisLoading] = useState(false)
+     const [email, setEmail] = useState('')
+
+     const { forgotPassword } = UserStore()
+
+     const onforgotPassword = () => {
+          if (!isValidEmail(email)) {
+               alert('Please enter a valid email adress')
+               return
+          }
+          setisLoading(true)
+          forgotPassword(email||'').then((res) => {
+              if(res?.message){
+               alert(res?.message)
+             navigation.navigate('OTP',{email})
+              }
+               setisLoading(false)
+          }).catch(() => {
+               setisLoading(false)
+          })
+       
      }
      return (
           <SafeAreaView style={{ flex: 1 }}>
+               <Loader isVisible={isLoading} />
                <KeyboardAwareScrollView behavior="position" style={styles.mainCon}>
                     <View style={{ padding: 20 }}>
                          <Pressable onPress={() => navigation.goBack()}>
@@ -33,7 +54,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
                          </View>
                          <View style={styles.container}>
                               <View style={styles.loginLblCon}>
-                                   <Text style={styles.loginLbl}>Forgot Password?</Text>
+                                   <Text style={styles.loginLbl}>Forgot {"\n"}Password?</Text>
                               </View>
                               <View style={styles.forgotDes}>
                                    <Text style={styles.forgotDesLbl}>
@@ -41,12 +62,15 @@ const ForgotPasswordScreen = ({ navigation }) => {
                                         with your account
                                    </Text>
                               </View>
-                                        <LabelInput
-                                             placeholder={"Enter your Email"}
-                                        />
+                              <LabelInput
+                                   autoCapitalize='none'
+                                   value={email}
+                                   onChangeText={(txt) => { setEmail(txt) }}
+                                   placeholder={"Enter your Email"}
+                              />
 
                               <Button
-                                   onPress={forgotPassword}
+                                   onPress={onforgotPassword}
                                    lable={'Submit'} styles={{ width: '100%', marginTop: WP(SPACING_PERCENT) }} />
                          </View>
                     </View>
@@ -54,7 +78,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
           </SafeAreaView>
      );
 }
-export default ForgotPasswordScreen
+
 
 
 const styles = StyleSheet.create({
@@ -119,5 +143,6 @@ const styles = StyleSheet.create({
      },
      forgotDesLbl: {
           color: '#000',
+          fontSize: WP(4),
      },
 });

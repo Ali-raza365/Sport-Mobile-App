@@ -43,13 +43,7 @@ export default class SvgIcon extends React.Component {
       width: this.props.width,
     };
   }
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    this.setState({
-      icon: nextProps.icon,
-      height: nextProps.height,
-      width: nextProps.width,
-    });
-  }
+
 
   render() {
     return (

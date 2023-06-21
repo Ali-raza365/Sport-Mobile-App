@@ -74,24 +74,26 @@ const authCtrl = {
 
             console.log({ otp })
             // Save the OTP in the user's document in the database
-            user.resetPasswordToken = otp;
-            user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
-            await user.save();
+
 
             let mail_result = await sendEmail(email, otp)
 
+            user.resetPasswordToken = otp;
+            user.resetPasswordExpires = Date.now() + 3600000; // Token expires in 1 hour
+            await user.save();
 
             console.log({ mail_result })
 
             res.json({ message: 'Password reset email sent' });
         } catch (error) {
             console.error(error);
-            res.status(500).json({ error: 'Internal server error' });
+            res.status(500).json({ error: 'Server Not Responded: Try Again Later' });
 
         }
     },
     verifyOTPRoute: async (req, res) => {
         const { email, otp } = req.body;
+        console.log({ email, otp });
 
         try {
             const user = await Users.findOne({ email });

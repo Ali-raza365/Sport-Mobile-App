@@ -1,76 +1,104 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import {
-  Text,
-  View,
   Pressable,
   StyleSheet,
-  TextInput,
-  KeyboardAvoidingView,
+  Text,
+  View
 } from 'react-native';
-import { COLORS, SPACING_PERCENT, WP } from '../../theme/config';
-import SvgIcon from '../../assets/SvgIcon';
-import { Button, LabelInput } from '../../components';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-export default class ResetPasswordScreen extends Component {
-  render() {
-    return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <KeyboardAwareScrollView behavior="position" style={styles.mainCon}>
-          <View style={{ padding: 20 }}>
-            <Pressable onPress={() => this.props.navigation.goBack(null)}>
-              <SvgIcon icon={'back'} width={30} height={30} />
-            </Pressable>
-          </View>
-          <View style={{ position: 'relative', bottom: 30 }}>
-            <View style={styles.loginIcon}>
-              <SvgIcon icon={'reset'} width={300} height={300} />
-            </View>
-            <View style={styles.container}>
-              <View style={styles.loginLblCon}>
-                <Text style={styles.loginLbl}>Reset{'\n'}Password</Text>
-              </View>
-              <View style={styles.formCon}>
-                <View style={[styles.textBoxCon]}>
-                  <View style={styles.at}>
-                    <SvgIcon icon={'lock'} width={20} height={20} />
-                  </View>
-                  <View style={[styles.passCon]}>
-                    <View style={styles.textCon}>
-                      <TextInput
-                        style={styles.textInput}
-                        placeholder={'New Password'}
-                        placeholderTextColor={'#aaa'}
-                        secureTextEntry={true}
-                      />
-                    </View>
-                    <View style={styles.show}>
-                      <SvgIcon icon={'show'} width={20} height={20} />
-                    </View>
-                  </View>
-                </View>
-                <View style={[styles.textBoxCon,]}>
-                {/* <SvgIcon icon={'lock'} width={20} height={20} /> */}
-                  <View style={styles._inputContainer}>
-                    
-                    <LabelInput
-                      placeholder={"New Password"}
-                    />
-                  </View>
-                </View>
-              </View>
+import { SafeAreaView } from 'react-native-safe-area-context';
+import Feather from 'react-native-vector-icons/Feather';
+import SvgIcon from '../../assets/SvgIcon';
+import { Button, LabelInput, Loader } from '../../components';
+import { COLORS, SPACING_PERCENT, WP } from '../../theme/config';
+import UserStore from '../../Store/UserStore';
+import { isValidEmail } from '../../utils/Validation';
+import { _gotoAuthStack } from '../../navigation/navigationServcies';
 
-              <Button
-                //  onPress={forgotPassword}
-                lable={'Submit'} styles={{ width: '100%', marginTop: WP(SPACING_PERCENT) }} />
+const ResetPasswordScreen = ({ navigation, route }) => {
+  const [isLoading, setisLoading] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [ConfirmPassword, setConfirmPassword] = useState('')
+  const { email } = route?.params
+  // const email = 'mianraza645@gmail.com'
+  const { changePassword } = UserStore()
 
-            </View>
+  const onSubmit = () => {
+    if (!isValidEmail(email)) {
+      alert('Email adress not valid')
+      return
+    } else if (!newPassword) {
+      alert('Password is required')
+      return
+    }
+    else if (newPassword?.length < 6) {
+      alert('Password should be 6 characters long')
+      return
+    }
+    else if (newPassword !== ConfirmPassword) {
+      alert('Confirm password does not match. Please ensure both passwords are the same.')
+      return
+    }
+
+    setisLoading(true)
+    changePassword({ email, newPassword }).then((res) => {
+      if (res?.message) {
+        alert(res?.message)
+        _gotoAuthStack(navigation)
+      }
+      setisLoading(false)
+    }).catch(() => {
+      setisLoading(false)
+    })
+
+  };
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <Loader isVisible={isLoading} />
+      <KeyboardAwareScrollView behavior="position" style={styles.mainCon}>
+        <View style={{ padding: 20 }}>
+        </View>
+        <View style={{ position: 'relative', bottom: 30 }}>
+          <View style={styles.loginIcon}>
+            <SvgIcon icon={'reset'} width={300} height={300} />
           </View>
-        </KeyboardAwareScrollView>
-      </SafeAreaView>
-    );
-  }
+          <View style={styles.container}>
+            <View style={styles.loginLblCon}>
+              <Text style={styles.loginLbl}>Reset{'\n'}Password</Text>
+            </View>
+            <View style={styles.formCon}>
+              <View style={[styles.textBoxCon,]}>
+                <LabelInput
+                  value={newPassword}
+                  secureTextEntry={true}
+                  onChangeText={(txt) => { setNewPassword(txt) }}
+                  containerStyle={{ flex: 1 }}
+                  placeholder={"New Password"}
+                />
+              </View>
+              <View style={[styles.textBoxCon,]}>
+                <LabelInput
+                  value={ConfirmPassword}
+                  onChangeText={(txt) => { setConfirmPassword(txt) }}
+                  secureTextEntry={true}
+                  containerStyle={{ flex: 1 }}
+                  placeholder={"Confirm New Password"}
+                />
+              </View>
+            </View>
+
+            <Button
+              onPress={onSubmit}
+              lable={'Submit'} styles={{ width: '100%', marginTop: WP(SPACING_PERCENT) }} />
+
+          </View>
+        </View>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
+  );
 }
+
+export default ResetPasswordScreen
 
 const styles = StyleSheet.create({
   mainCon: {
@@ -92,7 +120,7 @@ const styles = StyleSheet.create({
   },
   loginLblCon: {
     position: 'relative',
-    bottom: 40,
+    bottom: 20,
   },
   loginLbl: {
     color: '#000',
@@ -112,8 +140,10 @@ const styles = StyleSheet.create({
   textBoxCon: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems:"center",
-    
+    alignItems: "flex-end",
+    flex: 1,
+    // backgroundColor:"red",
+
   },
   textCon: {
     width: '90%',

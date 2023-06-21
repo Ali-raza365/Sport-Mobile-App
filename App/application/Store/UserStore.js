@@ -1,6 +1,6 @@
-import {create} from 'zustand';
-import {handleAxiosError} from '../utils/ErrorHandler';
-import {GET_USER_INFO_API, UPDATE_USER_INFO_API} from '../api/apis';
+import { create } from 'zustand';
+import { handleAxiosError } from '../utils/ErrorHandler';
+import { CHANGE_PASSWORD_API, FORGOT_PASSWORD_API, GET_USER_INFO_API, UPDATE_USER_INFO_API, VERIFY_OTP__API } from '../api/apis';
 import {
   _gotoAuthStack,
   _gotoHomeNavigator,
@@ -28,7 +28,7 @@ const UserStore = create(set => ({
         .then(resp => {
           // console.log(resp.data)
           if (resp?.data?.user) {
-            set({user: resp?.data?.user, token: token});
+            set({ user: resp?.data?.user, token: token });
             _gotoHomeNavigator(navigation);
           } else {
             _gotoAuthStack(navigation);
@@ -43,7 +43,7 @@ const UserStore = create(set => ({
   },
   updatePrfiler: async (token, detail) => {
     try {
-    //   console.log({detail});
+      //   console.log({detail});
       const form = new FormData();
       if (detail?.image) {
         form.append('image', {
@@ -60,7 +60,7 @@ const UserStore = create(set => ({
 
       let resp = await UPDATE_USER_INFO_API(token, form);
       if (resp?.data) {
-        set({ user: resp?.data?.user})
+        set({ user: resp?.data?.user })
         alert(resp?.data?.msg)
       } else {
         handleAxiosError(resp?.data);
@@ -70,10 +70,31 @@ const UserStore = create(set => ({
       handleAxiosError(error);
     }
   },
+  forgotPassword: async (email) => {
+    try {
+      let resp = await FORGOT_PASSWORD_API({ email })
+      return resp?.data
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  },
+  verifyOTP: async (daitail) => {
+    try {
+      let resp = await VERIFY_OTP__API(daitail)
+      return resp?.data
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  },
+  changePassword: async (detail) => {
+    try {
+      let resp = await CHANGE_PASSWORD_API(detail)
+      return resp?.data
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  },
 
-  // In our example we only need to fetch the users, but you'd probably want to define other methods here
-  // addUser: async (user) => { },
-  // deleteUser: async (id) => { },
 }));
 
 export default UserStore;
