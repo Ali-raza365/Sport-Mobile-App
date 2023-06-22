@@ -27,7 +27,7 @@ export default function ChatStack({navigation,route}) {
                     headerBackVisible:true,
                 }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
                 name='Chat'
                 component={Chat}
                 options={{
@@ -41,7 +41,7 @@ export default function ChatStack({navigation,route}) {
                         color:COLORS.blackColor,
                     },
                 }}
-            />
+            /> */}
            
         </Stack.Navigator>
     )

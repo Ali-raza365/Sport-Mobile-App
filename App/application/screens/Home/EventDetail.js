@@ -4,7 +4,7 @@ import { COLORS, HP, RADIUS, SPACING_PERCENT, TEXT_SIZES, WP } from '../../theme
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Foundation from 'react-native-vector-icons/Foundation';
-import { Button } from '../../components';
+import { AppBar, Button } from '../../components';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import UserStore from '../../Store/UserStore';
 import EventStore from '../../Store/EventStore';
@@ -27,59 +27,60 @@ const EventDetail = ({ route, navigation }) => {
     }
 
     return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.whiteColor }}>
-            <View style={styles._container}>
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
-                    contentContainerStyle={{ paddingBottom: 100, }}
-                >
-                    <View style={styles._imagesContainer}>
-                        <TouchableOpacity
-                            onPress={onBackPress}
-                            style={styles.innerCircle} >
-                            <Feather name="arrow-left" color={COLORS.blackColor} size={WP(6)} />
-                        </TouchableOpacity>
-                        <Image source={{ uri: detail.image }} resizeMode='cover' style={{ width: '100%', height: '100%' }} />
-                    </View>
-                    <View style={styles._infoContainer}>
-                        <Text style={styles._typeText}>{!!detail?.activity ? detail?.activity?.name : ''}</Text>
-                        <Text style={styles._heading}>{detail?.name}</Text>
-                        <Text style={styles._priceText}>{detail?.total_participants} Participants</Text>
+        // <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.whiteColor }}>
+        <View style={styles._container}>
+            <AppBar hidden={true} />
+            <ScrollView
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{ paddingBottom: 100, }}
+            >
+                <View style={styles._imagesContainer}>
+                    <TouchableOpacity
+                        onPress={onBackPress}
+                        style={styles.innerCircle} >
+                        <Feather name="arrow-left" color={COLORS.blackColor} size={WP(6)} />
+                    </TouchableOpacity>
+                    <Image source={{ uri: detail.image }} resizeMode='cover' style={{ width: '100%', height: '100%' }} />
+                </View>
+                <View style={styles._infoContainer}>
+                    <Text style={styles._typeText}>{!!detail?.activity ? detail?.activity?.name : ''}</Text>
+                    <Text style={styles._heading}>{detail?.name}</Text>
+                    <Text style={styles._priceText}>{detail?.total_participants} Participants</Text>
 
-                        <View style={styles._dateLocationContainer}>
-                            <View style={styles._row}>
-                                <View style={styles.iconContainer}>
-                                    <AntDesign name="calendar" size={WP(7)} color={COLORS.blackColor} />
-                                </View>
-                                <Text style={styles._priceText}>{!!detail?.date ? "  " + new Date(detail?.date).toDateString() : ''}</Text>
+                    <View style={styles._dateLocationContainer}>
+                        <View style={styles._row}>
+                            <View style={styles.iconContainer}>
+                                <AntDesign name="calendar" size={WP(7)} color={COLORS.blackColor} />
                             </View>
-                            <View style={styles._row}>
-                                <View style={styles.iconContainer}>
-                                    <Foundation name="marker" size={WP(7)} color={COLORS.blackColor} />
-                                </View>
-                                <Text style={styles._LocationText}>{!!detail?.location ? detail?.location?.name : ""}</Text>
+                            <Text style={styles._priceText}>{!!detail?.date ? "  " + new Date(detail?.date).toDateString() : ''}</Text>
+                        </View>
+                        <View style={styles._row}>
+                            <View style={styles.iconContainer}>
+                                <Foundation name="marker" size={WP(7)} color={COLORS.blackColor} />
                             </View>
+                            <Text style={styles._LocationText}>{!!detail?.location ? detail?.location?.name : ""}</Text>
                         </View>
-
-                        <View style={styles._desContainer}>
-                            <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>Detail</Text>
-                            <Text style={[styles.description,]}>{detail?.description || ''}</Text>
-                        </View>
-
-                        <Button
-                            backgroundColor={isParticipated ? COLORS.darkGrey : COLORS.primaryColor}
-                            onPress={onParticipate}
-                            lable={isParticipated ? "Already Participated" : "Participate"}
-                            disable={isParticipated}
-                            styles={{ marginTop: WP(4) }}
-                        />
                     </View>
 
+                    <View style={styles._desContainer}>
+                        <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>Detail</Text>
+                        <Text style={[styles.description,]}>{detail?.description || ''}</Text>
+                    </View>
+
+                    <Button
+                        backgroundColor={isParticipated ? COLORS.darkGrey : COLORS.primaryColor}
+                        onPress={onParticipate}
+                        lable={isParticipated ? "Already Participated" : "Participate"}
+                        disable={isParticipated}
+                        styles={{ marginTop: WP(4) }}
+                    />
+                </View>
 
 
-                </ScrollView>
-            </View>
-        </SafeAreaView>
+
+            </ScrollView>
+        </View>
+        // </SafeAreaView>
     )
 }
 
@@ -94,16 +95,16 @@ const styles = StyleSheet.create({
 
     _imagesContainer: {
         width: '100%',
-        height: HP(40),
+        height: HP(45),
     },
     innerCircle: {
         position: 'absolute',
-        top: WP(2),
+        top: WP(8),
         left: WP(4),
         width: WP(10),
         height: WP(10),
         borderRadius: WP(10),
-        backgroundColor: COLORS.whiteColor,
+        backgroundColor: "rgba(255,255,255,0.5)",
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 23,
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     BackArrow: {
         position: "absolute",
         zIndex: 10,
-        // color:"#fff",
+        color: "rgba(255,255,255,0.4)",
         fontSize: WP(8),
         top: HP(3),
         left: WP(5),

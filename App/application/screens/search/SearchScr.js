@@ -1,27 +1,27 @@
+import React from 'react';
 import {
   FlatList,
   Image,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import React from 'react';
+import { Chip } from 'react-native-paper';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import EventStore from '../../Store/EventStore';
+import UserStore from '../../Store/UserStore';
+import { SearchBar } from '../../components';
 import {
   COLORS,
   HP,
-  INPUT_HEIGHT,
   SPACING_PERCENT,
-  TAB_ICON_SIZE,
-  WP,
+  WP
 } from '../../theme/config';
-import { SearchBar } from '../../components';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MatCommIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { Chip } from 'react-native-paper';
-import EventStore from '../../Store/EventStore';
-import UserStore from '../../Store/UserStore';
+import { _momentDateFormat } from '../../utils/TimeFunctions';
+import CardItem from '../../components/CardItem';
 
 const SearchScr = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = React.useState('');
@@ -32,7 +32,7 @@ const SearchScr = ({ navigation }) => {
   const { user, token } = UserStore();
 
   const handleTextSubmit = () => {
-    if(!searchQuery) return
+    if (!searchQuery) return
     FetchSearchEvents({ text: searchQuery }, token)
   };
 
@@ -79,52 +79,23 @@ const SearchScr = ({ navigation }) => {
     },
   ];
 
-  const SearchComp = ({ item, index }) => {
-    const event = new Date(item?.time);
-    return (
-      <TouchableOpacity 
-    activeOpacity={0.5}
-      onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
-      style={styles.mainContainer}>
-        <View style={styles.imageContainer}>
-          <Image
-            source={{ uri: item?.image }}
-            resizeMode="cover"
-            style={{ width: '100%', height: '100%' }}
-          />
-        </View>
-        <View style={styles.headingContainer}>
-          <Text style={{ fontSize: 12, color: "#686868" }}>{item?.activity?.name}</Text>
-          <Text style={styles.heading}>
-            {item?.title}
-          </Text>
-          <Text numberOfLines={3} style={styles.description}>
-            {item?.description}
-          </Text>
-          <Text style={{ color: 'green', fontWeight: '700' }}>
-            {/* {item?.date?.toDateString?.()} */}
-            {item?.date?.toString?.()}
-          </Text>
 
-          {/* <Ionicons
-            onPress={() => { console.log("press") }}
-            style={styles.favourite}
-            name="heart-outline"
-            color={COLORS.darkGrey}
-            size={WP(5)}
-          /> */}
-        </View>
-      </TouchableOpacity>
+  const SearchComp = ({ item }) => {
+    return (
+      <CardItem
+        hideFav={true}
+        onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
+        item={item}
+      />
     );
   };
 
-  console.log(Searchevents);
   return (
     <SafeAreaView>
       <View style={styles.headerContainer}>
         <SearchBar
           placeholder="Search"
-          returnKeyType="search" 
+          returnKeyType="search"
           handleTextSubmit={handleTextSubmit}
           onChangeText={onChangeSearch}
           value={searchQuery}
@@ -137,16 +108,12 @@ const SearchScr = ({ navigation }) => {
         />
       </View>
 
-      <View style={styles.filterContainer}>
+      <View style={styles.filterContainer} horizontal>
         <Chip
           style={{
             backgroundColor: COLORS.primaryColor,
             marginLeft: WP(SPACING_PERCENT),
           }}
-          icon="filter"
-          closeIcon="chevron-down"
-          onClose={() => { }}
-          selected={true}
           selectedColor={COLORS.whiteColor}
           type="flat"
           onPress={() => console.log('Pressed')}>
@@ -154,31 +121,20 @@ const SearchScr = ({ navigation }) => {
         </Chip>
         <Chip
           style={{
-            borderWidth: 1,
-            borderColor: COLORS.primaryColor,
-            backgroundColor: 'transparent',
-            marginHorizontal: WP(SPACING_PERCENT),
+            backgroundColor: COLORS.primaryColor,
+            marginLeft: WP(SPACING_PERCENT),
           }}
-          icon="filter"
-          closeIcon="chevron-down"
-          onClose={() => { }}
-          selected={true}
-          selectedColor={COLORS.primaryColor}
+          selectedColor={COLORS.whiteColor}
           type="outlined"
           onPress={() => { navigation.navigate('MapScreen') }}>
           Location
         </Chip>
         <Chip
           style={{
-            borderWidth: 1,
-            borderColor: COLORS.primaryColor,
-            backgroundColor: 'transparent',
+            backgroundColor: COLORS.primaryColor,
+            marginLeft: WP(SPACING_PERCENT),
           }}
-          icon="filter"
-          closeIcon="chevron-down"
-          onClose={() => { }}
-          selected={true}
-          selectedColor={COLORS.primaryColor}
+          selectedColor={COLORS.whiteColor}
           type="outlined"
           onPress={() => console.log('Pressed')}>
           Category
@@ -208,10 +164,9 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    paddingBottom: WP(SPACING_PERCENT / 2),
-    borderBottomWidth: 1,
-    borderColor: COLORS.grey,
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginRight: WP(SPACING_PERCENT),
   },
 
   mainContainer: {
@@ -231,8 +186,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   headingContainer: { padding: 7, width: WP('55') },
-  heading: { fontSize: 18, fontWeight: 'bold', color: '#000000', paddingVertical: 5 },
-  description: { fontSize: 15, color: '#000000', paddingVertical: 5 },
-  favourite: { position: 'absolute', bottom: 5, right: 5 },
-
+  heading: { fontSize: WP(4.5), fontWeight: 'bold', color: '#000000', paddingVertical: 5 },
+  description: { fontSize: 15, color: '#000000', paddingBottom: 5 },
+  favourite: { position: 'absolute', top: 5, right: 12 },
 });

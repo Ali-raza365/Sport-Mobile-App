@@ -20,7 +20,10 @@ import ChatList from "./chat/ChatList";
 import Chat from "./chat/Chat";
 
 
+import AccountSettings from "./Settings/AccountSettings";
 import EditProfileScreen from "./Settings/EditProfileScreen";
+import YourFavorites from "./Settings/YourFavorites";
+import YourParticipants from "./Settings/YourParticipants";
 
 
 
@@ -46,7 +49,9 @@ export {
     Chat,
     MapScreen,
 
-
-    EditProfileScreen
+    AccountSettings,
+    EditProfileScreen,
+    YourFavorites,
+    YourParticipants,
 };
 

@@ -8,6 +8,7 @@ import ChatStore from '../../Store/ChatStore';
 import UserStore from '../../Store/UserStore';
 import { BASE_URL } from '../../api/apis';
 import { COLORS, WP } from '../../theme/config';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 
@@ -149,40 +150,34 @@ const ChatScreen = ({ route, navigation }) => {
         );
     }
 
-    const renderInputToolbar = (props) => {
-        return (
-            <InputToolbar
-                {...props}
-                containerStyle={styles.inputToolbarContainer}
-                primaryStyle={styles.inputToolbarPrimary}
-            />
-        );
-    };
 
     return (
-        <GiftedChat
-            messages={messages}
-            onSend={(messages) => onSend(messages)}
-            isLoadingEarlier={true}
-            showAvatarForEveryMessage
-            renderUsernameOnMessage
-            user={{
-                ...user,
-                _id: userId,
-            }}
-            listViewProps={{
-                maintainVisibleContentPosition: {
-                    minIndexForVisible: 0,
-                    autoscrollToTopThreshold: 30,
-                }
-            }}
-            renderBubble={renderBubble}
-            scrollToBottom
-            alwaysShowSend
-            renderSend={renderSend}
-            scrollToBottomComponent={scrollToBottomComponent}
-        // renderInputToolbar={renderInputToolbar}
-        />
+        <SafeAreaView style={{ flex: 1, }}>
+            <GiftedChat
+                messages={messages}
+                onSend={(messages) => onSend(messages)}
+                isLoadingEarlier={true}
+                showAvatarForEveryMessage
+                renderUsernameOnMessage
+                user={{
+                    ...user,
+                    _id: userId,
+                }}
+                listViewProps={{
+                    maintainVisibleContentPosition: {
+                        minIndexForVisible: 0,
+                        autoscrollToTopThreshold: 30,
+                    }
+                }}
+                renderBubble={renderBubble}
+                scrollToBottom
+                alwaysShowSend
+                renderSend={renderSend}
+                scrollToBottomComponent={scrollToBottomComponent}
+            // renderInputToolbar={renderInputToolbar}
+            />
+        </SafeAreaView>
+
     );
 };
 

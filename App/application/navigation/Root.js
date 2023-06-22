@@ -6,7 +6,8 @@ import Splash from '../screens/Splash/Splash';
 // import ONBoard from '../screens/OnBoard/ONBoard';
 import AuthStack from './AuthSatck/AuthStack';
 import HomebottomBar from './HomeStack/HomebottomBar';
-import { EditProfileScreen } from '../screens';
+import { Chat, EditProfileScreen } from '../screens';
+import { COLORS, WP } from '../theme/config';
 // import HomebottomBar from './HomeStack/HomebottomBar';
 
 
@@ -42,6 +43,22 @@ export default function Root() {
                     headerShown: false
                 }}
             />
+              <Stack.Screen
+               name='Chat'
+               component={Chat}
+               options={{
+                   headerShown: true,
+                   headerBackTitleVisible: true,
+                   headerLargeTitleShadowVisible: true,
+                   headerTitle:"",
+                   headerBackTitleStyle:{
+                       fontSize:WP(5),
+                       fontWeight:"bold",
+                       color:COLORS.blackColor,
+                   },
+               }}
+            />
+             
 
             <Stack.Screen
                 name='homenavigator'
@@ -50,12 +67,12 @@ export default function Root() {
                     headerShown: false
                 }}
             />
-             <Stack.Screen
+            <Stack.Screen
                 name='editProfile'
                 component={EditProfileScreen}
                 options={{
                     headerShown: true,
-                    headerTitle:'Edit Your Prfile',
+                    headerTitle: 'Edit Your Prfile',
                 }}
             />
 

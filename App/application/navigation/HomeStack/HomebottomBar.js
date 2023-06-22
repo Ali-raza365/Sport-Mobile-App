@@ -14,6 +14,7 @@ import Account from '../../screens/Settings/Account';
 import AccountSettings from '../../screens/Settings/AccountSettings';
 import EventStack from '../EventStack/EventStack';
 import ChatStack from '../ChatStack/ChatStack';
+import SettingsStack from '../SettingsStack/SettingsStack';
 
 // import StepIndicator from 'react-native-step-indicator';
 const Tab = createBottomTabNavigator();
@@ -156,7 +157,7 @@ export default function HomebottomBar() {
             />
             <Tab.Screen
                 name="account"
-                component={AccountSettings}
+                component={SettingsStack}
                 options={{
                     tabBarLabel: 'My account',
                     tabBarLabelStyle: {

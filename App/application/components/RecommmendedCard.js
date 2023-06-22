@@ -4,7 +4,7 @@ import { COLORS, HP, WP } from '../theme/config'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { _momentDateFormat } from '../utils/TimeFunctions'
 
-export default function CardBox({
+export default function RecommmendedCard({
     imageSource,
     details,
     date,
@@ -29,23 +29,6 @@ export default function CardBox({
             <View style={Styles._dataMain}>
                 <View style={Styles._sectionOne}>
                     <Text numberOfLines={2} style={Styles._detailText}>{details}</Text>
-                    {!hideFavorite ?
-                        <TouchableOpacity onPress={OnHeartPress}>
-                            {isfav ?
-                                <Ionicons
-                                    name='heart'
-                                    color={COLORS.primaryColor}
-                                    size={WP(5)}
-                                />
-                                : <Ionicons
-                                    name='heart-outline'
-                                    color={COLORS.primaryColor}
-                                    size={WP(5)}
-                                />
-                            }
-                        </TouchableOpacity>
-                        : <Text />}
-
                 </View>
                 <View style={Styles._sectionTwo}>
                     <Text style={Styles._priceText}>{!!date ? _momentDateFormat(date) : ''}</Text>
@@ -58,12 +41,11 @@ export default function CardBox({
 
 const Styles = StyleSheet.create({
     _mainContainer: {
-        width: WP(47),
-        height: HP(20),
-        backgroundColor: COLORS.whiteColor,
+        width: WP(80),
+        height: HP(30),
         borderRadius: WP(2),
         overflow: "hidden",
-        margin: WP(1)
+        margin: WP(1.5),
     },
     _imageMain: {
         width: "100%",
@@ -77,7 +59,6 @@ const Styles = StyleSheet.create({
     },
     _dataMain: {
         width: "100%",
-        height: "30%",
         backgroundColor: COLORS.whiteColor
     },
     _sectionOne: {
@@ -91,15 +72,14 @@ const Styles = StyleSheet.create({
     },
     _sectionTwo: {
         width: "100%",
-        maxHeight: "30%",
         backgroundColor: COLORS.whiteColor,
         paddingLeft: WP(1),
-        marginBottom: WP(2)
+        // marginBottom: WP(2)
     },
     _sectionThree: {
         width: "100%",
         height: "20%",
-        backgroundColor: COLORS.whiteColor,
+        backgroundColor: COLORS.redColor,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
@@ -107,9 +87,9 @@ const Styles = StyleSheet.create({
     },
     _detailText: {
         color: COLORS.blackColor,
-        width: "80%",
         fontWeight: "600",
         fontSize: WP(4),
+        width: "80%",
     },
     _priceText: {
         fontWeight: "bold",

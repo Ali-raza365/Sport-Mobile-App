@@ -1,5 +1,7 @@
 // import database from '@react-native-firebase/database';
 
+import moment from "moment";
+
 // /**
 //  * Function that will return the current firebase server time
 //  *
@@ -155,4 +157,10 @@ export const _formatMonthString = (date) => {
     var yyyy = today.getFullYear();
     today = mm
     return today
+};
+
+
+export const _momentDateFormat = (date) => {
+   return moment(date).format("MMM Do YY");  // Jun 23rd 23
+
 };

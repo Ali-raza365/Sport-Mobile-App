@@ -15,9 +15,6 @@ import { COLORS } from '../../theme/config';
 import { handleAxiosError } from '../../utils/ErrorHandler';
 import { _setItem } from '../../utils/async';
 
-// import Share from 'react-native-share';
-
-// import files from '../assets/filesBase64';
 
 const ProfileScreen = ({ navigation }) => {
     const { user, token } = UserStore();
@@ -91,14 +88,19 @@ const ProfileScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.infoBoxWrapper}>
-
             </View>
 
             <View style={styles.menuWrapper}>
-                <TouchableRipple onPress={() => { }}>
+                <TouchableRipple onPress={() => { navigation.navigate('YourFavorites') }}>
                     <View style={styles.menuItem}>
                         <Icon name="heart-outline" color={COLORS.primaryColor} size={25} />
                         <Text style={styles.menuItemText}>Your Favorites</Text>
+                    </View>
+                </TouchableRipple>
+                <TouchableRipple onPress={() => { navigation.navigate('YourParticipants') }}>
+                    <View style={styles.menuItem}>
+                        <Icon name="account-group-outline" color={COLORS.primaryColor} size={25} />
+                        <Text style={styles.menuItemText}>Your Participants</Text>
                     </View>
                 </TouchableRipple>
                 <TouchableRipple onPress={() => { }}>

@@ -8,6 +8,7 @@ import { COLORS, HP, RADIUS, SPACING_PERCENT, TEXT_SIZES, WP } from '../../theme
 import { ActivityIndicator } from 'react-native-paper';
 import { getLat_Long } from '../../utils/GetIPAddress';
 import { useIsFocused } from '@react-navigation/native';
+import RecommmendedCard from '../../components/RecommmendedCard';
 
 const Home = ({ navigation }) => {
 
@@ -168,6 +169,7 @@ const Home = ({ navigation }) => {
     }
 
     useEffect(() => { fetchActivites(token) }, [])
+    
     useEffect(() => {
         if (IsFocused) {
             getLat_Long().then((res) => {
@@ -209,6 +211,23 @@ const Home = ({ navigation }) => {
             />
         )
     }
+
+    const renderRecommmendedCardItem = ({ item, index }) => {
+        return (
+            <RecommmendedCard
+                onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
+                showsHorizontalScrollIndicator={false}
+                imageSource={item.image}
+                details={item.title}
+                OnHeartPress={() => OnHeartPress(item?._id)}
+                date={item.date}
+                location={!!item?.location ? item?.location?.name : ''}
+                time={item.date}
+                isfav={item.isFavorite}
+            />
+        )
+    }
+
 
     const OnHeartPress = (event_id) => {
         const updatedArray = [...events];
@@ -279,8 +298,9 @@ const Home = ({ navigation }) => {
                         <FlatList
                             keyExtractor={keyExtractor}
                             data={recEvents}
+                            showsHorizontalScrollIndicator={false}
                             horizontal
-                            renderItem={renderItem}
+                            renderItem={renderRecommmendedCardItem}
                         />
                     </View>
 
