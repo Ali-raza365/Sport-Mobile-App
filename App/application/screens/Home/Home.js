@@ -169,7 +169,7 @@ const Home = ({ navigation }) => {
     }
 
     useEffect(() => { fetchActivites(token) }, [])
-    
+
     useEffect(() => {
         if (IsFocused) {
             getLat_Long().then((res) => {

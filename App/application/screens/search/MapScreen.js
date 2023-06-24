@@ -13,6 +13,7 @@ import EventStore from '../../Store/EventStore';
 import UserStore from '../../Store/UserStore';
 import RecommmendedCard from '../../components/RecommmendedCard';
 import LocationFilterModal from '../../components/LocationFilterModal';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 
 const { width, height } = Dimensions.get("window");
@@ -125,13 +126,17 @@ const ExploreScreen = ({ navigation }) => {
     }
 
     useEffect(() => {
+        fetchCurrentLocationActivity()
+    }, [])
+
+    const fetchCurrentLocationActivity =()=>{
         getLat_Long().then((res) => {
             location = { radius: 10, ...res };
-            setCurrentLocation({ ...currentLocation, ...res, })
+            setCurrentLocation({ ...currentLocation, ...res,name:"" ,radius:5 })
             fetchEvents(token, location)
+        setshowfilterModal(false)
         })
-
-    }, [])
+    }
 
     useEffect(() => {
         if (isLoading) {
@@ -289,6 +294,7 @@ const ExploreScreen = ({ navigation }) => {
                 onBackButtonPress={togglePickerModal}
                 onBackdropPress={togglePickerModal}
                 onSave={onFilterSearch}
+                onRestPress={fetchCurrentLocationActivity}
             />
             {currentLocation?.longitude ? <View style={styles.container}>
                 <MapView
@@ -301,26 +307,28 @@ const ExploreScreen = ({ navigation }) => {
                 </MapView>
                 <View style={styles.header}>
                     <StatusBar backgroundColor="#000" />
-                    <View style={{ flexDirection: 'row', alignItems: "center" }}>
+                    <View style={{ flex: 1, flexDirection: 'row', alignItems: "center" }}>
                         <Ionicons
                             onPress={() => {
                                 navigation.goBack();
                             }}
+                            style={{ flex: 0.1 }}
                             name="arrow-back-outline"
                             size={30}
                             color="white"
                             type="ionicon"
                         />
-                        <View>
-                            <Text style={styles.headerTitle}>Nearby</Text>
-                            <Text style={[styles.headerTitle, { fontSize: WP(3.1), marginTop: 2, }]}>Activities Near by you</Text>
+                        <View style={{ flex: 0.8 }}>
+                            <Text numberOfLines={1} style={styles.headerTitle}>{currentLocation?.name || "Nearby"}</Text>
+                            <Text style={[styles.headerTitle, { fontSize: WP(3.1), marginTop: 2, }]}>Activities {currentLocation?.name ?`under radius: ${currentLocation?.radius}` : "Near by you"}</Text>
                         </View>
 
                     </View>
                     <TouchableOpacity
+                        style={{ flex: 0.1 }}
                         onPress={() => { setshowfilterModal(true) }}
                     >
-                        <Text style={{ padding: 5, color: 'white', fontSize: 18, }}>LIST</Text>
+                        <FontAwesome5 name="search-location" size={25} color="#fff" light />
                     </TouchableOpacity>
                 </View>
 

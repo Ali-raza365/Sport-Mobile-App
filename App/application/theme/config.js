@@ -36,13 +36,14 @@ export const HOME_TAB_ICON_SIZE = 6;
 export const TAB_ICON_SIZE = 6;
 
 //COLORS USED IN APPLICATION
+
 export const COLORS = {
      primaryColor: '#ff7f00',
      secondaryColor: '#414260',
      primaryRGB: 'rgba(90,44,102,',
      territoryColor: '#9D4DB3',
      primaryColor2: '#9E2654',
-     secondaryColor2: '#BC2E65',
+     secondaryColor2: '#0D0E13',
      territoryColor2: '#D34D80',
      lightGrey: '#8C8A9A',
      gray500:"#C0BFBF",
@@ -54,7 +55,7 @@ export const COLORS = {
      redColor: '#E6344A',
      greenColor: '#21CE99',
      yellowColor: '#F5BA03',
-     offWhiteColor:'##F5F5F5',
+     offWhiteColor:'#F5F5F5',
    
 };
 
