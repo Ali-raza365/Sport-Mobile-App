@@ -24,9 +24,8 @@ const NewEvent = ({ navigation }) => {
     const [showPickerModal, setShowPickerModal] = useState(false);
     const [eventImage, setEventImage] = useState(null);
     const { user, token } = UserStore();
-
     const { fetchActivites,
-        setEventLocation,setActivity,
+        setEventLocation, setActivity,
         selectedActivity, createEventFuc, createEvent_loading, EventLocation } = EventStore();
 
     console.log(EventLocation);
@@ -69,8 +68,7 @@ const NewEvent = ({ navigation }) => {
         if (!eventImage) return alert('event image is required!')
         if (!user?.fullname) return alert('organizer name is required!')
         if (!eventTitle) return alert('event title is required!')
-        if (!eventDate) return alert('date is required!')
-        if (!eventDate) return alert('time is required!')
+        if (!eventDate) return alert('Time & Date is required!')
         if (!EventLocation) return alert('location is required!')
         if (!selectedActivity?.name) return alert('please select sport activity for create event')
         if (!eventParti) return alert('participants is required!')
@@ -93,13 +91,13 @@ const NewEvent = ({ navigation }) => {
             }
         }
         createEventFuc(detail, token).then((res) => {
-            console.log(res?.status,'createEventFuc status');
-            if(res?.status ==200){
+            console.log(res?.status, 'createEventFuc status');
+            if (res?.status == 200) {
                 setEventLocation(null)
                 setActivity(null)
                 setTimeout(() => {
                     _gotoHomeNavigator(navigation)
-                    }, 1300);
+                }, 1300);
             }
         })
     }
@@ -123,7 +121,7 @@ const NewEvent = ({ navigation }) => {
 
                     <DatePicker
                         modal
-                        mode={'date'}
+                        mode={'datetime'}
                         open={showDatePicker}
                         minimumDate={new Date()}
                         date={eventDate}
@@ -169,7 +167,7 @@ const NewEvent = ({ navigation }) => {
                         lable={" Date & Time"}
                         placeholder={"Time"}
                         editable={false}
-                        value={eventDate?.toLocaleDateString() || ''}
+                        value={eventDate?.toLocaleString() || ''}
                         // onIconPress={() => setShowDatePicker(true)}
                         Icon={(<AntDesign onPress={() => setShowDatePicker(true)} name="calendar" size={WP(8)} color={COLORS.lightGrey} />)}
                     />

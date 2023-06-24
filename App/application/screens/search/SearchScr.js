@@ -167,6 +167,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginRight: WP(SPACING_PERCENT),
+    padding:WP(2),
+    paddingBottom:WP(4),
+    
   },
 
   mainContainer: {
