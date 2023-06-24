@@ -14,7 +14,7 @@ const YourFavorites = ({ navigation }) => {
     const [events, setEvents] = useState([])
 
     const IsFocused = useIsFocused()
-    const { Events, fetchEvents, AddEventToFavorite, RemoveEventFromFavorite, } = EventStore();
+    const { FavEvents, fetchFavoritesEvents, AddEventToFavorite, RemoveEventFromFavorite, } = EventStore();
     const { user, token } = UserStore();
 
     const renderItem = ({ item }) => {
@@ -37,7 +37,6 @@ const YourFavorites = ({ navigation }) => {
                 AddEventToFavorite(event_id, token)
             } else {
                 RemoveEventFromFavorite(event_id, token)
-
             }
             updatedArray[eventIndex] = {
                 ...updatedArray[eventIndex],
@@ -49,18 +48,26 @@ const YourFavorites = ({ navigation }) => {
     }
 
     useEffect(() => {
-        // fetchEvents(location, token).then((ev) => {
-        setEvents(Events || [])
-        // })
-    }, [IsFocused])
+        setLoading(true)
+        fetchFavoritesEvents(token).then((data) => {
+            setEvents(data || [])
+            setLoading(false)
+          }).catch(() => { setLoading(false) })
+    }, [])
 
     const onRefresh = () => {
         setRefreshing(true);
-        // fetchEvents(location, token).then((ev) => {
-        setEvents(ev || Events || [])
-        // })
+        fetchFavoritesEvents(token).then((data) => {
+            setEvents(data || [])
+          }).catch(() => {  })
         setRefreshing(false);
     };
+
+    const renderEmptyComponent = () => (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+          <Text>No items to display</Text>
+        </View>
+      );
 
     return (
         <>
@@ -72,6 +79,7 @@ const YourFavorites = ({ navigation }) => {
                 keyExtractor={(_, i) => `item${i}`}
                 showsVerticalScrollIndicator={false}
                 disableVirtualization={false}
+                ListEmptyComponent={renderEmptyComponent}
                 contentContainerStyle={{ flexGrow: 1, paddingBottom: HP(20), padding: WP(3), }}
                 data={events}
                 renderItem={renderItem}

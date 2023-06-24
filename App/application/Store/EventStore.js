@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ADD_FAVOURITE_EVENTS_API, CREATE_EVENT_API, GET_ACTIVITY_API, GET_EVENTS_API, GET_EVENTS_BY_LOCATION_API, GET_RECOMMENDED_EVENTS_API, PARTICIPATE_EVENT_API, REMOVE_FAVOURITE_EVENTS_API, SEARCH_EVENT_API } from "../api/apis";
+import { ADD_FAVOURITE_EVENTS_API, CREATE_EVENT_API, GET_ACTIVITY_API, GET_EVENTS_API, GET_EVENTS_BY_LOCATION_API, GET_FAVORITES_EVENTS_API, GET_PARTICIPANTS_EVENTS_API, GET_RECOMMENDED_EVENTS_API, PARTICIPATE_EVENT_API, REMOVE_FAVOURITE_EVENTS_API, SEARCH_EVENT_API } from "../api/apis";
 import { _gotoAuthStack, _gotoHomeNavigator } from "../navigation/navigationServcies";
 import { handleAxiosError } from "../utils/ErrorHandler";
 
@@ -8,6 +8,8 @@ const EventStore = create((set) => ({
     Activites: [],
     Events: [],
     nearMeEvents:[],
+    FavEvents:[],
+    ParticipantsEvents:[],
     EventLocation:null,
     Recommandedevents: [],
     Searchevents: null,
@@ -65,7 +67,6 @@ const EventStore = create((set) => ({
             handleAxiosError(error)
         }
     },
-
     createEventFuc: async (detail, token) => {
         try {
 
@@ -155,6 +156,35 @@ const EventStore = create((set) => ({
                 handleAxiosError(resp.data)
             }
             return resp?.data?.events ||null
+        } catch (error) {
+            handleAxiosError(error)
+        }
+    },
+    fetchFavoritesEvents: async (token) => {
+        try {
+            let resp = await GET_FAVORITES_EVENTS_API(token)
+            console.log(resp?.data);
+            if (resp?.data) {
+                set({ FavEvents: resp?.data?.favoriteEvents, })
+                return resp?.data?.favoriteEvents
+            } else {
+                handleAxiosError(resp.data)
+            }
+
+        } catch (error) {
+            handleAxiosError(error)
+        }
+    },
+    fetchParticipantsEvents: async (token) => {
+        try {
+            let resp = await GET_PARTICIPANTS_EVENTS_API(token)
+            if (resp?.data) {
+                set({ ParticipantsEvents: resp?.data?.events, })
+                return resp?.data?.events
+            } else {
+                handleAxiosError(resp.data)
+            }
+
         } catch (error) {
             handleAxiosError(error)
         }

@@ -7,7 +7,7 @@ import { Card } from 'react-native-paper';
 
 const CardItem = ({ item, hideFav, onPress, OnHeartPress }) => {
     return (
-        <Card style={{marginBottom: 10,}}> 
+        <Card style={{ marginBottom: 10, }}>
             <TouchableOpacity
                 activeOpacity={0.5}
                 onPress={onPress}
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
         padding: WP(3),
         borderColor: COLORS.grey,
         borderRadius: 10,
-        
+
         flex: 1,
         flexDirection: 'row',
     },

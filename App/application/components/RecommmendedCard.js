@@ -3,24 +3,23 @@ import React from 'react'
 import { COLORS, HP, WP } from '../theme/config'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { _momentDateFormat } from '../utils/TimeFunctions'
+import { Card } from 'react-native-paper'
 
 export default function RecommmendedCard({
     imageSource,
     details,
     date,
-    isfav,
-    OnHeartPress = () => { },
-    location,
     onPress = () => { },
-    hideFavorite,
     contentContainerStyle,
+    imageStyle,
 }) {
 
 
 
     return (
+        <Card style={{margin: WP(1.5),}}>
         <TouchableOpacity style={[Styles._mainContainer, contentContainerStyle]} activeOpacity={0.7} onPress={onPress}>
-            <View style={Styles._imageMain}>
+            <View style={[Styles._imageMain,imageStyle]}>
                 <Image
                     style={Styles._image}
                     source={{ uri: imageSource }}
@@ -36,6 +35,7 @@ export default function RecommmendedCard({
 
             </View>
         </TouchableOpacity>
+        </Card>
     )
 }
 
@@ -45,7 +45,7 @@ const Styles = StyleSheet.create({
         height: HP(30),
         borderRadius: WP(2),
         overflow: "hidden",
-        margin: WP(1.5),
+    
     },
     _imageMain: {
         width: "100%",
@@ -59,6 +59,7 @@ const Styles = StyleSheet.create({
     },
     _dataMain: {
         width: "100%",
+        height:"30%",
         backgroundColor: COLORS.whiteColor
     },
     _sectionOne: {

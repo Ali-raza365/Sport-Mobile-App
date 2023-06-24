@@ -5,12 +5,14 @@ import {
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS, WP } from '../../theme/config';
+import { COLORS, HP, WP } from '../../theme/config';
 
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import { getLat_Long } from '../../utils/GetIPAddress';
 import EventStore from '../../Store/EventStore';
 import UserStore from '../../Store/UserStore';
+import RecommmendedCard from '../../components/RecommmendedCard';
+import LocationFilterModal from '../../components/LocationFilterModal';
 
 
 const { width, height } = Dimensions.get("window");
@@ -21,13 +23,15 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 const ExploreScreen = ({ navigation }) => {
 
     var location = {
+        radius: 5,
         latitudeDelta: 0.04864195044303443,
         longitudeDelta: 0.040142817690068,
     }
     const { nearMeEvents, fetchEventsByLocation } = EventStore()
     const [currentLocation, setCurrentLocation] = useState(location)
+    const [showfilterModal, setshowfilterModal] = useState(false)
     const { token } = UserStore()
-console.log({currentLocation});
+    console.log({ currentLocation });
     // const initialMapState = {
     //     markers: [
     //         {
@@ -101,7 +105,6 @@ console.log({currentLocation});
 
     //     }
     // };
-    // const [state, setState] = React.useState(initialMapState);
     const [isLoading, setisLoading] = React.useState(false);
     let mapIndex = 0;
     let mapAnimation = new Animated.Value(0);
@@ -110,15 +113,21 @@ console.log({currentLocation});
         setisLoading(false)
         let resp = await fetchEventsByLocation(token, location)
         setisLoading(true)
-
-
     }
-    // console.log({nearMeEvents});
+
+    const togglePickerModal = () => {
+        setshowfilterModal(!setshowfilterModal)
+    }
+    const onFilterSearch = (loc) => {
+        let newloc = { ...currentLocation, ...loc, }
+        setCurrentLocation(newloc)
+        fetchEvents(token, newloc)
+    }
 
     useEffect(() => {
         getLat_Long().then((res) => {
-            location = { radius: 100, ...res };
-            setCurrentLocation({ ...currentLocation,...res, })
+            location = { radius: 10, ...res };
+            setCurrentLocation({ ...currentLocation, ...res, })
             fetchEvents(token, location)
         })
 
@@ -274,8 +283,14 @@ console.log({currentLocation});
     }
 
     return (
-        <SafeAreaView style={{ flex: 1 }}>
-        {currentLocation?.longitude ? <View style={styles.container}>
+        <SafeAreaView style={{ flex: 1 }} edges={['right', 'top', 'left']} >
+            <LocationFilterModal
+                isVisible={showfilterModal}
+                onBackButtonPress={togglePickerModal}
+                onBackdropPress={togglePickerModal}
+                onSave={onFilterSearch}
+            />
+            {currentLocation?.longitude ? <View style={styles.container}>
                 <MapView
                     ref={_map}
                     initialRegion={currentLocation}
@@ -303,7 +318,7 @@ console.log({currentLocation});
 
                     </View>
                     <TouchableOpacity
-                        onPress={() => { navigation.navigate('ListScr') }}
+                        onPress={() => { setshowfilterModal(true) }}
                     >
                         <Text style={{ padding: 5, color: 'white', fontSize: 18, }}>LIST</Text>
                     </TouchableOpacity>
@@ -341,10 +356,18 @@ console.log({currentLocation});
                     )}
                 >
                     {nearMeEvents?.length ? nearMeEvents.map((item, index) => (
-                        <MarkerCard key={index} detail={item} />
+                        <RecommmendedCard
+                            onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
+                            imageSource={item.image}
+                            details={item.title}
+                            contentContainerStyle={{ height: HP(25) }}
+                            imageStyle={{ height: "80%" }}
+                            date={item.date}
+                            key={index} detail={item} />
                     )) : null}
                 </Animated.ScrollView>
-            </View>:null}
+            </View> : null}
+
         </SafeAreaView>
     );
 };
@@ -489,6 +512,5 @@ const styles = StyleSheet.create({
     cardHeaderContainer: {
         width: '80%',
         height: 70,
-
     }
 });

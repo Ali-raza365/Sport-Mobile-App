@@ -79,6 +79,7 @@ export const getLat_Long = async (isAlertShow) => {
                                         console.log({ currentLongitude });
                                     },
                                     (error) => {
+                                        console.log(error);
                                         resolve({ longitude: null, latitude: null })
                                     }
                                 )

@@ -185,22 +185,22 @@ const eventCtrl = {
         try {
             const events = await Event.find({
                 location: {
-                  $geoWithin: {
-                    $centerSphere: [[longitude, latitude], radiusInKm / 6371] // Convert radius to radians
-                  }
+                    $geoWithin: {
+                        $centerSphere: [[longitude, latitude], radiusInKm / 6371] // Convert radius to radians
+                    }
                 }
-              })
-                // .find({
-                //     location: {
-                //         $near: {
-                //             $geometry: {
-                //                 type: "Point",
-                //                 coordinates: [longitude, latitude],
-                //             },
-                //             $maxDistance: (radiusInKm * 10000),
-                //         },
-                //     },
-                // }).sort({ createdAt: -1 })
+            })
+            // .find({
+            //     location: {
+            //         $near: {
+            //             $geometry: {
+            //                 type: "Point",
+            //                 coordinates: [longitude, latitude],
+            //             },
+            //             $maxDistance: (radiusInKm * 10000),
+            //         },
+            //     },
+            // }).sort({ createdAt: -1 })
             console.log(events);
             if (!events) return res.status(400).json({ msg: "No events found!" })
             const eventList = await CheckEvents(events, req?.user?._id)
@@ -286,7 +286,7 @@ const eventCtrl = {
             // if (!events || events.length === 0) {
             //     return res.status(400).json({ msg: "No events found!" });
             // }
-console.log(events);
+            console.log(events);
             res.json({ events });
         } catch (err) {
             return res.status(500).json({ msg: err });
@@ -365,7 +365,8 @@ console.log(events);
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }
-            const favoriteEvents = user.favorites;
+            const eventList = await CheckEvents(user.favorites, req?.user?._id)
+            const favoriteEvents =eventList;
             return res.json({ favoriteEvents });
         } catch (error) {
             console.error(error);
@@ -431,7 +432,8 @@ console.log(events);
             if (!events) {
                 return res.status(404).json({ message: 'Events not found' });
             }
-            return res.json({ events });
+            const eventList = await CheckEvents(events, userId)
+            return res.json({ events:eventList || [] });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal server error' });

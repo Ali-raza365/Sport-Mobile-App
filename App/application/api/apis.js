@@ -136,7 +136,7 @@ export const GET_USER_INFO_API = (token) => {
 }
 
 // UPDATE USER INFO
-export const UPDATE_USER_INFO_API = (token,detail) => {
+export const UPDATE_USER_INFO_API = (token, detail) => {
     return new Promise((resolve, reject) => {
         try {
             axios({
@@ -219,6 +219,48 @@ export const GET_EVENTS_API = (details, token) => {
                 url: BASE_URL + 'api/event/near-me',
                 method: 'POST',
                 data: details,
+                headers: {
+                    Authorization: "Bearer " + token,
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+export const GET_FAVORITES_EVENTS_API = (token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/event/all-favorites',
+                method: 'GET',
+                headers: {
+                    Authorization: "Bearer " + token,
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+export const GET_PARTICIPANTS_EVENTS_API = (token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/event/participant',
+                method: 'GET',
                 headers: {
                     Authorization: "Bearer " + token,
                 }
@@ -407,7 +449,7 @@ export const FETCH_CHAT_MESSAGES_API = (detail, token) => {
             axios({
                 url: BASE_URL + `api/chat/messages`,
                 method: 'POST',
-                data:detail,
+                data: detail,
                 headers: {
                     Authorization: "Bearer " + token,
                     "Content-Type": 'application/json',

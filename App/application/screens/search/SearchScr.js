@@ -32,7 +32,7 @@ const SearchScr = ({ navigation }) => {
   const { user, token } = UserStore();
 
   const handleTextSubmit = () => {
-    if (!searchQuery) return
+    // if (!searchQuery) return
     FetchSearchEvents({ text: searchQuery }, token)
   };
 
