@@ -456,6 +456,7 @@ const eventCtrl = {
                     },
                 },
             ])
+            console.log("working");
 
             if (!events) {
                 return res.status(404).json({ message: 'Events not found' });
@@ -464,7 +465,7 @@ const eventCtrl = {
                 return accumulator.concat(event.requests);
             }, []);
 
-            return res.json({ events: concatenatedArray || [] });
+            return res.json({ requests: concatenatedArray || [] });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal server error' });

@@ -56,6 +56,7 @@ export const COLORS = {
      greenColor: '#21CE99',
      yellowColor: '#F5BA03',
      offWhiteColor:'#F5F5F5',
+     darkgray:"#2E3A59"
    
 };
 

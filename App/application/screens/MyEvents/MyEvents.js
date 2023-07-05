@@ -49,7 +49,6 @@ const MyEvents = ({ navigation }) => {
     useEffect(() => {
         setLoading(true)
         fetchMyEvents(token).then((data) => {
-            console.log(data[0]);
             setEvents(data || [])
             setLoading(false)
         }).catch(() => { setLoading(false) })
