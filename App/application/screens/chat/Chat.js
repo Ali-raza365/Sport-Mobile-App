@@ -24,12 +24,13 @@ const ChatScreen = ({ route, navigation }) => {
 
     let userId = user?._id;
     let roomId = lastMessage?._id
-    console.log({ lastMessage });
+    // console.log({ lastMessage });
     const connectToChat = (userId, roomId) => {
 
         socket = io(`${BASE_URL}?userId=${userId}`);
 
         socket.emit('joinChatRoom', roomId);
+        socket.on('joinChatRoom', (join)=>{console.log(join);});
 
         socket.on('chatMessage', (data) => {
             console.log('chatMessage', data?.user);

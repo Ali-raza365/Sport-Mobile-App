@@ -8,7 +8,7 @@ import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplet
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Slider from '@react-native-community/slider'
 
-export default function LocationFilterModal({ isVisible, onSave, onBackButtonPress, onBackdropPress }) {
+export default function LocationFilterModal({ isVisible, onSave,onRestPress, onBackButtonPress, onBackdropPress }) {
 
 
   const [location, setLocation] = useState({
@@ -77,6 +77,11 @@ export default function LocationFilterModal({ isVisible, onSave, onBackButtonPre
             style={Styles.panelButton}
             onPress={onSavePress}>
             <Text style={Styles.panelButtonTitle}>Save</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={Styles.panelButton}
+            onPress={onRestPress}>
+            <Text style={Styles.panelButtonTitle}>Reset Location</Text>
           </TouchableOpacity>
         </View>
       </Modal>

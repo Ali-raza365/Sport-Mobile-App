@@ -8,6 +8,8 @@ import { AppBar, Button } from '../../components';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import UserStore from '../../Store/UserStore';
 import EventStore from '../../Store/EventStore';
+import moment from 'moment';
+import { _momentDateFormat } from '../../utils/TimeFunctions';
 
 const EventDetail = ({ route, navigation }) => {
 
@@ -48,22 +50,30 @@ const EventDetail = ({ route, navigation }) => {
                     <Text style={styles._priceText}>{detail?.total_participants} Participants</Text>
 
                     <View style={styles._dateLocationContainer}>
+
                         <View style={styles._row}>
                             <View style={styles.iconContainer}>
                                 <AntDesign name="calendar" size={WP(7)} color={COLORS.blackColor} />
                             </View>
-                            <Text style={styles._priceText}>{!!detail?.date ? "  " + new Date(detail?.date).toDateString() : ''}</Text>
+                            <Text style={styles._priceText}>{!!detail?.date ? "  " + _momentDateFormat(detail?.date) : ''}</Text>
+                        </View>
+                        <View style={styles._row}>
+                            <View style={styles.iconContainer}>
+                                <AntDesign name="clockcircleo" size={WP(7)} color={COLORS.blackColor} />
+                            </View>
+                            <Text style={styles._priceText}>{!!detail?.date ? "  " + moment(detail?.date).format('LT') : ''}</Text>
                         </View>
                         <View style={styles._row}>
                             <View style={styles.iconContainer}>
                                 <Foundation name="marker" size={WP(7)} color={COLORS.blackColor} />
                             </View>
-                            <Text style={styles._LocationText}>{!!detail?.location ? detail?.location?.name : ""}</Text>
+                            <Text numberOfLines={3} style={styles._LocationText}>{!!detail?.location ? detail?.location?.name : ""}</Text>
                         </View>
                     </View>
 
                     <View style={styles._desContainer}>
-                        <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>Detail</Text>
+                       <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>{detail?.title || ''}</Text>
+                        {/* <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>Detail</Text> */}
                         <Text style={[styles.description,]}>{detail?.description || ''}</Text>
                     </View>
 
