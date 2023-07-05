@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const BASE_URL = 'https://sport-mobile-app-psi.vercel.app/';
-//  const BASE_URL = 'http://192.168.100.9:8080/';
+// export const BASE_URL = 'https://sport-mobile-app-psi.vercel.app/';
+ const BASE_URL = 'http://192.168.100.9:8080/';
 
 
 
@@ -276,6 +276,28 @@ export const GET_PARTICIPANTS_EVENTS_API = (token) => {
         }
     })
 }
+export const GET_MY_EVENTS_API = (token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/event/my-events',
+                method: 'GET',
+                headers: {
+                    Authorization: "Bearer " + token,
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
 
 export const GET_RECOMMENDED_EVENTS_API = (detail, token) => {
     return new Promise((resolve, reject) => {

@@ -23,7 +23,12 @@ import Chat from "./chat/Chat";
 import AccountSettings from "./Settings/AccountSettings";
 import EditProfileScreen from "./Settings/EditProfileScreen";
 import YourFavorites from "./Settings/YourFavorites";
-import YourParticipants from "./Settings/YourParticipants";
+
+// my Events
+import YourParticipants from "./MyEvents/YourParticipants";
+import MyEvents from "./MyEvents/MyEvents";
+import EventsRequest from "./MyEvents/EventsRequest";
+
 
 
 
@@ -52,6 +57,10 @@ export {
     AccountSettings,
     EditProfileScreen,
     YourFavorites,
+
+
     YourParticipants,
+    MyEvents,
+    EventsRequest
 };
 

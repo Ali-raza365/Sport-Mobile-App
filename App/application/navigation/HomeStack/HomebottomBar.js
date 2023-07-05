@@ -15,6 +15,7 @@ import AccountSettings from '../../screens/Settings/AccountSettings';
 import EventStack from '../EventStack/EventStack';
 import ChatStack from '../ChatStack/ChatStack';
 import SettingsStack from '../SettingsStack/SettingsStack';
+import MyTabs from '../../screens/MyEvents/MyTopBar';
 
 // import StepIndicator from 'react-native-step-indicator';
 const Tab = createBottomTabNavigator();
@@ -138,6 +139,20 @@ export default function HomebottomBar() {
                     },
                     tabBarIcon: ({ color, size }) => (
                         <MaterialIcons name="event" color={color} size={size} />
+                    ),
+                }}
+            />
+            <Tab.Screen
+                name="MyEvents"
+                component={MyTabs}
+                options={{
+                    tabBarLabelStyle: {
+                        fontWeight: '700',
+                        top: -4,
+                    },
+                    tabBarLabel: 'Search for activities',
+                    tabBarIcon: ({ color, size }) => (
+                        <Octicons name="checklist" color={color} size={size} />
                     ),
                 }}
             />

@@ -1,12 +1,11 @@
-import { View, Text, FlatList, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import CardItem from '../../components/CardItem';
-import UserStore from '../../Store/UserStore';
-import EventStore from '../../Store/EventStore';
-import { HP, WP } from '../../theme/config';
-import { getLat_Long } from '../../utils/GetIPAddress';
 import { useIsFocused } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, RefreshControl, Text, View } from 'react-native';
+import EventStore from '../../Store/EventStore';
+import UserStore from '../../Store/UserStore';
 import { Loader } from '../../components';
+import CardItem from '../../components/CardItem';
+import { HP, WP } from '../../theme/config';
 
 const YourParticipants = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);

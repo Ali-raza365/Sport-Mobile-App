@@ -15,18 +15,18 @@ const chatCtrl = {
                 { $addFields: { lastMessage: { $arrayElemAt: ["$chat", 0] } } },
                 {
                     $addFields: {
-                      isParticipated: {
-                        $in: [userId, '$participants']
-                      }
+                        isParticipated: {
+                            $in: [userId, '$participants']
+                        }
                     }
-                  },
-                  {
+                },
+                {
                     $addFields: {
-                      isfavorites: {
-                        $in: [userId, '$favorites']
-                      }
+                        isFavorite: {
+                            $in: [userId, '$favorites']
+                        }
                     }
-                  },
+                },
                 {
                     $sort: {
                         "lastMessage.createdAt": -1,

@@ -26,7 +26,7 @@ const pipeline = (user_id) => ([
     },
     {
         $addFields: {
-            isFavorites: {
+            isFavorite: {
                 $in: [user_id, '$favorites']
             }
         }
@@ -95,6 +95,17 @@ const eventCtrl = {
             return res.status(500).json({ msg: err.message })
         }
     },
+    getMyEvent: async (req, res) => {
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+            const events = await Event.aggregate([{ $match: { createdBy: userId } }, ...pipeline(userId), { $sort: { createdAt: -1, }, }]);
+            if (!events) return res.status(400).json({ msg: "No events found!" })
+            res.json({ events })
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
     getEventDetails: async (req, res) => {
         const { event_id } = req.body
         try {
@@ -114,17 +125,6 @@ const eventCtrl = {
             const events = await Event.find({ createdBy: req.user._id })
                 .select("-chat -participants -favorites -requests")
                 .sort({ createdAt: -1 })
-            if (!events) return res.status(400).json({ msg: "No events found!" })
-            res.json({ events })
-        } catch (err) {
-            return res.status(500).json({ msg: err.message })
-        }
-    },
-    getMyEvent: async (req, res) => {
-        try {
-            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
-            const userId = req.user._id
-            const events = await Event.aggregate([{ $match: { createdBy: userId } }, ...pipeline(userId),   { $sort: {createdAt: -1,},}]);
             if (!events) return res.status(400).json({ msg: "No events found!" })
             res.json({ events })
         } catch (err) {
@@ -361,7 +361,7 @@ const eventCtrl = {
         try {
             if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
             const userId = req.user._id
-            const user = await User.findById(userId).populate('favorites'); 5
+            const user = await User.findById(userId).populate('favorites')
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }
@@ -531,7 +531,7 @@ const eventCtrl = {
         try {
             if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
             const userId = req.user._id
-            const events = await Event.find({ participants: { $in: [userId] } })
+            const events = await Event.find({ participants: { $in: [userId] }, createdBy: { $ne: userId } })
 
             if (!events) {
                 return res.status(404).json({ message: 'Events not found' });
