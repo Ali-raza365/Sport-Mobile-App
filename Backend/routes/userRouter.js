@@ -7,5 +7,7 @@ const uploadToCloudinary = require('../middleware/uploadToCloudinary')
 router.get('/user/all', auth, userCtrl.getUsers)
 router.post('/user', auth,uploadToCloudinary, userCtrl.updateUser)
 router.get('/user/info', auth, userCtrl.getUserInfo)
+router.post('/activity/delete', auth, userCtrl.deleteUser)
+
 
 module.exports = router

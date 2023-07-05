@@ -4,6 +4,50 @@ const Event = require('../models/eventModel');
 const User = require('../models/userModel');
 
 
+const geoNearPipeline = (longitude, latitude, radiusInKm,) => ({
+    $geoNear: {
+        near: {
+            type: 'Point',
+            coordinates: [longitude, latitude],
+        },
+        distanceField: "distance",
+        maxDistance: radiusInKm * 1000, // Convert radius to meters
+        spherical: true,
+    }
+})
+
+const pipeline = (user_id) => ([
+    {
+        $addFields: {
+            isParticipated: {
+                $in: [user_id, '$participants']
+            }
+        }
+    },
+    {
+        $addFields: {
+            isFavorites: {
+                $in: [user_id, '$favorites']
+            }
+        }
+    },
+    // {
+    //     $addFields: {
+    //         isPanding: {
+    //             $in: [user_id, '$requests']
+    //         }
+    //     }
+    // },
+    {
+        $project: {
+            participants: 0,
+            requests: 0,
+            favorites: 0,
+            chat: 0,
+        }
+    },
+])
+
 const eventCtrl = {
     createEvent: async (req, res) => {
         try {
@@ -11,19 +55,8 @@ const eventCtrl = {
             const { organizer, activity, title, description, max_participants, date, time, location } = req.body
             console.log(location);
             const loc = !!location ? JSON.parse(location) : null
-            // {
-            //     name: 'Sample 5 Location',
-            //     coordinates: [
-            //         30.443902444762696, -84.27326978424058
-            //     ]
-            // } 
+
             const act = !!activity ? JSON.parse(activity) : null;
-            //  {
-            //     name: 'Yoga',
-            //     activity_id: '64726219c05329af74705321'
-            // }
-
-
 
             if (!req?.user?._id) return res.status(400).json({ msg: "invalid Token!" })
 
@@ -53,10 +86,11 @@ const eventCtrl = {
     },
     getEvents: async (req, res) => {
         try {
-            const events = await Event.find({}).sort({ createdAt: -1 })
+            const events = await Event.find({})
+                .select("-chat -participants -favorites -requests")
+                .sort({ createdAt: -1 })
             if (!events) return res.status(400).json({ msg: "events does not found" })
-            const eventList = await CheckEvents(events, req?.user?._id)
-            res.json({ events: eventList })
+            res.json({ events: events })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
@@ -64,9 +98,10 @@ const eventCtrl = {
     getEventDetails: async (req, res) => {
         const { event_id } = req.body
         try {
-            const event = await Event.findById(event_id)
+            const event = await Event.findById(event_id).select('-chat')
                 .populate('participants', 'fullname email avatar')
                 .populate('favorites', 'fullname email avatar')
+                .populate('requests', 'fullname email avatar')
                 .exec();
             if (!event) return res.status(400).json({ msg: "Event not found" })
             res.json({ event })
@@ -77,6 +112,19 @@ const eventCtrl = {
     getEventById: async (req, res) => {
         try {
             const events = await Event.find({ createdBy: req.user._id })
+                .select("-chat -participants -favorites -requests")
+                .sort({ createdAt: -1 })
+            if (!events) return res.status(400).json({ msg: "No events found!" })
+            res.json({ events })
+        } catch (err) {
+            return res.status(500).json({ msg: err.message })
+        }
+    },
+    getMyEvent: async (req, res) => {
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+            const events = await Event.aggregate([{ $match: { createdBy: userId } }, ...pipeline(userId),   { $sort: {createdAt: -1,},}]);
             if (!events) return res.status(400).json({ msg: "No events found!" })
             res.json({ events })
         } catch (err) {
@@ -99,28 +147,12 @@ const eventCtrl = {
     },
     updateEvent: async (req, res) => {
         try {
-            const {
-                event_id,
-                organizer,
-                image,
-                title,
-                description,
-                participants,
-                date,
-                time,
-                location } = req.body
+            const { event_id, organizer, image, title, description, participants, date, time, location } = req.body
+
             if (!event_id) return res.status(400).json({ msg: "Event not found" })
 
-            let updatedEvent = await Event.findOneAndUpdate({ _id: event_id }, {
-                organizer,
-                image,
-                title,
-                description,
-                participants,
-                date,
-                time,
-                location,
-            }, { new: true })
+            let updatedEvent = await Event.findOneAndUpdate({ _id: event_id },
+                { organizer, image, title, description, participants, date, time, location, }, { new: true })
             res.json({ msg: "Update Success!", event: updatedEvent })
 
         } catch (err) {
@@ -146,65 +178,43 @@ const eventCtrl = {
         const radiusInKm = req.body.radius || 5;
         const longitude = parseFloat(req.body.longitude);
         const latitude = parseFloat(req.body.latitude);
+        const user_id = req?.user?._id;
 
         if (isNaN(longitude) || isNaN(latitude)) {
             return res.status(400).json({ message: 'Invalid coordinates' });
         }
         try {
-            const events = await Event
-                .find({
-                    location: {
-                        $near: {
-                            $geometry: {
-                                type: "Point",
-                                coordinates: [longitude, latitude],
-                            },
-                            $maxDistance: (radiusInKm * 10000),
-                        },
-                    },
-                }).sort({ createdAt: 1 })
-
+            const events = await Event.aggregate([geoNearPipeline(longitude, latitude, radiusInKm), ...pipeline(user_id)]);
 
             if (!events) return res.status(400).json({ msg: "No events found!" })
-            const eventList = await CheckEvents(events, req?.user?._id)
-            res.json({ events: eventList })
+
+            res.json({ events })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
-
-
     },
     getEventNearMe: async (req, res) => {
         const radiusInKm = req.body.radius || 5;
         const longitude = parseFloat(req.body.longitude);
         const latitude = parseFloat(req.body.latitude);
+        const user_id = req?.user?._id;
         console.log({ Qury: req.body });
         if (isNaN(longitude) || isNaN(latitude)) {
             return res.status(400).json({ message: 'Invalid coordinates' });
         }
         try {
-            const events = await Event.find({
-                location: {
-                    $geoWithin: {
-                        $centerSphere: [[longitude, latitude], radiusInKm / 6371] // Convert radius to radians
-                    }
-                }
-            })
-            // .find({
-            //     location: {
-            //         $near: {
-            //             $geometry: {
-            //                 type: "Point",
-            //                 coordinates: [longitude, latitude],
-            //             },
-            //             $maxDistance: (radiusInKm * 10000),
-            //         },
-            //     },
-            // }).sort({ createdAt: -1 })
-            console.log(events);
+            const events = await Event.aggregate([geoNearPipeline(longitude, latitude, radiusInKm), ...pipeline(user_id),
+            {
+                $sort: {
+                    participants: -1,
+                },
+            },
+            {
+                $limit: 10,
+            },]);
             if (!events) return res.status(400).json({ msg: "No events found!" })
-            const eventList = await CheckEvents(events, req?.user?._id)
-            res.json({ events: eventList })
+
+            res.json({ events })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
@@ -214,26 +224,22 @@ const eventCtrl = {
         const radiusInKm = req.body.radius || 5;
         const longitude = parseFloat(req.body.longitude);
         const latitude = parseFloat(req.body.latitude);
-
+        const user_id = req?.user?._id;
         if (isNaN(longitude) || isNaN(latitude)) {
             return res.status(400).json({ message: 'Invalid coordinates' });
         }
         try {
-            const events = await Event
-                .find({
-                    location: {
-                        $near: {
-                            $geometry: {
-                                type: "Point",
-                                coordinates: [longitude, latitude],
-                            },
-                            $maxDistance: (radiusInKm * 10000),
-                        },
-                    },
-                }).sort({ participants: -1 }).limit(10)
+            const events = await Event.aggregate([geoNearPipeline(longitude, latitude, radiusInKm), ...pipeline(user_id),
+            {
+                $sort: {
+                    participants: -1,
+                },
+            },
+            {
+                $limit: 10,
+            },]);
             if (!events) return res.status(400).json({ msg: "No events found!" })
-            const eventList = await CheckEvents(events, req?.user?._id)
-            res.json({ events: eventList })
+            res.json({ events: events })
         } catch (err) {
             return res.status(500).json({ msg: err.message })
         }
@@ -262,8 +268,6 @@ const eventCtrl = {
                 },
             }
         }
-
-
         try {
             const events = await Event
                 .find({
@@ -276,16 +280,12 @@ const eventCtrl = {
                                 { organizer: { $regex: searchText, $options: 'i' } },
                                 { "activity.name": { $regex: searchText, $options: 'i' } },
                                 { "location.name": { $regex: searchText, $options: 'i' } },
-
                             ],
                         },
                     ],
                 })
                 .sort({ createdAt: 1 });
 
-            // if (!events || events.length === 0) {
-            //     return res.status(400).json({ msg: "No events found!" });
-            // }
             console.log(events);
             res.json({ events });
         } catch (err) {
@@ -361,13 +361,110 @@ const eventCtrl = {
         try {
             if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
             const userId = req.user._id
-            const user = await User.findById(userId).populate('favorites');
+            const user = await User.findById(userId).populate('favorites'); 5
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }
             const eventList = await CheckEvents(user.favorites, req?.user?._id)
-            const favoriteEvents =eventList;
+            const favoriteEvents = eventList;
             return res.json({ favoriteEvents });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+    sendParticipantRequest: async (req, res) => {
+        const { event_id } = req.body;
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+
+            const event = await Event.findById(event_id);
+            if (!event) {
+                return res.status(500).json({ message: 'Event not found' });
+            }
+            if (event?._doc?.participants?.includes(userId)) {
+                return res.status(500).json({ message: 'you are already Participant in this event ' });
+            }
+            if (event.total_participants >= event.max_participants) {
+                return res.status(500).json({ message: "Maximum number of participants reached" });
+            }
+            let updateEvent = await Event.findByIdAndUpdate(
+                event_id,
+                { $addToSet: { requests: userId } },
+                { new: true }
+            );
+            await event.save();
+            res.json({ message: ' Participant request send successfully ' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+    removeParticipantRequest: async (req, res) => {
+        const { event_id } = req.body;
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+
+            const event = await Event.findByIdAndUpdate(
+                event_id,
+                { $pull: { requests: userId } },
+                { new: true }
+            );
+            if (!event) {
+                return res.status(404).json({ message: 'Event not found' });
+            }
+
+            res.json({ message: ' Participant request cancel successfully ' });
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Internal server error' });
+        }
+    },
+    getParticipantRequests: async (req, res) => {
+        try {
+            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
+            const userId = req.user._id
+            const events = await Event.aggregate([
+                { $match: { createdBy: userId } },
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'requests',
+                        foreignField: '_id',
+                        as: 'request_details',
+                    },
+                },
+                { $unwind: '$request_details' },
+
+                {
+                    $project: {
+                        _id: 0,
+                        requests: {
+                            _id: '$request_details._id',
+                            fullname: '$request_details.fullname',
+                            email: '$request_details.email',
+                            avatar: '$request_details.avatar',
+                            event: '$title',
+                            description: '$description',
+                            date: '$date',
+                            activity: '$activity.name',
+                            image: '$image',
+                            event_id: '$_id',
+                        },
+                    },
+                },
+            ])
+
+            if (!events) {
+                return res.status(404).json({ message: 'Events not found' });
+            }
+            const concatenatedArray = events.reduce((accumulator, event) => {
+                return accumulator.concat(event.requests);
+            }, []);
+
+            return res.json({ events: concatenatedArray || [] });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal server error' });
@@ -378,21 +475,25 @@ const eventCtrl = {
         try {
             if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
             const userId = req.user._id
-
             const event = await Event.findById(event_id);
             if (!event) {
                 return res.status(500).json({ message: 'Event not found' });
             }
-
             if (event.total_participants >= event.max_participants) {
                 return res.status(500).json({ message: "Maximum number of participants reached" });
             }
+
+            await Event.findByIdAndUpdate(
+                event_id,
+                { $pull: { requests: userId } },
+                { new: true }
+            );
+
             let updateEvent = await Event.findByIdAndUpdate(
                 event_id,
                 { $addToSet: { participants: userId } },
                 { new: true }
             );
-
             event.total_participants = updateEvent.participants.length;
             await event.save();
             res.json({ message: 'you are successfully participanted in this event' });
@@ -412,12 +513,15 @@ const eventCtrl = {
                 { $pull: { participants: userId } },
                 { new: true }
             );
+            if (!event) {
+                return res.status(500).json({ message: 'Event not found' });
+            }
+            console.log(event)
             event.total_participants = event.participants.length;
             if (!event) {
                 return res.status(404).json({ message: 'Event not found' });
             }
-
-            res.json({ message: 'Event removed from favorites' });
+            res.json({ message: 'removed successfully' });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal server error' });
@@ -433,7 +537,7 @@ const eventCtrl = {
                 return res.status(404).json({ message: 'Events not found' });
             }
             const eventList = await CheckEvents(events, userId)
-            return res.json({ events:eventList || [] });
+            return res.json({ events: eventList || [] });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal server error' });
@@ -441,3 +545,38 @@ const eventCtrl = {
     },
 }
 module.exports = eventCtrl
+
+
+
+        // "requests": [
+        //     {
+        //         "_id": "6471054db3c216a529926306",
+        //         "fullname": "Demo user",
+        //         "email": "demo@gmail.com",
+        //         "avatar": "https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png"
+        //     },
+        //     {
+        //         "_id": "6471054db3c216a529926306",
+        //         "fullname": "Demo user",
+        //         "email": "demo@gmail.com",
+        //         "avatar": "https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png"
+        //     },
+        //     {
+        //         "_id": "6471054db3c216a529926306",
+        //         "fullname": "Demo user",
+        //         "email": "demo@gmail.com",
+        //         "avatar": "https://res.cloudinary.com/devatchannel/image/upload/v1602752402/avatar/avatar_cugq40.png"
+        //     },
+        //     {
+        //         "_id": "6492006b6f1538b249f9e329",
+        //         "fullname": "Ali Raza",
+        //         "email": "mianraza645@gmail.com",
+        //         "avatar": "https://res.cloudinary.com/djuafn5vu/image/upload/v1687462839/rsdax2rl761drfkyjyge.jpg"
+        //     },
+        //     {
+        //         "_id": "6492006b6f1538b249f9e329",
+        //         "fullname": "Ali Raza",
+        //         "email": "mianraza645@gmail.com",
+        //         "avatar": "https://res.cloudinary.com/djuafn5vu/image/upload/v1687462839/rsdax2rl761drfkyjyge.jpg"
+        //     }
+        // ]

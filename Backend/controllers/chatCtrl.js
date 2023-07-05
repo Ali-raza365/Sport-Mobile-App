@@ -14,6 +14,20 @@ const chatCtrl = {
                 { $addFields: { chat: { $reverseArray: "$chat" } } },
                 { $addFields: { lastMessage: { $arrayElemAt: ["$chat", 0] } } },
                 {
+                    $addFields: {
+                      isParticipated: {
+                        $in: [userId, '$participants']
+                      }
+                    }
+                  },
+                  {
+                    $addFields: {
+                      isfavorites: {
+                        $in: [userId, '$favorites']
+                      }
+                    }
+                  },
+                {
                     $sort: {
                         "lastMessage.createdAt": -1,
                         "lastMessage.message": 1
@@ -25,6 +39,7 @@ const chatCtrl = {
                         max_participants: 0,
                         total_participants: 0,
                         participants: 0,
+                        requests: 0,
                         favorites: 0,
                         chat: 0,
                         'lastMessage.user.password': 0,

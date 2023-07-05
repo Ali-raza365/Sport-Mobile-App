@@ -27,7 +27,7 @@ const eventSchema = new mongoose.Schema(
         },
         title: {
             type: String,
-            minLength: 5,
+            minLength: 3,
             maxlength: 30,
             require: true,
         },
@@ -47,6 +47,12 @@ const eventSchema = new mongoose.Schema(
             default: 1,
         },
         chat: [ChatModal.schema],
+        requests: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'user',
+            },
+        ],
         participants: [
             {
                 type: mongoose.Schema.Types.ObjectId,
@@ -74,6 +80,13 @@ const eventSchema = new mongoose.Schema(
             coordinates: {
                 type: [Number]
             }
+        },
+        isPaid: {
+            type: Boolean,
+            default: false
+        },
+        price: {
+            type: Number,
         }
     },
     {
