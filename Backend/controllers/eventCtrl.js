@@ -378,6 +378,7 @@ const eventCtrl = {
         try {
             if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
             const userId = req.user._id
+            if (!event_id) return res.status(400).json({ msg: "event id is required!" })
 
             const event = await Event.findById(event_id);
             if (!event) {
@@ -395,18 +396,16 @@ const eventCtrl = {
                 { new: true }
             );
             await event.save();
-            res.json({ message: ' Participant request send successfully ' });
+            res.json({ message: 'Participant request send successfully!' });
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Internal server error' });
         }
     },
     removeParticipantRequest: async (req, res) => {
-        const { event_id } = req.body;
+        const { event_id,userId } = req.body;
         try {
-            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
-            const userId = req.user._id
-
+            if (!userId) return res.status(400).json({ msg: "user Id required!" })
             const event = await Event.findByIdAndUpdate(
                 event_id,
                 { $pull: { requests: userId } },
@@ -446,7 +445,7 @@ const eventCtrl = {
                             fullname: '$request_details.fullname',
                             email: '$request_details.email',
                             avatar: '$request_details.avatar',
-                            event: '$title',
+                            eventTitle: '$title',
                             description: '$description',
                             date: '$date',
                             activity: '$activity.name',
@@ -471,11 +470,10 @@ const eventCtrl = {
             res.status(500).json({ message: 'Internal server error' });
         }
     },
-    addParticipant: async (req, res) => {
-        const { event_id } = req.body;
+    acceptParticipant: async (req, res) => {
+        const { event_id,userId } = req.body;
         try {
-            if (!req.user._id) return res.status(400).json({ msg: "invalid Token!" })
-            const userId = req.user._id
+            if (!userId) return res.status(400).json({ msg: "user Id required!" })
             const event = await Event.findById(event_id);
             if (!event) {
                 return res.status(500).json({ message: 'Event not found' });

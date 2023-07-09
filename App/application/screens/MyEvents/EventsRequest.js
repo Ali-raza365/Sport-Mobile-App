@@ -13,13 +13,35 @@ const EventRequest = ({ navigation }) => {
     const [events, setEvents] = useState([])
 
     const IsFocused = useIsFocused()
-    const { fetchParticipantsRequests,  } = EventStore();
+    const { AcceptParticiateRequest, DeclineParticiateRequest, fetchParticipantsRequests } = EventStore();
     const { user, token } = UserStore();
+
+    const onAccept = (data) => {
+        let detail = {
+            event_id: data?.event_id,
+            userId: data?._id
+        }
+        AcceptParticiateRequest(detail, token)
+            .then((data) => { console.log(data);})
+            .catch((e) => {console.log(e); })
+    }
+    const onDecline = (data) => {
+        console.log(data);
+        let detail = {
+            event_id: data?.event_id,
+            userId: data?._id
+        }
+        DeclineParticiateRequest(detail, token)
+            .then((data) => { console.log(data);})
+            .catch((e) => {console.log(e); })
+     }
 
     const renderItem = ({ item }) => {
         return (
             <RequestCard
-                onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
+                // onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
+                onAccept={() => onAccept(item)}
+                onDecline={() => onDecline(item)}
                 item={item}
             />
         )
@@ -54,9 +76,7 @@ const EventRequest = ({ navigation }) => {
         <>
             <Loader isVisible={loading} />
             <FlatList
-                refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                }
+                refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 keyExtractor={(_, i) => `item${i}`}
                 showsVerticalScrollIndicator={false}
                 disableVirtualization={false}

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const BASE_URL = 'https://sport-mobile-app-psi.vercel.app/';
-// export  const BASE_URL = 'http://192.168.100.9:8080/';
+// export const BASE_URL = 'https://sport-mobile-app-psi.vercel.app/';
+export const BASE_URL = 'http://192.168.100.9:8080/';
 
 
 
@@ -390,13 +390,13 @@ export const REMOVE_FAVOURITE_EVENTS_API = (event_id, token) => {
     })
 }
 
-export const PARTICIPATE_EVENT_API = (event_id, token) => {
+export const ACCEPT_PARTICIPATE_EVENT_API = (detail, token) => {
     return new Promise((resolve, reject) => {
         try {
             axios({
-                url: BASE_URL + 'api/event/add-participant',
+                url: BASE_URL + 'api/event/accept-participant',
                 method: 'POST',
-                data: { event_id },
+                data: detail,
                 headers: {
                     Authorization: "Bearer " + token,
                     "Content-Type": 'application/json',
@@ -445,6 +445,53 @@ export const GET_EVENTS_BY_LOCATION_API = (token, details) => {
                 data: details,
                 headers: {
                     Authorization: "Bearer " + token,
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
+export const SEND_PARTICIPATE_REQUEST_API = (detail, token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/event/send-participant-request',
+                method: 'POST',
+                data: detail,
+                headers: {
+                    Authorization: "Bearer " + token,
+                    "Content-Type": 'application/json',
+                }
+            })
+                .then((response) => {
+                    resolve(response);
+                })
+                .catch((error) => {
+                    reject(error)
+                })
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+export const DECLINE_PARTICIPATE_REQUEST_API = (detail, token) => {
+    return new Promise((resolve, reject) => {
+        try {
+            axios({
+                url: BASE_URL + 'api/event/remove-participant-request',
+                method: 'POST',
+                data: detail,
+                headers: {
+                    Authorization: "Bearer " + token,
+                    "Content-Type": 'application/json',
                 }
             })
                 .then((response) => {

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { ADD_FAVOURITE_EVENTS_API, CREATE_EVENT_API, GET_ACTIVITY_API, GET_EVENTS_API, GET_EVENTS_BY_LOCATION_API, GET_FAVORITES_EVENTS_API, GET_MY_EVENTS_API, GET_PARTICIPANTS_EVENTS_API, GET_PARTICIPANTS_REQUESTS_EVENTS_API, GET_RECOMMENDED_EVENTS_API, PARTICIPATE_EVENT_API, REMOVE_FAVOURITE_EVENTS_API, SEARCH_EVENT_API } from "../api/apis";
+import { ACCEPT_PARTICIPATE_EVENT_API, ACCEPT_PARTICIPATE_REQUEST_API, ADD_FAVOURITE_EVENTS_API, CREATE_EVENT_API, DECLINE_PARTICIPATE_REQUEST_API, GET_ACTIVITY_API, GET_EVENTS_API, GET_EVENTS_BY_LOCATION_API, GET_FAVORITES_EVENTS_API, GET_MY_EVENTS_API, GET_PARTICIPANTS_EVENTS_API, GET_PARTICIPANTS_REQUESTS_EVENTS_API, GET_RECOMMENDED_EVENTS_API, PARTICIPATE_EVENT_API, REMOVE_FAVOURITE_EVENTS_API, SEARCH_EVENT_API, SEND_PARTICIPATE_REQUEST_API } from "../api/apis";
 import { _gotoAuthStack, _gotoHomeNavigator } from "../navigation/navigationServcies";
 import { handleAxiosError } from "../utils/ErrorHandler";
 
@@ -111,6 +111,31 @@ const EventStore = create((set) => ({
             handleAxiosError(error)
         }
     },
+    SendParticiateRequest: async (detail, token) => {
+        try {
+            const resp = await SEND_PARTICIPATE_REQUEST_API(detail, token)
+            if (resp?.data) {
+                console.log(resp?.data?.message);
+                return resp?.data?.message
+            } else {
+                handleAxiosError(resp.data)
+            }
+        } catch (error) {
+            handleAxiosError(error)
+        }
+    },
+    DeclineParticiateRequest: async (detail, token) => {
+        try {
+            const resp = await DECLINE_PARTICIPATE_REQUEST_API(detail, token)
+            if (resp?.data) {
+                console.log(resp?.data?.message);
+            } else {
+                handleAxiosError(resp.data)
+            }
+        } catch (error) {
+            handleAxiosError(error)
+        }
+    },
     RemoveEventFromFavorite: async (detail, token) => {
         try {
             const resp = await REMOVE_FAVOURITE_EVENTS_API(detail, token)
@@ -123,9 +148,9 @@ const EventStore = create((set) => ({
             handleAxiosError(error)
         }
     },
-    ParticipateEvents: async (detail, token) => {
+    AcceptParticiateRequest: async (detail, token) => {
         try {
-            const resp = await PARTICIPATE_EVENT_API(detail, token)
+            const resp = await ACCEPT_PARTICIPATE_EVENT_API(detail, token)
             if (resp?.data?.message) {
                 return resp?.data?.message
             } else {
@@ -219,8 +244,7 @@ const EventStore = create((set) => ({
             handleAxiosError(error)
         }
     },
-    
-
+   
 }))
 
 export default EventStore

@@ -17,14 +17,17 @@ const EventDetail = ({ route, navigation }) => {
     console.log(detail?.isParticipated);
     const [isParticipated, setisParticipated] = useState(detail?.isParticipated || false)
     const onBackPress = () => navigation?.goBack()
-    const { Activites, fetchEvents, AddEventToFavorite, RemoveEventFromFavorite, ParticipateEvents } = EventStore();
+    const { Activites, fetchEvents, AddEventToFavorite, RemoveEventFromFavorite, SendParticiateRequest } = EventStore();
     const { user, token } = UserStore();
 
     const onParticipate = () => {
-        ParticipateEvents(detail?._id, token).then((msg) => {
+        SendParticiateRequest({ event_id: detail?._id }, token).then((msg) => {
             !!msg ? alert(msg) : null
-            setisParticipated(true)
-            fetchEvents()
+            if (msg == "Participant request send successfully!") {
+                setisParticipated(true)
+                fetchEvents()
+            }
+
         })
     }
 
@@ -72,7 +75,7 @@ const EventDetail = ({ route, navigation }) => {
                     </View>
 
                     <View style={styles._desContainer}>
-                       <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>{detail?.title || ''}</Text>
+                        <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>{detail?.title || ''}</Text>
                         {/* <Text style={[styles._priceText, { color: COLORS.blackColor, paddingVertical: WP(3) }]}>Detail</Text> */}
                         <Text style={[styles.description,]}>{detail?.description || ''}</Text>
                     </View>

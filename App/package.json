@@ -9,7 +9,7 @@
         "lint": "eslint .",
         "start": "react-native start",
         "test": "jest",
-        "postinstall": "npx react-native setup-ios-permissions && pod-install"
+        "pods": "cd ios && pod install && cd .. "
     },
     "dependencies": {
         "@gorhom/bottom-sheet": "^4.4.7",

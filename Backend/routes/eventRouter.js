@@ -23,7 +23,7 @@ router.post('/event/remove-participant-request', auth, eventCtrl.removeParticipa
 router.get('/event/participant-requests', auth, eventCtrl.getParticipantRequests)
 
 router.get('/event/all-favorites', auth, eventCtrl.getAllFavouriteByuser)
-router.post('/event/add-participant', auth, eventCtrl.addParticipant)
+router.post('/event/accept-participant', auth, eventCtrl.acceptParticipant)
 router.post('/event/remove-participant', auth, eventCtrl.removeParticipant)
 router.get('/event/participant', auth, eventCtrl.getEventsByuserParticipant)
 
