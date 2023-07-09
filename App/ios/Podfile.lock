@@ -1,5 +1,16 @@
 PODS:
   - boost (1.76.0)
+  - Braintree (5.22.0):
+    - Braintree/Card (= 5.22.0)
+    - Braintree/Core (= 5.22.0)
+    - Braintree/PayPal (= 5.22.0)
+  - Braintree/Card (5.22.0):
+    - Braintree/Core
+  - Braintree/Core (5.22.0)
+  - Braintree/PayPal (5.22.0):
+    - Braintree/Core
+    - Braintree/PayPalDataCollector
+  - Braintree/PayPalDataCollector (5.22.0)
   - CocoaAsyncSocket (7.6.5)
   - DoubleConversion (1.1.6)
   - FBLazyVector (0.71.7)
@@ -465,6 +476,9 @@ PODS:
     - React-Core
   - RNGestureHandler (2.12.0):
     - React-Core
+  - RNPaypal (4.1.0):
+    - Braintree
+    - React
   - RNPermissions (3.8.0):
     - React-Core
   - RNReanimated (3.3.0):
@@ -501,7 +515,7 @@ PODS:
     - React-RCTImage
   - RNSVG (13.9.0):
     - React-Core
-  - SocketRocket (0.6.0)
+  - SocketRocket (0.6.1)
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -577,6 +591,7 @@ DEPENDENCIES:
   - ReactNativeLocalization (from `../node_modules/react-native-localization`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNPaypal (from `../node_modules/react-native-paypal`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -585,6 +600,7 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
+    - Braintree
     - CocoaAsyncSocket
     - Flipper
     - Flipper-Boost-iOSX
@@ -694,6 +710,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-async-storage/async-storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNPaypal:
+    :path: "../node_modules/react-native-paypal"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNReanimated:
@@ -712,6 +730,7 @@ CHECKOUT OPTIONS:
 
 SPEC CHECKSUMS:
   boost: 57d2868c099736d80fcd648bf211b4431e51a558
+  Braintree: e154d3a5ebf17ceff4d8e704239e18afcd45cc81
   CocoaAsyncSocket: 065fd1e645c7abab64f7a6a2007a48038fdc6a99
   DoubleConversion: 5189b271737e1565bdce30deb4a08d647e3f5f54
   FBLazyVector: a89a0525bc7ca174675045c2b492b5280d5a2470
@@ -770,11 +789,12 @@ SPEC CHECKSUMS:
   ReactNativeLocalization: 076497d7ca70341c751cd3b3e7c86187332a182d
   RNCAsyncStorage: b90b71f45b8b97be43bc4284e71a6af48ac9f547
   RNGestureHandler: dec4645026e7401a0899f2846d864403478ff6a5
+  RNPaypal: 248d7a7d9f7b09c5988e7834d112bbe3c69de0dd
   RNPermissions: b0e38eca4ce809f39a1655c7dfb8fe957b844cfc
   RNReanimated: 9976fbaaeb8a188c36026154c844bf374b3b7eeb
   RNScreens: 218801c16a2782546d30bd2026bb625c0302d70f
   RNSVG: 53c661b76829783cdaf9b7a57258f3d3b4c28315
-  SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
+  SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   Yoga: d56980c8914db0b51692f55533409e844b66133c
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

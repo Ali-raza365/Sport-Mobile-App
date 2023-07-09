@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import {
-    Animated, Dimensions, Image, Platform, StatusBar, StyleSheet,
+    Animated, Dimensions,
+    Platform, StatusBar, StyleSheet,
     Text, TouchableOpacity, View
 } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { COLORS, HP, WP } from '../../theme/config';
 
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { getLat_Long } from '../../utils/GetIPAddress';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import EventStore from '../../Store/EventStore';
 import UserStore from '../../Store/UserStore';
-import RecommmendedCard from '../../components/RecommmendedCard';
 import LocationFilterModal from '../../components/LocationFilterModal';
-import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import RecommmendedCard from '../../components/RecommmendedCard';
+import { getLat_Long } from '../../utils/GetIPAddress';
 
 
 const { width, height } = Dimensions.get("window");
@@ -27,6 +28,8 @@ const ExploreScreen = ({ navigation }) => {
         radius: 5,
         latitudeDelta: 0.04864195044303443,
         longitudeDelta: 0.040142817690068,
+        // latitude: 22.6293867,
+        // longitude: 88.4354486,
     }
     const { nearMeEvents, fetchEventsByLocation } = EventStore()
     const [currentLocation, setCurrentLocation] = useState(location)
@@ -132,7 +135,8 @@ const ExploreScreen = ({ navigation }) => {
     const fetchCurrentLocationActivity = () => {
         getLat_Long().then((res) => {
             location = { radius: 10, ...res };
-            setCurrentLocation({ ...currentLocation, ...res, name: "", radius: 5 })
+            console.log(res)
+            setCurrentLocation({ ...currentLocation, ...{ longitude: Number(res.longitude), latitude: Number(res.latitude) }, name: "", radius: 5 })
             fetchEvents(token, location)
             setshowfilterModal(false)
         })
@@ -296,17 +300,17 @@ const ExploreScreen = ({ navigation }) => {
                 onSave={onFilterSearch}
                 onRestPress={fetchCurrentLocationActivity}
             />
-            {currentLocation?.longitude ? 
-            <View style={styles.container}>
-                 <MapView
-                    ref={_map}
-                    initialRegion={currentLocation}
-                    style={styles.container}
-                    provider={PROVIDER_GOOGLE}
-                >
-                    {nearMeEvents?.length ? renderMarkers() : null}
-                </MapView> 
-                <View style={styles.header}>
+            {currentLocation?.longitude ?
+                <View style={styles.container}>
+                    <MapView
+                        ref={_map}
+                        initialRegion={currentLocation}
+                        style={styles.container}
+                        provider={PROVIDER_GOOGLE}
+                    >
+                        {nearMeEvents?.length ? renderMarkers() : null}
+                    </MapView>
+                    {/* <View style={styles.header}>
                     <StatusBar backgroundColor="#000" />
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: "center" }}>
                         <Ionicons
@@ -331,51 +335,51 @@ const ExploreScreen = ({ navigation }) => {
                     >
                         <FontAwesome5 name="search-location" size={25} color="#fff" light />
                     </TouchableOpacity>
-                </View>
+                </View> */}
 
-                <Animated.ScrollView
-                    ref={_scrollView}
-                    horizontal
-                    pagingEnabled
-                    scrollEventThrottle={1}
-                    showsHorizontalScrollIndicator={false}
-                    snapToInterval={CARD_WIDTH + 20}
-                    snapToAlignment="center"
-                    style={styles.scrollView}
-                    contentInset={{
-                        top: 0,
-                        left: SPACING_FOR_CARD_INSET,
-                        bottom: 0,
-                        right: SPACING_FOR_CARD_INSET
-                    }}
-                    contentContainerStyle={{
-                        paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
-                    }}
-                    onScroll={Animated.event(
-                        [
-                            {
-                                nativeEvent: {
-                                    contentOffset: {
-                                        x: mapAnimation,
-                                    }
+                    <Animated.ScrollView
+                        ref={_scrollView}
+                        horizontal
+                        pagingEnabled
+                        scrollEventThrottle={1}
+                        showsHorizontalScrollIndicator={false}
+                        snapToInterval={CARD_WIDTH + 20}
+                        snapToAlignment="center"
+                        style={styles.scrollView}
+                        contentInset={{
+                            top: 0,
+                            left: SPACING_FOR_CARD_INSET,
+                            bottom: 0,
+                            right: SPACING_FOR_CARD_INSET
+                        }}
+                        contentContainerStyle={{
+                            paddingHorizontal: Platform.OS === 'android' ? SPACING_FOR_CARD_INSET : 0
+                        }}
+                        onScroll={Animated.event(
+                            [
+                                {
+                                    nativeEvent: {
+                                        contentOffset: {
+                                            x: mapAnimation,
+                                        }
+                                    },
                                 },
-                            },
-                        ],
-                        { useNativeDriver: true }
-                    )}
-                >
-                    {nearMeEvents?.length ? nearMeEvents.map((item, index) => (
-                        <RecommmendedCard
-                            onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
-                            imageSource={item.image}
-                            details={item.title}
-                            contentContainerStyle={{ height: HP(25) }}
-                            imageStyle={{ height: "80%" }}
-                            date={item.date}
-                            key={index} detail={item} />
-                    )) : null}
-                </Animated.ScrollView>
-            </View> : null}
+                            ],
+                            { useNativeDriver: true }
+                        )}
+                    >
+                        {nearMeEvents?.length ? nearMeEvents.map((item, index) => (
+                            <RecommmendedCard
+                                onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
+                                imageSource={item.image}
+                                details={item.title}
+                                contentContainerStyle={{ height: HP(25) }}
+                                imageStyle={{ height: "80%" }}
+                                date={item.date}
+                                key={index} detail={item} />
+                        )) : null}
+                    </Animated.ScrollView>
+                </View> : null}
 
         </SafeAreaView>
     );

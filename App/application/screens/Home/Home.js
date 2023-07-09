@@ -278,7 +278,8 @@ const Home = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <AppBar type={'dark'} />
+            <AppBar backgroundColor={COLORS.whiteColor} type={'dark'} />
+
             <Loader isVisible={loading} />
             <View style={styles._headerContainer}>
                 <IonIcon style={{ paddingLeft: WP(2) }} name='home' size={WP(8)} color={COLORS.primaryColor} />

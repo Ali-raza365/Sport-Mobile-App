@@ -24,7 +24,6 @@ function App(){
 
   return (
     <>
-      <AppBar />
       <NavigationContainer>
         <Root/>
       </NavigationContainer>

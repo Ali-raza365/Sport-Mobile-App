@@ -42,7 +42,7 @@ export default function Splash({ navigation }) {
 
     return (
         <SafeAreaView style={Styles._mainContainer}>
-            <AppBar hidden={true} />
+            <AppBar hidden={true} type={'light'} backgroundColor={COLORS.whiteColor} />
             <Image
                 source={IMAGES.mainLogo}
                 resizeMode='contain'
