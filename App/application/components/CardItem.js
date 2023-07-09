@@ -45,7 +45,7 @@ const CardItem = ({ item, hideFav, onPress, OnHeartPress }) => {
                     <Text style={styles.heading}>
                         {item?.title}
                     </Text>
-                    <Text numberOfLines={3} style={styles.description}>
+                    <Text numberOfLines={2} style={styles.description}>
                         {item?.description?.trim?.()}
                     </Text>
                     <Text style={{ color: COLORS.primaryColor, marginTop: 5, fontWeight: '700' }}>

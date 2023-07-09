@@ -59,6 +59,7 @@ export const getLat_Long = async (isAlertShow) => {
                             message: 'This App needs to Access your location',
                         },
                     );
+                    console.log({granted});
                     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                         // DeviceInfo.isLocationEnabled().then((enabled) => {
                             // console.log("Is location is enable", enabled)

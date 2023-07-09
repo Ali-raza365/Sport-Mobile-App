@@ -19,7 +19,7 @@ app.use((req, res, next) => {
     res.setHeader('Pragma', 'no-cache');
     res.setHeader('Expires', '0');
     next();
-  });
+});
 
 
 // Socket
@@ -27,7 +27,8 @@ const http = require('http').createServer(app)
 const io = require('socket.io')(http)
 
 io.on('connection', socket => {
-    SocketServer(socket,io)
+    console.log('Socket connected!');
+    SocketServer(socket, io)
 })
 
 // Routes
@@ -37,8 +38,8 @@ app.use('/api', require('./routes/eventRouter'))
 app.use('/api', require('./routes/activitiesRouter'))
 app.use('/api', require('./routes/chatRouter'))
 
-app.get('/',(req,res)=>{
-res.send('server is running')
+app.get('/', (req, res) => {
+    res.send('server is running')
 })
 
 // if(process.env.NODE_ENV === 'production'){

@@ -24,13 +24,17 @@ const ChatScreen = ({ route, navigation }) => {
 
     let userId = user?._id;
     let roomId = lastMessage?._id
+    console.log({ roomId, userId });
     // console.log({ lastMessage });
     const connectToChat = (userId, roomId) => {
 
-        socket = io(`${BASE_URL}?userId=${userId}`);
-
+        socket = io(`${BASE_URL}?userId=${userId}`, {transports: ['websocket']});
+     socket.connect();
+        socket.on('connect', () => {
+            console.log('connection established');
+        })
         socket.emit('joinChatRoom', roomId);
-        socket.on('joinChatRoom', (join)=>{console.log(join);});
+        socket.on('joinChatRoom', (join) => { console.log(join); });
 
         socket.on('chatMessage', (data) => {
             console.log('chatMessage', data?.user);
@@ -52,23 +56,7 @@ const ChatScreen = ({ route, navigation }) => {
         // };
     };
 
-    navigation.setOptions({
-        headerLeft: () => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Pressable onPress={() => { navigation.goBack() }}>
-                    <Feather name="arrow-left" color={COLORS.blackColor} size={WP(6)} />
-                </Pressable>
-                <Pressable style={{}} onPress={() => { navigation.navigate('invhistorystack') }}>
-                    <Image source={{ uri: lastMessage?.image }}
-                        style={{ width: WP(7), height: WP(7), borderRadius: WP(30), marginHorizontal: 10, }}
-                        resizeMode='cover'
-                    />
-                </Pressable>
-                <Text style={{ color: COLORS.blackColor, fontSize: WP(4.4), fontWeight: "500" }}>{lastMessage?.title}</Text>
-            </View>
-
-        )
-    })
+    
 
 
     useEffect(() => {
@@ -92,6 +80,23 @@ const ChatScreen = ({ route, navigation }) => {
                 )
             }))
         })
+        navigation.setOptions({
+        headerLeft: () => (
+            <View style={{ flexDirection: "row", alignItems: "center" }}>
+                <Pressable onPress={() => { navigation.goBack() }}>
+                    <Feather name="arrow-left" color={COLORS.blackColor} size={WP(6)} />
+                </Pressable>
+                <Pressable style={{}} onPress={() => { navigation.navigate('invhistorystack') }}>
+                    <Image source={{ uri: lastMessage?.image }}
+                        style={{ width: WP(7), height: WP(7), borderRadius: WP(30), marginHorizontal: 10, }}
+                        resizeMode='cover'
+                    />
+                </Pressable>
+                <Text style={{ color: COLORS.blackColor, fontSize: WP(4.4), fontWeight: "500" }}>{lastMessage?.title}</Text>
+            </View>
+
+        )
+    })
         return () => {
             socket.disconnect();
         };

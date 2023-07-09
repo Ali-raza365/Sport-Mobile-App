@@ -7,6 +7,7 @@ import { COLORS, HP, IMAGES, SPACING_PERCENT, TAB_ICON_SIZE, WP } from "../../th
 import { _getItem } from '../../utils/async';
 import Lang from '../../translation'
 import UserStore from '../../Store/UserStore';
+import { AppBar } from '../../components';
 
 
 
@@ -41,6 +42,7 @@ export default function Splash({ navigation }) {
 
     return (
         <SafeAreaView style={Styles._mainContainer}>
+            <AppBar hidden={true} />
             <Image
                 source={IMAGES.mainLogo}
                 resizeMode='contain'

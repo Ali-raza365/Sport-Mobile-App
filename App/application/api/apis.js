@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// export const BASE_URL = 'https://sport-mobile-app-psi.vercel.app/';
-const BASE_URL = 'http://192.168.100.9:8080/';
+export const BASE_URL = 'https://sport-mobile-app-psi.vercel.app/';
+// export  const BASE_URL = 'http://192.168.100.9:8080/';
 
 
 

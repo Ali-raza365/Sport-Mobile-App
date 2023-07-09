@@ -3,6 +3,7 @@ import React from 'react'
 import { COLORS, HP, WP } from '../theme/config'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { _momentDateFormat } from '../utils/TimeFunctions'
+import { Card } from 'react-native-paper';
 
 export default function CardBox({
     imageSource,
@@ -19,6 +20,7 @@ export default function CardBox({
 
 
     return (
+        <Card style={{ margin: WP(1),borderRadius: WP(2), }}>
         <TouchableOpacity style={[Styles._mainContainer, contentContainerStyle]} activeOpacity={0.7} onPress={onPress}>
             <View style={Styles._imageMain}>
                 <Image
@@ -53,6 +55,7 @@ export default function CardBox({
 
             </View>
         </TouchableOpacity>
+        </Card>
     )
 }
 
@@ -61,9 +64,8 @@ const Styles = StyleSheet.create({
         width: WP(47),
         height: HP(20),
         backgroundColor: COLORS.whiteColor,
-        borderRadius: WP(2),
         overflow: "hidden",
-        margin: WP(1)
+        // margin: WP(1)
     },
     _imageMain: {
         width: "100%",

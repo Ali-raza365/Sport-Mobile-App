@@ -129,12 +129,12 @@ const ExploreScreen = ({ navigation }) => {
         fetchCurrentLocationActivity()
     }, [])
 
-    const fetchCurrentLocationActivity =()=>{
+    const fetchCurrentLocationActivity = () => {
         getLat_Long().then((res) => {
             location = { radius: 10, ...res };
-            setCurrentLocation({ ...currentLocation, ...res,name:"" ,radius:5 })
+            setCurrentLocation({ ...currentLocation, ...res, name: "", radius: 5 })
             fetchEvents(token, location)
-        setshowfilterModal(false)
+            setshowfilterModal(false)
         })
     }
 
@@ -296,15 +296,16 @@ const ExploreScreen = ({ navigation }) => {
                 onSave={onFilterSearch}
                 onRestPress={fetchCurrentLocationActivity}
             />
-            {currentLocation?.longitude ? <View style={styles.container}>
-                <MapView
+            {currentLocation?.longitude ? 
+            <View style={styles.container}>
+                 <MapView
                     ref={_map}
                     initialRegion={currentLocation}
                     style={styles.container}
                     provider={PROVIDER_GOOGLE}
                 >
                     {nearMeEvents?.length ? renderMarkers() : null}
-                </MapView>
+                </MapView> 
                 <View style={styles.header}>
                     <StatusBar backgroundColor="#000" />
                     <View style={{ flex: 1, flexDirection: 'row', alignItems: "center" }}>
@@ -320,7 +321,7 @@ const ExploreScreen = ({ navigation }) => {
                         />
                         <View style={{ flex: 0.8 }}>
                             <Text numberOfLines={1} style={styles.headerTitle}>{currentLocation?.name || "Nearby"}</Text>
-                            <Text style={[styles.headerTitle, { fontSize: WP(3.1), marginTop: 2, }]}>Activities {currentLocation?.name ?`under radius: ${currentLocation?.radius}` : "Near by you"}</Text>
+                            <Text style={[styles.headerTitle, { fontSize: WP(3.1), marginTop: 2, }]}>Activities {currentLocation?.name ? `under radius: ${currentLocation?.radius}` : "Near by you"}</Text>
                         </View>
 
                     </View>

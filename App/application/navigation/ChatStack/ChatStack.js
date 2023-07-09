@@ -1,8 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import React from 'react';
-import { Chat, ChatList } from '../../screens';
-import { COLORS, WP } from '../../theme/config';
-import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import { ChatList } from '../../screens';
+import { WP } from '../../theme/config';
 
 const Stack = createNativeStackNavigator();
 
