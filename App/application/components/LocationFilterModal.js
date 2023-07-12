@@ -7,12 +7,13 @@ import { launchImageLibrary, launchCamera } from 'react-native-image-picker';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Slider from '@react-native-community/slider'
+import { ms } from 'react-native-size-matters'
 
-export default function LocationFilterModal({ isVisible, onSave,onRestPress, onBackButtonPress, onBackdropPress }) {
+export default function LocationFilterModal({ isVisible, onSave, onRestPress, onBackButtonPress, onBackdropPress }) {
 
 
   const [location, setLocation] = useState({
-    radius:5
+    radius: 5
   })
 
   const onSavePress = () => {
@@ -22,69 +23,69 @@ export default function LocationFilterModal({ isVisible, onSave,onRestPress, onB
 
 
   return (
-      <Modal
-        isVisible={isVisible}
-        style={Styles._modal}
-        onBackButtonPress={onBackButtonPress}
-        onBackdropPress={onBackdropPress}
-      >
+    <Modal
+      isVisible={isVisible}
+      style={Styles._modal}
+      onBackButtonPress={onBackButtonPress}
+      onBackdropPress={onBackdropPress}
+    >
 
-        <View style={Styles._modalMain}>
-          <GooglePlacesAutocomplete
-           placeholderTextColor={COLORS.darkGrey}
-           currentLocation={true}
-            styles={{
-              container: { alignSelf: 'center', width: '100%', color: "#000" },
-              textInput: {
-                backgroundColor: "#fff",
-                borderWidth: 0.5,
-                borderColor: "#ccc"
-              },
-            }}
-            placeholder='Search Location'
-            fetchDetails={true}
-            onPress={(data, details = null,) => {
-              let cordinate = details?.geometry?.location || null
-              console.log(cordinate);
-              let name = data?.description
-              setLocation( {
-                ...location,
-                name,
-                latitude: cordinate?.lat,
-                longitude: cordinate?.lng,
-              })
+      <View style={Styles._modalMain}>
+        <GooglePlacesAutocomplete
+          placeholderTextColor={COLORS.darkGrey}
+          currentLocation={true}
+          styles={{
+            container: { alignSelf: 'center', width: '100%', color: "#000" },
+            textInput: {
+              backgroundColor: "#fff",
+              borderWidth: 0.5,
+              borderColor: "#ccc"
+            },
+          }}
+          placeholder='Search Location'
+          fetchDetails={true}
+          onPress={(data, details = null,) => {
+            let cordinate = details?.geometry?.location || null
+            console.log(cordinate);
+            let name = data?.description
+            setLocation({
+              ...location,
+              name,
+              latitude: cordinate?.lat,
+              longitude: cordinate?.lng,
+            })
 
-            }}
-            query={{
-              key: 'AIzaSyAQfjOJ3COtWccJr0gBIexmOu-nvNt853Y',
-              language: 'en',
-            }}
+          }}
+          query={{
+            key: 'AIzaSyAQfjOJ3COtWccJr0gBIexmOu-nvNt853Y',
+            language: 'en',
+          }}
+        />
+        <View style={{ marginTop: WP(2), width: '100%' }}>
+          <Text style={Styles._heading}>Radius: {location?.radius}</Text>
+          <Slider
+            step={5}
+            value={location?.radius || 5}
+            minimumValue={1}
+            maximumValue={100}
+            minimumTrackTintColor={COLORS.primaryColor}
+            maximumTrackTintColor="#000000"
+            onValueChange={(val) => { setLocation({ ...location, radius: val }) }}
+
           />
-          <View style={{ marginTop: WP(2), width: '100%' }}>
-            <Text style={Styles._heading}>Radius: {location?.radius}</Text>
-            <Slider
-              step={5}
-              value={location?.radius || 5}
-              minimumValue={1}
-              maximumValue={100}
-              minimumTrackTintColor={COLORS.primaryColor}
-              maximumTrackTintColor="#000000"
-              onValueChange={(val) => { setLocation({ ...location, radius: val }) }}
-
-            />
-          </View>
-          <TouchableOpacity
-            style={Styles.panelButton}
-            onPress={onSavePress}>
-            <Text style={Styles.panelButtonTitle}>Save</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={Styles.panelButton}
-            onPress={onRestPress}>
-            <Text style={Styles.panelButtonTitle}>Reset Location</Text>
-          </TouchableOpacity>
         </View>
-      </Modal>
+        <TouchableOpacity
+          style={Styles.panelButton}
+          onPress={onSavePress}>
+          <Text style={Styles.panelButtonTitle}>Save</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={Styles.panelButton}
+          onPress={onRestPress}>
+          <Text style={Styles.panelButtonTitle}>Reset Location</Text>
+        </TouchableOpacity>
+      </View>
+    </Modal>
   )
 }
 
@@ -99,7 +100,7 @@ const Styles = StyleSheet.create({
   },
   _modalMain: {
     width: WP(100),
-    height: HP(40),
+    height: ms(400),
     backgroundColor: "#EEF0F1",
     borderBottomRightRadius: WP(3),
     borderBottomLeftRadius: WP(3),

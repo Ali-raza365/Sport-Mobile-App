@@ -38,7 +38,7 @@ const SearchBar = ({
                 borderColor: COLORS.borderColor,
                 borderRadius: WP(RADIUS),
                 flexDirection: 'row',
-                width: WP(80),
+                width: WP(83),
                 height: HP(4.5),
                 overflow: 'hidden',
                 alignItems: 'center',
@@ -90,7 +90,7 @@ const Styles = StyleSheet.create({
     _label: {
         fontSize: WP(TEXT_SIZES.info_1),
         color: COLORS.blackColor,
-        marginBottom: WP(SPACING_PERCENT / 5),
+        // marginBottom: WP(SPACING_PERCENT / 5),
         textAlign: 'left',
     },
     iconContainer: {

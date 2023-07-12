@@ -4,6 +4,7 @@ import { _momentDateFormat } from '../utils/TimeFunctions'
 import { COLORS, HP, WP } from '../theme/config'
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Card } from 'react-native-paper';
+import { ms, s } from 'react-native-size-matters';
 
 const CardItem = ({ item, hideFav, onPress, OnHeartPress }) => {
     return (
@@ -20,7 +21,7 @@ const CardItem = ({ item, hideFav, onPress, OnHeartPress }) => {
                     />
                 </View>
                 <View style={styles.headingContainer}>
-                    <Text style={{ fontSize: 12, color: COLORS.darkGrey, fontWeight: "500" }}>{item?.activity?.name}</Text>
+                    <Text style={{ fontSize: s(10), color: COLORS.darkGrey, fontWeight: "500" }}>{item?.activity?.name}</Text>
                     {hideFav ? null :
                         <>
                             <TouchableOpacity
@@ -62,7 +63,7 @@ export default CardItem
 const styles = StyleSheet.create({
     mainContainer: {
         width: '100%',
-        height: HP(20),
+        height: ms(160),
         backgroundColor: COLORS.whiteColor,
         borderBottomWidth: 1,
         padding: WP(3),
@@ -77,8 +78,8 @@ const styles = StyleSheet.create({
         height: '100%',
         borderRadius: 10,
     },
-    headingContainer: { padding: 7, paddingHorizontal: WP(2.5), width: WP('55') },
-    heading: { fontSize: WP(4.5), fontWeight: 'bold', color: '#000000', paddingVertical: 5 },
-    description: { fontSize: 15, color: '#000000' },
+    headingContainer: { padding: 7, paddingHorizontal: ms(7), width: WP('55') },
+    heading: { fontSize: s(14), fontWeight: 'bold', color: '#000000', paddingVertical: 5 },
+    description: { fontSize: s(13), color: '#000000' },
     favourite: { position: 'absolute', top: 5, right: 15 },
 })

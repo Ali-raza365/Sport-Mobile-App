@@ -10,6 +10,7 @@ import UserStore from '../../Store/UserStore';
 import EventStore from '../../Store/EventStore';
 import moment from 'moment';
 import { _momentDateFormat } from '../../utils/TimeFunctions';
+import MapViewCap from '../../components/MapViewCap';
 
 const EventDetail = ({ route, navigation }) => {
 
@@ -30,6 +31,8 @@ const EventDetail = ({ route, navigation }) => {
 
         })
     }
+
+    console.log(detail);
 
     return (
         // <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.whiteColor }}>
@@ -71,6 +74,9 @@ const EventDetail = ({ route, navigation }) => {
                                 <Foundation name="marker" size={WP(7)} color={COLORS.blackColor} />
                             </View>
                             <Text numberOfLines={3} style={styles._LocationText}>{!!detail?.location ? detail?.location?.name : ""}</Text>
+                        </View>
+                        <View>
+                    <MapViewCap Region={detail?.location}/>
                         </View>
                     </View>
 

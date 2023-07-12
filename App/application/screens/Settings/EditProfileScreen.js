@@ -17,6 +17,8 @@ import UserStore from '../../Store/UserStore';
 import { PickerModal } from '../../components';
 import { COLORS, HP } from '../../theme/config';
 import { isValidNumber, isValidUsername } from '../../utils/Validation';
+import { ms, s } from 'react-native-size-matters';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 const EditProfileScreen = (navigation) => {
     const { user, token, updatePrfiler } = UserStore();
@@ -54,6 +56,8 @@ const EditProfileScreen = (navigation) => {
 
 
     return (
+<KeyboardAwareScrollView>
+
         <View style={styles.container}>
             <PickerModal
                 onBackButtonPress={togglePickerModal}
@@ -109,7 +113,6 @@ const EditProfileScreen = (navigation) => {
                         {userInfo?.fullname}
                     </Text>
                 </View>
-
                 <View style={styles.action}>
                     <FontAwesome name="user-o" color={colors.text} size={20} />
                     <TextInput
@@ -183,6 +186,8 @@ const EditProfileScreen = (navigation) => {
                 </TouchableOpacity>
             </View>
         </View>
+        </KeyboardAwareScrollView>
+
     );
 };
 
@@ -220,6 +225,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: '#cccc',
         paddingBottom: 5,
+        // backgroundColor:"green",
+        height:ms(45),
     },
     actionError: {
         flexDirection: 'row',
@@ -230,12 +237,10 @@ const styles = StyleSheet.create({
     },
     textInput: {
         flex: 1,
-        marginTop: Platform.OS === 'ios' ? 0 : -12,
         marginLeft: 10,
-        height: HP(4.3),
-        fontSize: 20,
+        height: '100%',
+        fontSize: s(12),
         color: '#05375a',
-        // borderBottomColor:"#cccccc",
-        // borderBottomWidth:0.5,
+        // backgroundColor:"yellow"
     },
 });

@@ -109,7 +109,7 @@ const SearchScr = ({ navigation }) => {
       </View>
 
       <View style={styles.filterContainer} horizontal>
-        <Chip
+        {/* <Chip
           style={{
             backgroundColor: COLORS.primaryColor,
             marginLeft: WP(SPACING_PERCENT),
@@ -118,7 +118,7 @@ const SearchScr = ({ navigation }) => {
           type="flat"
           onPress={() => console.log('Pressed')}>
           Filter
-        </Chip>
+        </Chip> */}
         <Chip
           style={{
             backgroundColor: COLORS.primaryColor,
@@ -129,7 +129,7 @@ const SearchScr = ({ navigation }) => {
           onPress={() => { navigation.navigate('MapScreen') }}>
           Location
         </Chip>
-        <Chip
+        {/* <Chip
           style={{
             backgroundColor: COLORS.primaryColor,
             marginLeft: WP(SPACING_PERCENT),
@@ -138,7 +138,7 @@ const SearchScr = ({ navigation }) => {
           type="outlined"
           onPress={() => console.log('Pressed')}>
           Category
-        </Chip>
+        </Chip> */}
       </View>
 
       <FlatList
@@ -158,8 +158,9 @@ export default SearchScr;
 const styles = StyleSheet.create({
   headerContainer: {
     margin: 10,
+    marginHorizontal:15,
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
   filterContainer: {

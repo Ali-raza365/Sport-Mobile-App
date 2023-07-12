@@ -4,6 +4,7 @@ import { COLORS, HP, WP } from '../theme/config'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { _momentDateFormat } from '../utils/TimeFunctions'
 import { Card } from 'react-native-paper';
+import { s, vs, ms, mvs } from 'react-native-size-matters';
 
 export default function CardBox({
     imageSource,
@@ -20,52 +21,54 @@ export default function CardBox({
 
 
     return (
-        <Card style={{ margin: WP(1),borderRadius: WP(2), }}>
-        <TouchableOpacity style={[Styles._mainContainer, contentContainerStyle]} activeOpacity={0.7} onPress={onPress}>
-            <View style={Styles._imageMain}>
-                <Image
-                    style={Styles._image}
-                    source={{ uri: imageSource }}
-                />
-            </View>
-            <View style={Styles._dataMain}>
-                <View style={Styles._sectionOne}>
-                    <Text numberOfLines={2} style={Styles._detailText}>{details}</Text>
-                    {!hideFavorite ?
-                        <TouchableOpacity onPress={OnHeartPress}>
-                            {isfav ?
-                                <Ionicons
-                                    name='heart'
-                                    color={COLORS.primaryColor}
-                                    size={WP(5)}
-                                />
-                                : <Ionicons
-                                    name='heart-outline'
-                                    color={COLORS.primaryColor}
-                                    size={WP(5)}
-                                />
-                            }
-                        </TouchableOpacity>
-                        : <Text />}
+        <Card style={{
+            marginVertical: mvs(7),
+            marginHorizontal: ms(4),
+        }}>
+            <TouchableOpacity style={[Styles._mainContainer, contentContainerStyle]} activeOpacity={0.7} onPress={onPress}>
+                <View style={Styles._imageMain}>
+                    <Image
+                        style={Styles._image}
+                        source={{ uri: imageSource }}
+                    />
+                </View>
+                <View style={Styles._dataMain}>
+                    <View style={Styles._sectionOne}>
+                        <Text numberOfLines={2} style={Styles._detailText}>{details}</Text>
+                        {!hideFavorite ?
+                            <TouchableOpacity onPress={OnHeartPress}>
+                                {isfav ?
+                                    <Ionicons
+                                        name='heart'
+                                        color={COLORS.primaryColor}
+                                        size={WP(5)}
+                                    />
+                                    : <Ionicons
+                                        name='heart-outline'
+                                        color={COLORS.primaryColor}
+                                        size={WP(5)}
+                                    />
+                                }
+                            </TouchableOpacity>
+                            : <Text />}
+
+                    </View>
+                    <View style={Styles._sectionTwo}>
+                        <Text style={Styles._priceText}>{!!date ? _momentDateFormat(date) : ''}</Text>
+                    </View>
 
                 </View>
-                <View style={Styles._sectionTwo}>
-                    <Text style={Styles._priceText}>{!!date ? _momentDateFormat(date) : ''}</Text>
-                </View>
-
-            </View>
-        </TouchableOpacity>
+            </TouchableOpacity>
         </Card>
     )
 }
 
 const Styles = StyleSheet.create({
     _mainContainer: {
-        width: WP(47),
-        height: HP(20),
+        width: WP("46%"),
+        height: ms(150),
         backgroundColor: COLORS.whiteColor,
         overflow: "hidden",
-        // margin: WP(1)
     },
     _imageMain: {
         width: "100%",
@@ -105,25 +108,17 @@ const Styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "space-between",
-        paddingHorizontal: WP(1)
+        paddingHorizontal: ms(2)
     },
     _detailText: {
         color: COLORS.blackColor,
         width: "80%",
         fontWeight: "600",
-        fontSize: WP(4),
+        fontSize: s(14),
     },
     _priceText: {
         fontWeight: "bold",
         color: COLORS.primaryColor,
-        fontSize: WP(3.5),
-    },
-    _locationText: {
-        color: COLORS.primaryColor2,
-        fontSize: WP(3)
-    },
-    _dateText: {
-        color: COLORS.primaryColor2,
-        fontSize: WP(3)
+        fontSize: s(8),
     },
 })

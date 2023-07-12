@@ -28,8 +28,8 @@ const ChatScreen = ({ route, navigation }) => {
     // console.log({ lastMessage });
     const connectToChat = (userId, roomId) => {
 
-        socket = io(`${BASE_URL}?userId=${userId}`, {transports: ['websocket']});
-     socket.connect();
+        socket = io(`${BASE_URL}?userId=${userId}`, { transports: ['websocket'] });
+        socket.connect();
         socket.on('connect', () => {
             console.log('connection established');
         })
@@ -37,7 +37,7 @@ const ChatScreen = ({ route, navigation }) => {
         socket.on('joinChatRoom', (join) => { console.log(join); });
 
         socket.on('chatMessage', (data) => {
-            console.log('chatMessage', data?.user);
+            console.log('chatMessage', data);
             if (userId !== data?.user?._id) {
                 setMessages((previousMessages) => GiftedChat.append(previousMessages, data));
             }
@@ -56,7 +56,7 @@ const ChatScreen = ({ route, navigation }) => {
         // };
     };
 
-    
+
 
 
     useEffect(() => {
@@ -81,22 +81,22 @@ const ChatScreen = ({ route, navigation }) => {
             }))
         })
         navigation.setOptions({
-        headerLeft: () => (
-            <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Pressable onPress={() => { navigation.goBack() }}>
-                    <Feather name="arrow-left" color={COLORS.blackColor} size={WP(6)} />
-                </Pressable>
-                <Pressable style={{}} onPress={() => { navigation.navigate('invhistorystack') }}>
-                    <Image source={{ uri: lastMessage?.image }}
-                        style={{ width: WP(7), height: WP(7), borderRadius: WP(30), marginHorizontal: 10, }}
-                        resizeMode='cover'
-                    />
-                </Pressable>
-                <Text style={{ color: COLORS.blackColor, fontSize: WP(4.4), fontWeight: "500" }}>{lastMessage?.title}</Text>
-            </View>
+            headerLeft: () => (
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                    <Pressable onPress={() => { navigation.goBack() }}>
+                        <Feather name="arrow-left" color={COLORS.blackColor} size={WP(6)} />
+                    </Pressable>
+                    <Pressable style={{}} onPress={() => { navigation.navigate('invhistorystack') }}>
+                        <Image source={{ uri: lastMessage?.image }}
+                            style={{ width: WP(7), height: WP(7), borderRadius: WP(30), marginHorizontal: 10, }}
+                            resizeMode='cover'
+                        />
+                    </Pressable>
+                    <Text style={{ color: COLORS.blackColor, fontSize: WP(4.4), fontWeight: "500" }}>{lastMessage?.title}</Text>
+                </View>
 
-        )
-    })
+            )
+        })
         return () => {
             socket.disconnect();
         };
@@ -108,7 +108,14 @@ const ChatScreen = ({ route, navigation }) => {
         setMessages((previousMessages) =>
             GiftedChat.append(previousMessages, messages),
         );
-        socket.emit('chatMessage', { eventId: roomId, messageData: { ...messages?.[0], message: messages?.[0]?.text, user } })
+        console.log("onSend", user);
+        let userobj = {
+            _id: user?._id,
+            avatar: user?.avatar,
+            name: user?.fullname,
+            mobile: user?.mobile
+        }
+        socket.emit('chatMessage', { eventId: roomId, messageData: { ...messages?.[0], message: messages?.[0]?.text, user: userobj } })
     }, []);
 
 

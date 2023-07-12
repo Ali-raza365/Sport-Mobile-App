@@ -4,6 +4,8 @@ import { COLORS, HP, WP } from '../theme/config'
 import Ionicons from "react-native-vector-icons/Ionicons"
 import { _momentDateFormat } from '../utils/TimeFunctions'
 import { Card } from 'react-native-paper'
+import { s, vs, ms, mvs } from 'react-native-size-matters';
+
 
 export default function RecommmendedCard({
     imageSource,
@@ -27,8 +29,9 @@ export default function RecommmendedCard({
             </View>
             <View style={Styles._dataMain}>
                 <View style={Styles._sectionOne}>
-                    <Text numberOfLines={2} style={Styles._detailText}>{details}</Text>
+                    <Text numberOfLines={1} style={Styles._detailText}>{details}</Text>
                 </View>
+                
                 <View style={Styles._sectionTwo}>
                     <Text style={Styles._priceText}>{!!date ? _momentDateFormat(date) : ''}</Text>
                 </View>
@@ -42,14 +45,14 @@ export default function RecommmendedCard({
 const Styles = StyleSheet.create({
     _mainContainer: {
         width: WP(80),
-        height: HP(30),
+        height: ms(200),
         borderRadius: WP(2),
         overflow: "hidden",
     
     },
     _imageMain: {
         width: "100%",
-        height: "70%",
+        height: "75%",
         backgroundColor: COLORS.whiteColor
     },
     _image: {
@@ -59,16 +62,13 @@ const Styles = StyleSheet.create({
     },
     _dataMain: {
         width: "100%",
-        height:"30%",
+        height:"25%",
         backgroundColor: COLORS.whiteColor
     },
     _sectionOne: {
         width: "100%",
-        maxHeight: "60%",
         paddingHorizontal: WP(1),
         backgroundColor: COLORS.whiteColor,
-        flexDirection: "row",
-        justifyContent: "space-between",
         paddingTop: WP(1)
     },
     _sectionTwo: {
@@ -89,20 +89,12 @@ const Styles = StyleSheet.create({
     _detailText: {
         color: COLORS.blackColor,
         fontWeight: "600",
-        fontSize: WP(4),
-        width: "80%",
+        fontSize: s(14),
     },
     _priceText: {
         fontWeight: "bold",
         color: COLORS.primaryColor,
-        fontSize: WP(3.5),
+        fontSize: s(12),
     },
-    _locationText: {
-        color: COLORS.primaryColor2,
-        fontSize: WP(3)
-    },
-    _dateText: {
-        color: COLORS.primaryColor2,
-        fontSize: WP(3)
-    },
+
 })

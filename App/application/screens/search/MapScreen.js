@@ -310,32 +310,32 @@ const ExploreScreen = ({ navigation }) => {
                     >
                         {nearMeEvents?.length ? renderMarkers() : null}
                     </MapView>
-                    {/* <View style={styles.header}>
-                    <StatusBar backgroundColor="#000" />
-                    <View style={{ flex: 1, flexDirection: 'row', alignItems: "center" }}>
-                        <Ionicons
-                            onPress={() => {
-                                navigation.goBack();
-                            }}
-                            style={{ flex: 0.1 }}
-                            name="arrow-back-outline"
-                            size={30}
-                            color="white"
-                            type="ionicon"
-                        />
-                        <View style={{ flex: 0.8 }}>
-                            <Text numberOfLines={1} style={styles.headerTitle}>{currentLocation?.name || "Nearby"}</Text>
-                            <Text style={[styles.headerTitle, { fontSize: WP(3.1), marginTop: 2, }]}>Activities {currentLocation?.name ? `under radius: ${currentLocation?.radius}` : "Near by you"}</Text>
-                        </View>
+                    <View style={styles.header}>
+                        <StatusBar backgroundColor="#000" />
+                        <View style={{ flex: 1, flexDirection: 'row', alignItems: "center" }}>
+                            <Ionicons
+                                onPress={() => {
+                                    navigation.goBack();
+                                }}
+                                style={{ flex: 0.1 }}
+                                name="arrow-back-outline"
+                                size={30}
+                                color="white"
+                                type="ionicon"
+                            />
+                            <View style={{ flex: 0.8 }}>
+                                <Text numberOfLines={1} style={styles.headerTitle}>{currentLocation?.name || "Nearby"}</Text>
+                                <Text style={[styles.headerTitle, { fontSize: WP(3.1), marginTop: 2, }]}>Activities {currentLocation?.name ? `under radius: ${currentLocation?.radius}` : "Near by you"}</Text>
+                            </View>
 
+                        </View>
+                        <TouchableOpacity
+                            style={{ flex: 0.1 }}
+                            onPress={() => { setshowfilterModal(true) }}
+                        >
+                            <FontAwesome5 name="search-location" size={25} color="#fff" light />
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity
-                        style={{ flex: 0.1 }}
-                        onPress={() => { setshowfilterModal(true) }}
-                    >
-                        <FontAwesome5 name="search-location" size={25} color="#fff" light />
-                    </TouchableOpacity>
-                </View> */}
 
                     <Animated.ScrollView
                         ref={_scrollView}
@@ -373,8 +373,7 @@ const ExploreScreen = ({ navigation }) => {
                                 onPress={() => { navigation.navigate("eventdetail", { detail: item }) }}
                                 imageSource={item.image}
                                 details={item.title}
-                                contentContainerStyle={{ height: HP(25) }}
-                                imageStyle={{ height: "80%" }}
+                        
                                 date={item.date}
                                 key={index} detail={item} />
                         )) : null}
